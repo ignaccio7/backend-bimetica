@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --step--3: clamp(0.64rem, calc(0.61rem + 0.08vw), 0.66rem);
+    --step--2: clamp(0.78rem, calc(0.77rem + 0.03vw), 0.8rem);
+    --step--1: clamp(0.94rem, calc(0.92rem + 0.11vw), 1rem);
+    --step-0: clamp(1.13rem, calc(1.08rem + 0.22vw), 1.25rem);
+    --step-1: clamp(1.35rem, calc(1.28rem + 0.37vw), 1.56rem);
+    --step-2: clamp(1.62rem, calc(1.5rem + 0.58vw), 1.95rem);
+    --step-3: clamp(1.94rem, calc(1.77rem + 0.87vw), 2.44rem);
+    --step-4: clamp(2.33rem, calc(2.08rem + 1.25vw), 3.05rem);
+    --step-5: clamp(2.8rem, calc(2.45rem + 1.77vw), 3.82rem);
+
+    --color-primary-50: #e6eef3;
+    --color-primary-100: #cddbec;
+    --color-primary-200: #9abed6;
+    --color-primary-300: #6a9ac2;
+    --color-primary-400: #3b74ae;
+    --color-primary-500: #003e65; /* Color primario */
+    --color-primary-600: #003657;
+    --color-primary-700: #002e48;
+    --color-primary-800: #00263a;
+    --color-primary-900: #001d2d;
+    --color-primary-950: #001520;
+
+    --color-secondary-50: #fff9e6;
+    --color-secondary-100: #fff3c2;
+    --color-secondary-200: #ffe89f;
+    --color-secondary-300: #ffdc75;
+    --color-secondary-400: #ffc238;
+    --color-secondary-500: #fbad03; /* Color secundario */
+    --color-secondary-600: #da9502;
+    --color-secondary-700: #b57c02;
+    --color-secondary-800: #906301;
+    --color-secondary-900: #6b4901;
+    --color-secondary-950: #463001;
+}
+
+/* @font-face {
+  font-family: "Montserrat";
+  src: url("../assets/fonts/Montserrat-VariableFont.ttf") format("truetype");
+  font-weight: 300 500 700 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("../assets/fonts/Raleway-VariableFont.ttf") format("truetype");
+  font-weight: 300 500 700 800 900;
+  font-style: normal;
+  font-display: swap;
+} */
