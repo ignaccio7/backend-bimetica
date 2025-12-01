@@ -1,7 +1,8 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import { IconHome, IconTeam, IconUser } from "@/Icons/icons";
+// import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
@@ -44,15 +45,61 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
 
                 {/* Navegación */}
-                <nav className="px-4 py-6 space-y-1 grow bg-primary-500">
-                    <NavLink
-                        href={route("dashboard")}
-                        active={route().current("dashboard")}
-                    >
-                        Dashboard
-                    </NavLink>
+                <nav className="px-4 py-6 space-y-1 grow bg-primary-500 flex flex-col gap-2">
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Principal
+                    </h3>
+                    <div className="links flex flex-col gap-1">
+                        <NavLink
+                            href={route("dashboard")}
+                            active={route().current("dashboard")}
+                        >
+                            <IconHome />
+                            Inicio
+                        </NavLink>
 
-                    {/* Agrega más links aquí */}
+                        <NavLink
+                            href={route("profile.edit")}
+                            active={route().current("profile.edit")}
+                        >
+                            <IconUser />
+                            Perfíl
+                        </NavLink>
+                    </div>
+
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Usuarios
+                    </h3>
+
+                    <div className="links flex flex-col gap-1">
+                        <NavLink
+                            href={route("user.index")}
+                            active={route().current("user.index")}
+                        >
+                            <IconTeam />
+                            Gestionar usuarios
+                        </NavLink>
+                    </div>
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Servicios
+                    </h3>
+
+                    <div className="links flex flex-col gap-1">
+                        <NavLink
+                            href={route("service.index")}
+                            active={route().current("service.index")}
+                        >
+                            <IconHome />
+                            Diseño
+                        </NavLink>
+                        {/* <NavLink
+                            href={route("service.index")}
+                            active={route().current("service.index")}
+                        >
+                            <IconHome />
+                            Construcción
+                        </NavLink> */}
+                    </div>
                 </nav>
             </div>
 
@@ -102,7 +149,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                     type="button"
                                                     className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                                 >
-                                                    {user.name}
+                                                    {user.username}
 
                                                     <svg
                                                         className="-me-0.5 ms-2 h-4 w-4"
@@ -161,12 +208,12 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                     <Dropdown.Content>
                                         <div className="px-4 py-2 border-b border-gray-100">
-                                            <div className="text-sm font-medium text-gray-800">
+                                            <div className="text-sm font-medium text-gray-500">
                                                 {user.name}
                                             </div>
-                                            <div className="text-xs text-gray-500">
+                                            {/* <div className="text-xs text-gray-500">
                                                 {user.email}
-                                            </div>
+                                            </div> */}
                                         </div>
                                         <Dropdown.Link
                                             href={route("profile.edit")}
