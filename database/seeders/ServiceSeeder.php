@@ -17,6 +17,7 @@ class ServiceSeeder extends Seeder
         $services = [
             [
                 'title' => 'Carpeta técnica',
+                'slug' => 'carpeta-tecnica',
                 'description' => 'Documentación completa que integra especificaciones, planos, memorias y normativas técnicas necesarias para la aprobación y ejecución de proyectos civiles.',
                 'type' => 'diseño',
                 'categories' => [
@@ -35,6 +36,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'title' => 'Diseño de planos',
+                'slug' => 'planos',
                 'description' => 'Desarrollo profesional de planos arquitectónicos, eléctricos, sanitarios y estructurales siguiendo estándares técnicos y normativos actualizados.',
                 'type' => 'diseño',
                 'categories' => [
@@ -53,6 +55,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'title' => 'Diseño de trámites',
+                'slug' => 'tramites',
                 'description' => 'Preparación de documentación técnica requerida para procesos administrativos como licencias de construcción, ampliaciones y regularizaciones.',
                 'type' => 'diseño',
                 'categories' => [
@@ -70,7 +73,26 @@ class ServiceSeeder extends Seeder
                 'image' => 'https://picsum.photos/640/480?random=3',
             ],
             [
+                'title' => 'Computo de proyectos',
+                'slug' => 'computo',
+                'description' => 'Desarrollo de computos de proyectos para gestión de proyectos y gestión de recursos.',
+                'type' => 'diseño',
+                'categories' => [
+                    'Computos de proyectos',
+                    'Gestión de recursos',
+                    'Gestión de proyectos',
+                ],
+                'benefits' => [
+                    'Facilidad de gestión de proyectos',
+                    'Reducción de tiempo y costos',
+                    'Mejora de la gestión de recursos',
+                    'Mejora de la gestión de proyectos',
+                ],
+                'image' => 'https://picsum.photos/640/480?random=4',
+            ],
+            [
                 'title' => 'Construcción de obras civiles',
+                'slug' => 'construccion-de-obras-civiles',
                 'description' => 'Ejecución completa de proyectos civiles garantizando calidad, supervisión y cumplimiento de estándares técnicos en cada etapa de la obra.',
                 'type' => 'construccion',
                 'categories' => [
@@ -89,6 +111,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'title' => 'Remodelación',
+                'slug' => 'remodelacion',
                 'description' => 'Rediseño y adecuación de espacios interiores y exteriores para mejorar funcionalidad, estética y valor del inmueble.',
                 'type' => 'construccion',
                 'categories' => [
@@ -107,6 +130,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'title' => 'Obra completa – llave en mano',
+                'slug' => 'obra-completa',
                 'description' => 'Desarrollo integral del proyecto desde la planificación hasta la entrega final, asegurando un proceso sin complicaciones para el cliente.',
                 'type' => 'construccion',
                 'categories' => [

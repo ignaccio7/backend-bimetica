@@ -1,6 +1,7 @@
 import PrimaryButton from "@/Components/PrimaryButton";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import Pagination from "@/Components/ui/Pagination";
+import { IconPencil, IconTrash } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -13,6 +14,7 @@ export default function List({ services }) {
         { campo: "Categoría" },
         { campo: "Beneficios" },
         { campo: "Imagen" },
+        { campo: "Opciones" },
     ];
 
     const contenidoTabla = services?.data?.map((service) => {
@@ -38,6 +40,14 @@ export default function List({ services }) {
                 src={imageUrl}
                 alt={service.title}
             />,
+            <div className="actions flex flex-row gap-2">
+                <button className="px-2 py-1 bg-green-700 text-white rounded-md">
+                    <IconPencil />
+                </button>
+                <button className="px-2 py-1 bg-red-700 text-white rounded-md">
+                    <IconTrash />
+                </button>
+            </div>,
         ];
     });
 

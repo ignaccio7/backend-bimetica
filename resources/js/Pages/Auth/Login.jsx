@@ -12,6 +12,7 @@ import {
 
 export default function Login({
     status,
+    landingUrl = "",
     // canResetPassword
 }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -101,12 +102,13 @@ export default function Login({
                             Forgot your password?
                         </Link>
                     )} */}
-                    <button
+                    <a
+                        href={landingUrl}
                         className="bg-secondary-500 px-4 py-2 rounded-md text-step-1 font-semibold text-white uppercase"
                         type="button"
                     >
                         Volver a la página
-                    </button>
+                    </a>
 
                     <PrimaryButton
                         className="ms-4"

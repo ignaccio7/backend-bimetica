@@ -36,9 +36,6 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        // Imprimir lo que llega en request
-        echo $request;
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
