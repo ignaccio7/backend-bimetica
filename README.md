@@ -34,7 +34,6 @@ Deja la base de datos vacía
 Para crear enlace simbolico ya que estamos guardando imagenes en services
 php artisan storage:link
 
-
 ---
 
 Logo animado
