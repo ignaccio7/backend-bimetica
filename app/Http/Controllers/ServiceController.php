@@ -15,9 +15,9 @@ class ServiceController extends Controller
     public function index(): Response
     {
         // Listar servicios paginando de 15 en 15
-        $services = Service::paginate(1);
+        $services = Service::paginate(5);
 
-        return Inertia::render('Service/List', [
+        return Inertia::render('Service/Design/List', [
             'services' => $services
         ]);
     }
@@ -28,6 +28,7 @@ class ServiceController extends Controller
     public function create()
     {
         //
+        return Inertia::render('Service/Design/Create', []);
     }
 
     /**
@@ -35,7 +36,25 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Imprimir lo que llega en request
+        echo $request;
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'type' => 'required|string',
+            'categories' => 'nullable|array',
+            'benefits' => 'nullable|array',
+            'image' => 'nullable|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('services', 'public');
+        }
+
+        Service::create($validated);
+
+        return redirect()->back()->with('sucess', 'Servicio creado');
     }
 
     /**
@@ -68,5 +87,10 @@ class ServiceController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function list(string $type)
+    {
+        return response()->json(Service::where('type', $type)->get());
     }
 }

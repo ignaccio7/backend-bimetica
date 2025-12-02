@@ -16,28 +16,32 @@ export default function List({ services }) {
     ];
 
     const contenidoTabla = services?.data?.map((service) => {
+        const imageUrl = (service?.image).startsWith("http")
+            ? service.image
+            : `/storage/${service.image}`;
+
         return [
             service.title,
             service.description,
             <ul className="list-disc pl-5 marker:text-secondary-500">
-                {JSON.parse(service.categories).map((category) => {
+                {service.categories?.map((category) => {
                     return <li key={category}>{category}</li>;
                 })}
             </ul>,
             <ul className="list-disc pl-5 marker:text-secondary-500">
-                {JSON.parse(service.benefits).map((benefit) => {
+                {service.benefits?.map((benefit) => {
                     return <li key={benefit}>{benefit}</li>;
                 })}
             </ul>,
             <img
-                className="rounded-md max-w-52"
-                src={service.image}
+                className="rounded-md w-60 h-auto aspect-video"
+                src={imageUrl}
                 alt={service.title}
             />,
         ];
     });
 
-    console.log(contenidoTabla);
+    // console.log(contenidoTabla);
 
     return (
         <AuthenticatedLayout>

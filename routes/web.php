@@ -20,7 +20,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +33,8 @@ Route::middleware('auth')->group(function () {
 
     // Services Routes 
     Route::get('/services', [ServiceController::class, 'index'])->name('service.index');
+    Route::get('/services/create', [ServiceController::class, 'create'])->name('service.create');
+    Route::post('/services', [ServiceController::class, 'store'])->name('service.store');
 });
 
 require __DIR__ . '/auth.php';

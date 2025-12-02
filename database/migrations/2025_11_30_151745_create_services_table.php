@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->string('type')->isNotEmpty();
-            $table->string('categories')->nullable();
-            $table->string('benefits')->nullable();
+            $table->json('categories')->nullable();
+            $table->json('benefits')->nullable();
             $table->string('image')->nullable();
 
             $table->timestamps();

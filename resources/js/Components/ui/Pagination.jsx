@@ -3,7 +3,7 @@ import { router } from "@inertiajs/react";
 
 export default function Pagination({ currentPage, lastPage, routeName }) {
     // ✅ Cambié "route" por "routeName" para evitar confusión
-    console.log({ currentPage, lastPage, routeName });
+    // console.log({ currentPage, lastPage, routeName });
 
     // Si solo hay 1 página, no mostrar paginación
     if (lastPage <= 1) return null;

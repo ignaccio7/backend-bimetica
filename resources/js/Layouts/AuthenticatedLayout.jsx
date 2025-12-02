@@ -1,7 +1,7 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
-import { IconHome, IconTeam, IconUser } from "@/Icons/icons";
+import { IconHome, IconPlus, IconTeam, IconUser } from "@/Icons/icons";
 // import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -21,7 +21,12 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* Logo */}
                 <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
                     <Link href="/">
-                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                        {/* <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" /> */}
+                        <img
+                            src="/bimetica_logo.png"
+                            alt="Logo Bimetica"
+                            className="block w-32 sm:w-48 h-auto"
+                        />
                     </Link>
                     {/* Botón cerrar solo en móvil */}
                     <button
@@ -81,7 +86,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </NavLink>
                     </div>
                     <h3 className="text-secondary-400 text-step-2 font-semibold">
-                        Servicios
+                        Servicios de diseño
                     </h3>
 
                     <div className="links flex flex-col gap-1">
@@ -90,7 +95,14 @@ export default function AuthenticatedLayout({ header, children }) {
                             active={route().current("service.index")}
                         >
                             <IconHome />
-                            Diseño
+                            Gestionar servicios
+                        </NavLink>
+                        <NavLink
+                            href={route("service.create")}
+                            active={route().current("service.create")}
+                        >
+                            <IconPlus />
+                            Crear nuevo
                         </NavLink>
                         {/* <NavLink
                             href={route("service.index")}
