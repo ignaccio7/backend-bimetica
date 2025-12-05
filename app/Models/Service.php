@@ -25,10 +25,11 @@ class Service extends Model
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug')
-            ->slugsShouldBeNoLongerThan(50)
-            ->doNotGenerateSlugsOnUpdate();
+            ->slugsShouldBeNoLongerThan(50);
+        // ->doNotGenerateSlugsOnUpdate();
     }
 
+    // Con esta funcion cambiamos el identificador de la tabla de id a slug
     public function getRouteKeyName()
     {
         return 'slug';

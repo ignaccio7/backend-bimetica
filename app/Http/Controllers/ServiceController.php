@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,18 +38,22 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info($request);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'type' => 'required|string',
             'categories' => 'nullable|array',
+            'categories.*' => 'required|string',
             'benefits' => 'nullable|array',
-            'image' => 'nullable|mimes:jpg,jpeg,png,webp|max:5120',
+            'benefits.*' => 'required|string',
+            'image' => 'required|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('services', 'public');
-        }
+
+        $validated['image'] = $request->file('image')->store('services', 'public');
+
 
         Service::create($validated);
 
@@ -65,25 +71,64 @@ class ServiceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Service $service)
     {
-        //
+        // imprimir service en el logger        
+        Log::info($service);
+        return Inertia::render('Service/Design/Edit', [
+            'service' => $service
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    // public function update(Request $request, string $id)
+    public function update(Request $request, Service $service)
     {
-        //
+        Log::info("Ver mi request");
+        Log::info($request);
+        Log::info($request->hasFile('image'));
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'type' => 'required|string',
+            'categories' => 'nullable|array',
+            'categories.*' => 'required|string',
+            'benefits' => 'nullable|array',
+            'benefits.*' => 'required|string',
+            'image' => 'nullable|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        if ($request->file('image') && $request->file('image')->isValid()) {
+
+            // Borrar imagen anterior
+            if ($service->image && Storage::disk('public')->exists($service->image)) {
+                Storage::disk('public')->delete($service->image);
+            }
+
+            // Guardar nueva imagen
+            $validated['image'] = $request->file('image')->store('services', 'public');
+        } else {
+            unset($validated['image']);
+        }
+        $service->update($validated);
+
+        // return redirect()->back()->with('sucess', 'Servicio actualizado');
+        return redirect()->route('service.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Service $service)
     {
-        //
+        if ($service->image && Storage::disk('public')->exists($service->image)) {
+            Storage::disk('public')->delete($service->image);
+        }
+
+        $service->delete();
+        return redirect()->route('service.index');
     }
 
     public function list(string $type)

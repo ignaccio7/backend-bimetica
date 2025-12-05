@@ -3,10 +3,13 @@ import CustomDataTable from "@/Components/ui/CustomDataTable";
 import Pagination from "@/Components/ui/Pagination";
 import { IconPencil, IconTrash } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 
 export default function List({ services }) {
-    console.log(services);
+    // console.log(services);
+
+    // para eliminar
+    // para eliminar
 
     const columnas = [
         { campo: "Titulo" },
@@ -18,9 +21,13 @@ export default function List({ services }) {
     ];
 
     const contenidoTabla = services?.data?.map((service) => {
-        const imageUrl = (service?.image).startsWith("http")
-            ? service.image
-            : `/storage/${service.image}`;
+        console.log(service);
+
+        const imageUrl = service.image
+            ? (service?.image).startsWith("http")
+                ? service.image
+                : `/storage/${service.image}`
+            : "";
 
         return [
             service.title,
@@ -40,11 +47,16 @@ export default function List({ services }) {
                 src={imageUrl}
                 alt={service.title}
             />,
-            <div className="actions flex flex-row gap-2">
-                <button className="px-2 py-1 bg-green-700 text-white rounded-md">
+            <div className="actions flex flex-row md:flex-col gap-2 justify-start md:justify-center items-center">
+                <Link
+                    href={route("service.edit", {
+                        service: service.slug,
+                    })}
+                    className="px-2 py-1 bg-green-700 text-white rounded-md flex justify-center hover:bg-green-500 transition-colors duration-200"
+                >
                     <IconPencil />
-                </button>
-                <button className="px-2 py-1 bg-red-700 text-white rounded-md">
+                </Link>
+                <button className="px-2 py-1 bg-red-700 text-white rounded-md flex justify-center hover:bg-red-500 transition-colors duration-200">
                     <IconTrash />
                 </button>
             </div>,
