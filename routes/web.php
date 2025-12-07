@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -38,6 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/services/{service}/edit', [ServiceController::class, 'edit'])->name('service.edit');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('service.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
+
+    // Projects Routes
+    Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
 });
 
 require __DIR__ . '/auth.php';

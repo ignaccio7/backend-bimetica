@@ -86,7 +86,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </NavLink>
                     </div>
                     <h3 className="text-secondary-400 text-step-2 font-semibold">
-                        Servicios de diseño
+                        Servicios
                     </h3>
 
                     <div className="links flex flex-col gap-1">
@@ -112,6 +112,26 @@ export default function AuthenticatedLayout({ header, children }) {
                             Construcción
                         </NavLink> */}
                     </div>
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Proyectos
+                    </h3>
+
+                    <div className="links flex flex-col gap-1">
+                        <NavLink
+                            href={route("project.index")}
+                            active={route().current("project.index")}
+                        >
+                            <IconHome />
+                            Nuestros proyectos
+                        </NavLink>
+                        {/* <NavLink
+                            href={route("service.create")}
+                            active={route().current("service.create")}
+                        >
+                            <IconPlus />
+                            Gestionar proyectos
+                        </NavLink> */}
+                    </div>
                 </nav>
             </div>
 
@@ -126,7 +146,7 @@ export default function AuthenticatedLayout({ header, children }) {
             {/* Contenido principal con margen para el sidebar en desktop */}
             <div className="lg:pl-64">
                 {/* Header superior */}
-                <nav className="border-b border-gray-100 bg-white sticky top-0">
+                <nav className="border-b border-gray-100 bg-white sticky top-0 z-50">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
                             {/* Botón hamburguesa en móvil */}
@@ -230,15 +250,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                         <Dropdown.Link
                                             href={route("profile.edit")}
                                         >
-                                            Profile
+                                            Perfíl
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("logout")}
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
-                                        </Dropdown.Link>
+                                            Salir
+                                        </Dropdown.Link>{" "}
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
