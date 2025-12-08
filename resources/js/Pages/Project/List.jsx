@@ -709,54 +709,65 @@ export default function ProjectsList({ projects = [] }) {
                             <div className="shuffle-sizer w-[1px] h-0 invisible absolute"></div>
 
                             {projectsDB.map((project) => (
-                                <article
+                                <a
+                                    href=""
                                     data-groups={`["${project.category}"]`}
-                                    className="project-card float-left w-full max-w-[600px] md:max-w-[350px] md:h-[540px] mr-6 mb-6 
-                                    border border-gray-200 shadow-md rounded-md overflow-hidden flex flex-col gap-4 relative bg-white transition-all duration-300 ease-out"
                                     key={project.title}
+                                    className="project-card float-left w-full max-w-[600px] md:max-w-[320px] xl:max-w-[380px] md:h-[540px] mr-6 mb-6 
+                                    border border-gray-200 rounded-md relative bg-white 
+                                    group 
+                                    before:absolute before:inset-0 before:shadow-transparent before:transition-all before:duration-300
+                                     before:-z-10 before:shadow-md hover:before:shadow-gray-400"
                                 >
-                                    <div className="tags absolute top-2 left-2 flex flex-row gap-2 text-step-1">
-                                        <span className="bg-secondary-500 text-white px-2 rounded-md">
-                                            {project.category}
-                                        </span>
-                                        <span className="bg-primary-200 text-black px-2 rounded-md">
-                                            {project.status}
-                                        </span>
-                                    </div>
-                                    <picture>
-                                        <img
-                                            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop"
-                                            alt="Random build"
-                                            className="w-full h-auto object-cover max-h-64 aspect-square"
-                                        />
-                                    </picture>
-                                    <header className="px-4 pt-2">
-                                        <h3 className="text-step-3 font-bold text-primary-500 leading-none">
-                                            {project.title}
-                                        </h3>
-                                    </header>
-                                    <div className="content grow flex">
-                                        <p className="px-4 text-balance text-gray-700 text-step-2 font-extralight leading-5 line-clamp-5 self-center">
-                                            {project.description}
-                                        </p>
-                                    </div>
-                                    <footer className="px-4 pb-6">
-                                        <ul className="[&>li]:text-gray-700 text-step-1">
-                                            <li className="flex flex-row gap-1 items-center">
-                                                <IconLocation size="16" />
-                                                {project.tags.location}
-                                            </li>
-                                            <li className="flex flex-row gap-1 items-center">
-                                                <IconCalendar size="16" />
-                                                Septiembre
-                                            </li>
-                                            <li className="flex flex-row gap-1 items-center">
-                                                <IconClock size="16" />
-                                                12 meses
-                                            </li>
-                                        </ul>
-                                    </footer>
-                                </article>
+                                    <article className="flex flex-col gap-4 relative bg-white">
+                                        <div className="tags absolute top-2 left-2 flex flex-row gap-2 text-step-1 z-20">
+                                            <span className="bg-secondary-500 text-white px-2 rounded-md">
+                                                {project.category}
+                                            </span>
+                                            <span className="bg-primary-200 text-black px-2 rounded-md">
+                                                {project.status}
+                                            </span>
+                                        </div>
+                                        <picture className="overflow-hidden">
+                                            <img
+                                                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop"
+                                                alt="Random build"
+                                                className="w-full h-auto object-cover max-h-64 aspect-square transition-transform duration-300
+                                                group-hover:scale-110 group-hover:-z-10"
+                                            />
+                                        </picture>
+                                        <header className="px-4 pt-2">
+                                            <h3
+                                                className="text-step-3 font-bold text-primary-500 leading-none
+                                                transition-colors duration-300
+                                            group-hover:text-secondary-500"
+                                            >
+                                                {project.title}
+                                            </h3>
+                                        </header>
+                                        <div className="content grow flex">
+                                            <p className="px-4 text-balance text-gray-700 text-step-2 font-extralight leading-5 line-clamp-5 self-center">
+                                                {project.description}
+                                            </p>
+                                        </div>
+                                        <footer className="px-4 pb-6">
+                                            <ul className="[&>li]:text-gray-700 text-step-1">
+                                                <li className="flex flex-row gap-1 items-center">
+                                                    <IconLocation size="16" />
+                                                    {project.tags.location}
+                                                </li>
+                                                <li className="flex flex-row gap-1 items-center">
+                                                    <IconCalendar size="16" />
+                                                    Septiembre
+                                                </li>
+                                                <li className="flex flex-row gap-1 items-center">
+                                                    <IconClock size="16" />
+                                                    12 meses
+                                                </li>
+                                            </ul>
+                                        </footer>
+                                    </article>
+                                </a>
                             ))}
                         </section>
                     </div>
