@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
 });
 
 require __DIR__ . '/auth.php';

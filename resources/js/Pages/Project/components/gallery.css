@@ -1,0 +1,21 @@
+/* Flechas solo en el slider de thumbs */
+.swiper-button-next,
+.swiper-button-prev {
+    width: 30px !important;
+    height: 100% !important;
+    background-color: rgba(0, 0, 0, 1) !important;
+    top: 22px !important;
+}
+
+.swiper-button-next {
+    right: 0 !important;
+}
+
+.swiper-button-next svg,
+.swiper-button-prev svg {
+    width: 16px !important;
+}
+
+.swiper-button-prev {
+    left: 0 !important;
+}

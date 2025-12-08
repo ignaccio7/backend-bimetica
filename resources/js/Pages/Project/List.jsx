@@ -1,5 +1,6 @@
 import { IconCalendar, IconClock, IconLocation } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import Shuffle from "shufflejs";
 
@@ -7,6 +8,7 @@ export default function ProjectsList({ projects = [] }) {
     const projectsDB = [
         {
             title: "Torre Residencial Moderna - Santa Cruz",
+            slug: "torre-residencial-moderna-santa-cruz",
             description:
                 "Edificio residencial de alta gama que combina lujo y sostenibilidad en el corazón de la zona este de Santa Cruz, incorporando elementos arquitectónicos inspirados en la cultura chiquitana.",
             category: "Infraestructura",
@@ -50,6 +52,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Hospital Oncológico Nacional - La Paz",
+            slug: "hospital-oncologico-nacional-la-paz",
             description:
                 "Centro médico especializado de referencia nacional ubicado en El Alto, que integra medicina tradicional aymara con tecnología de punta en un diseño bioclimático adaptado a la altura.",
             category: "Salud",
@@ -89,6 +92,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Centro Cultural Tiwanaku - Copacabana",
+            slug: "centro-cultural-tiwanaku-copacabana",
             description:
                 "Complejo museográfico y de investigación dedicado a la cultura Tiwanaku, ubicado en las riberas del Lago Titicaca, que reinterpreta la arquitectura precolombina con técnicas contemporáneas.",
             category: "Cultural",
@@ -128,6 +132,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Planta de Procesamiento de Quinua - Oruro",
+            slug: "planta-de-procesamiento-de-quinua-oruro",
             description:
                 "Complejo industrial ecoeficiente para el procesamiento y valor agregado de quinua real, incorporando tecnología de punta con arquitectura inspirada en los salares de Uyuni.",
             category: "Salud",
@@ -167,6 +172,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Edificio Corporativo YPFB - Cochabamba",
+            slug: "edificio-corporativo-ypfb-cochabamba",
             description:
                 "Sede regional de Yacimientos Petrolíferos Fiscales Bolivianos que refleja la identidad energética del país a través de un diseño dinámico y sostenible en el valle cochabambino.",
             category: "Institucional",
@@ -210,6 +216,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Complejo Turístico Eco-Lodge - Rurrenabaque",
+            slug: "complejo-turistico-eco-lodge-rurrenabaque",
             description:
                 "Conjunto de cabañas de lujo sostenible en la Amazonía boliviana, diseñadas para la observación de biodiversidad con mínimo impacto ambiental y colaboración comunitaria.",
             category: "Institucional",
@@ -249,6 +256,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Estadio Nacional de Alto Rendimiento - Sucre",
+            slug: "estadio-nacional-alto-rendimiento-sucre",
             description:
                 "Complejo deportivo polifuncional diseñado para entrenamiento de alto rendimiento y competencias internacionales, ubicado en la capital constitucional de Bolivia.",
             category: "Salud",
@@ -292,6 +300,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Mercado Mayorista de Alimentos - El Alto",
+            slug: "mercado-mayorista-alimentos-el-alto",
             description:
                 "Centro de abastecimiento y distribución de alimentos más grande de Bolivia, diseñado como nodo logístico inteligente para optimizar la cadena de suministro alimentario.",
             category: "Cultural",
@@ -331,6 +340,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Centro de Innovación Tecnológica - Tarija",
+            slug: "centro-de-innovacion-tecnologica-tarija",
             description:
                 "Hub de investigación y desarrollo tecnológico especializado en energías renovables y agricultura de precisión para los valles tarijeños y la región del Chaco.",
             category: "Infraestructura",
@@ -370,6 +380,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Terminal de Buses Bimodal - Potosí",
+            slug: "terminal-de-buses-bimodal-potosi",
             description:
                 "Estación intermodal que integra transporte terrestre y futuro sistema de teleférico, diseñada como puerta de entrada a la ciudad patrimonial de la humanidad.",
             category: "Infraestructura",
@@ -409,6 +420,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Complejo Habitacional Social - Montero",
+            slug: "complejo-habitacional-social-montero",
             description:
                 "Conjunto de viviendas de interés social que implementa nuevos modelos de densificación sostenible para ciudades intermedias del trópico boliviano.",
             category: "Salud",
@@ -448,6 +460,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Centro de Convenciones Internacional - Santa Cruz",
+            slug: "centro-de-convenciones-internacional-santa-cruz",
             description:
                 "Recinto ferial y de convenciones de clase mundial diseñado para posicionar a Santa Cruz como hub de negocios de Sudamérica, inspirado en la biodiversidad amazónica.",
             category: "Cultural",
@@ -491,6 +504,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Planta de Tratamiento de Aguas - Cochabamba",
+            slug: "planta-de-tratamiento-de-aguas-cochabamba",
             description:
                 "Sistema integral de tratamiento y reutilización de aguas residuales que resuelve el déficit hídrico crónico de la región metropolitana de Cochabamba.",
             category: "Infraestructura",
@@ -530,6 +544,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Torre Mirador Cerro Rico - Potosí",
+            slug: "torre-mirador-cerro-rico-potosi",
             description:
                 "Estructura de observación y centro interpretativo que permite una experiencia única del Cerro Rico, combinando turismo responsable con preservación del patrimonio minero.",
             category: "Salud",
@@ -569,6 +584,7 @@ export default function ProjectsList({ projects = [] }) {
         },
         {
             title: "Edificio Judicial Departamental - Trinidad",
+            slug: "edificio-judicial-departamental-trinidad",
             description:
                 "Sede de la justicia para el departamento del Beni, que reinterpreta la arquitectura moxeña con espacios diseñados para procesos judiciales modernos y humanizados.",
             category: "Institucional",
@@ -709,8 +725,10 @@ export default function ProjectsList({ projects = [] }) {
                             <div className="shuffle-sizer w-[1px] h-0 invisible absolute"></div>
 
                             {projectsDB.map((project) => (
-                                <a
-                                    href=""
+                                <Link
+                                    href={route("project.show", {
+                                        project: project.slug,
+                                    })}
                                     data-groups={`["${project.category}"]`}
                                     key={project.title}
                                     className="project-card float-left w-full max-w-[600px] md:max-w-[320px] xl:max-w-[380px] md:h-[540px] mr-6 mb-6 
@@ -767,7 +785,7 @@ export default function ProjectsList({ projects = [] }) {
                                             </ul>
                                         </footer>
                                     </article>
-                                </a>
+                                </Link>
                             ))}
                         </section>
                     </div>

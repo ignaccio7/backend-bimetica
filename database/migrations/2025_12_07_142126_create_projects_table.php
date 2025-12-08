@@ -13,16 +13,17 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->unique()->isNotEmpty();
             $table->string('title')->unique();
             $table->string('description');
             $table->string('category');
             $table->string('status')->default('En proceso');
-            $table->string('tags');
-            $table->string('characteristics');
-            $table->string('challenges');
-            $table->string('solutions');
-            $table->string('gallery_equirectangular')->nullable();
-            $table->string('gallery_images')->nullable();
+            $table->json('tags');
+            $table->json('characteristics');
+            $table->json('challenges');
+            $table->json('solutions');
+            $table->json('gallery_equirectangular')->nullable();
+            $table->json('gallery_images')->nullable();
             $table->timestamps();
         });
     }

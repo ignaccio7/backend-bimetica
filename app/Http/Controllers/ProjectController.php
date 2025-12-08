@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -11,6 +12,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         return Inertia::render('Project/List', []);
@@ -35,9 +37,12 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show($project)
     {
-        //
+        Log::info($project);
+        return Inertia::render('Project/Show', [
+            'project' => $project
+        ]);
     }
 
     /**
