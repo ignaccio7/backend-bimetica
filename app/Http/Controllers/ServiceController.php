@@ -135,4 +135,18 @@ class ServiceController extends Controller
     {
         return response()->json(Service::where('type', $type)->get());
     }
+
+    public function menu()
+    {
+        // options design -> solo obtener slug y title
+        Log::info('✅ Menu de servicios');
+        $design = Service::where('type', 'diseño')->get(['slug', 'title']);
+
+
+        Log::info($design);
+
+        return response()->json([
+            'design' => $design
+        ]);
+    }
 }

@@ -9,4 +9,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+Route::get('/services/menu', [ServiceController::class, 'menu'])->name('service.menu');
 Route::get('/services/{type}', [ServiceController::class, 'list'])->name('service.list');

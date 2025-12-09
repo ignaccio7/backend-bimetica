@@ -1,2 +1,5 @@
 ### Get services by type
 GET http://localhost:8000/api/services/diseño
+
+### Get sevices menu
+GET http://localhost:8000/api/services/menu

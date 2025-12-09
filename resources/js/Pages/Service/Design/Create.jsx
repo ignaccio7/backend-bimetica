@@ -20,6 +20,8 @@ export default function Create({ className = "" }) {
             image: null,
         });
 
+    console.log(errors);
+
     const [preview, setPreview] = useState(null);
 
     const handleAddItem = (key) => {
@@ -141,30 +143,40 @@ export default function Create({ className = "" }) {
                             <InputLabel value="Categorías" />
 
                             {data.categories.map((cat, index) => (
-                                <div key={index} className="flex gap-2 mt-2">
-                                    <TextInput
-                                        className="flex-1"
-                                        value={cat}
-                                        onChange={(e) =>
-                                            handleChangeItem(
-                                                "categories",
-                                                index,
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleRemoveItem(
-                                                "categories",
-                                                index
-                                            )
-                                        }
-                                        className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
-                                    >
-                                        X
-                                    </button>
+                                <div key={index} className="flex flex-col mt-2">
+                                    <div className="w-full grow flex">
+                                        <TextInput
+                                            className="flex-1"
+                                            value={cat}
+                                            onChange={(e) =>
+                                                handleChangeItem(
+                                                    "categories",
+                                                    index,
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleRemoveItem(
+                                                    "categories",
+                                                    index
+                                                )
+                                            }
+                                            className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                    <div className="error">
+                                        <InputError
+                                            className="mt-2"
+                                            message={
+                                                errors[`categories.${index}`]
+                                            }
+                                        />
+                                    </div>
                                 </div>
                             ))}
 
@@ -187,27 +199,39 @@ export default function Create({ className = "" }) {
                             <InputLabel value="Beneficios" />
 
                             {data.benefits.map((ben, index) => (
-                                <div key={index} className="flex gap-2 mt-2">
-                                    <TextInput
-                                        className="flex-1"
-                                        value={ben}
-                                        onChange={(e) =>
-                                            handleChangeItem(
-                                                "benefits",
-                                                index,
-                                                e.target.value
-                                            )
-                                        }
+                                <div
+                                    key={index}
+                                    className="flex flex-col  mt-2"
+                                >
+                                    <div className="flex">
+                                        <TextInput
+                                            className="flex-1"
+                                            value={ben}
+                                            onChange={(e) =>
+                                                handleChangeItem(
+                                                    "benefits",
+                                                    index,
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleRemoveItem(
+                                                    "benefits",
+                                                    index
+                                                )
+                                            }
+                                            className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors[`benefits.${index}`]}
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleRemoveItem("benefits", index)
-                                        }
-                                        className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
-                                    >
-                                        X
-                                    </button>
                                 </div>
                             ))}
 

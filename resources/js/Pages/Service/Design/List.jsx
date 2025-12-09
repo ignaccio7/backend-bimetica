@@ -1,15 +1,39 @@
 import PrimaryButton from "@/Components/PrimaryButton";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
+import ModalConfirm from "@/Components/ui/ModalConfirm";
 import Pagination from "@/Components/ui/Pagination";
 import { IconPencil, IconTrash } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function List({ services }) {
-    // console.log(services);
+    const [modal, setModal] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
 
-    // para eliminar
-    // para eliminar
+    const openModal = () => {
+        setModal(true);
+    };
+
+    const closeModal = () => {
+        setModal(false);
+    };
+
+    const deleteService = async () => {
+        if (!selectedService) return;
+
+        router.delete(
+            route("service.destroy", {
+                service: selectedService.slug,
+            }),
+            {
+                onSuccess: () => {
+                    console.log("Servicio eliminado");
+                    closeModal();
+                },
+            }
+        );
+    };
 
     const columnas = [
         { campo: "Titulo" },
@@ -21,7 +45,7 @@ export default function List({ services }) {
     ];
 
     const contenidoTabla = services?.data?.map((service) => {
-        console.log(service);
+        // console.log(service);
 
         const imageUrl = service.image
             ? (service?.image).startsWith("http")
@@ -56,7 +80,13 @@ export default function List({ services }) {
                 >
                     <IconPencil />
                 </Link>
-                <button className="px-2 py-1 bg-red-700 text-white rounded-md flex justify-center hover:bg-red-500 transition-colors duration-200">
+                <button
+                    onClick={() => {
+                        openModal();
+                        setSelectedService(service);
+                    }}
+                    className="px-2 py-1 bg-red-700 text-white rounded-md flex justify-center hover:bg-red-500 transition-colors duration-200"
+                >
                     <IconTrash />
                 </button>
             </div>,
@@ -66,33 +96,46 @@ export default function List({ services }) {
     // console.log(contenidoTabla);
 
     return (
-        <AuthenticatedLayout>
-            <Head title="Servicios - Bimetica" />
+        <>
+            <AuthenticatedLayout>
+                <Head title="Servicios - Bimetica" />
 
-            <div className="py-6">
-                <div className="actions mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="px-2 sm:px-0">
-                        <CustomDataTable
-                            titulo={"Gestionar nuestros servicios"}
-                            subtitulo={"Administra los servicios del sistema"}
-                            acciones={[
-                                <PrimaryButton>
-                                    Registrar nuevo servicio
-                                </PrimaryButton>,
-                            ]}
-                            columnas={columnas}
-                            contenidoTabla={contenidoTabla}
-                            paginacion={
-                                <Pagination
-                                    currentPage={services.current_page}
-                                    lastPage={services.last_page}
-                                    routeName="service.index"
-                                />
-                            }
-                        />
+                <div className="py-6">
+                    <div className="actions mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+                        <div className="px-2 sm:px-0">
+                            <CustomDataTable
+                                titulo={"Gestionar nuestros servicios"}
+                                subtitulo={
+                                    "Administra los servicios del sistema"
+                                }
+                                acciones={
+                                    [
+                                        // <PrimaryButton>
+                                        //     Registrar nuevo servicio
+                                        // </PrimaryButton>,
+                                    ]
+                                }
+                                columnas={columnas}
+                                contenidoTabla={contenidoTabla}
+                                paginacion={
+                                    <Pagination
+                                        currentPage={services.current_page}
+                                        lastPage={services.last_page}
+                                        routeName="service.index"
+                                    />
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </AuthenticatedLayout>
+            </AuthenticatedLayout>
+            <ModalConfirm
+                isOpen={modal}
+                closeModal={closeModal}
+                onConfirm={deleteService}
+                title={"¿Eliminar servicio?"}
+                message={`¿Estás seguro que quieres eliminar? Esta acción no se puede deshacer.`}
+            />
+        </>
     );
 }
