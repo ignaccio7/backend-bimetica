@@ -66,64 +66,29 @@ export default function Show({}) {
                                 />
                             </picture>
                         </section>
-                        <section className="gallery-equirectangular mt-10 mb-10">
+                        <section className="gallery-equirectangular mt-20 mb-10">
                             <h2 className="text-center text-step-4 font-black text-primary-500 leading-none text-balance mb-6">
                                 Galeria del proyecto
                             </h2>
                             <Gallery />
                         </section>
-                        <section className="magazine mt-10 mb-50">
+                        <section className="magazine mt-20 mb-50">
                             <h2 className="text-center text-step-4 font-black text-primary-500 leading-none text-balance mb-6">
                                 Conozca más acerca de nuestro producto
                             </h2>
                             <div className="overflow-hidden">
                                 <Magazine
                                     images={[
-                                        "/projects-images/1.jpg",
-                                        "/projects-images/2.jpg",
-                                        "/projects-images/3.jpg",
-                                        "/projects-images/4.jpg",
-                                        "/projects-images/5.jpg",
-                                        "/projects-images/6.jpg",
-                                        "/projects-images/7.jpg",
+                                        "/projects-images/pdf/1.jpg",
+                                        "/projects-images/pdf/2.jpg",
+                                        "/projects-images/pdf/3.jpg",
+                                        "/projects-images/pdf/4.jpg",
+                                        "/projects-images/pdf/5.jpg",
+                                        "/projects-images/pdf/6.jpg",
                                     ]}
                                 />
                             </div>
                         </section>
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
                         <br />
                         <br />
                         <br />
