@@ -8,6 +8,8 @@ import { Head, Link, router } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function List({ services }) {
+    console.log(services);
+
     const [modal, setModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
 
@@ -56,11 +58,20 @@ export default function List({ services }) {
         return [
             service.title,
             service.description,
-            <ul className="list-disc pl-5 marker:text-secondary-500">
-                {service.categories?.map((category) => {
-                    return <li key={category}>{category}</li>;
-                })}
-            </ul>,
+            <div>
+                {service.items?.map((item) => (
+                    <div key={item.title} className="mb-2">
+                        <h4 className="font-semibold">{item.title}</h4>
+                        {item.categories && item.categories.length > 0 && (
+                            <ul className="list-disc pl-5 marker:text-secondary-500">
+                                {item.categories.map((category) => (
+                                    <li key={category}>{category}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                ))}
+            </div>,
             <ul className="list-disc pl-5 marker:text-secondary-500">
                 {service.benefits?.map((benefit) => {
                     return <li key={benefit}>{benefit}</li>;

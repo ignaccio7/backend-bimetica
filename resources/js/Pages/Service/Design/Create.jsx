@@ -1,6 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-
 import { useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
@@ -15,7 +14,7 @@ export default function Create({ className = "" }) {
             title: "",
             description: "",
             type: "",
-            categories: [],
+            items: [],
             benefits: [],
             image: null,
         });
@@ -24,20 +23,57 @@ export default function Create({ className = "" }) {
 
     const [preview, setPreview] = useState(null);
 
-    const handleAddItem = (key) => {
-        setData(key, [...data[key], ""]);
+    // Funciones para manejar ITEMS (con título y categorías anidadas)
+    const handleAddItem = () => {
+        setData("items", [...data.items, { title: "", categories: [] }]);
     };
 
-    const handleChangeItem = (key, index, value) => {
-        const updated = [...data[key]];
-        updated[index] = value;
-        setData(key, updated);
+    const handleChangeItemTitle = (index, value) => {
+        const updated = [...data.items];
+        updated[index].title = value;
+        setData("items", updated);
     };
 
-    const handleRemoveItem = (key, index) => {
-        const updated = [...data[key]];
+    const handleRemoveItem = (index) => {
+        const updated = [...data.items];
         updated.splice(index, 1);
-        setData(key, updated);
+        setData("items", updated);
+    };
+
+    // Funciones para manejar CATEGORÍAS dentro de cada ITEM
+    const handleAddCategory = (itemIndex) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories.push("");
+        setData("items", updated);
+    };
+
+    const handleChangeCategory = (itemIndex, categoryIndex, value) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories[categoryIndex] = value;
+        setData("items", updated);
+    };
+
+    const handleRemoveCategory = (itemIndex, categoryIndex) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories.splice(categoryIndex, 1);
+        setData("items", updated);
+    };
+
+    // Funciones para manejar BENEFITS (sin cambios)
+    const handleAddBenefit = () => {
+        setData("benefits", [...data.benefits, ""]);
+    };
+
+    const handleChangeBenefit = (index, value) => {
+        const updated = [...data.benefits];
+        updated[index] = value;
+        setData("benefits", updated);
+    };
+
+    const handleRemoveBenefit = (index) => {
+        const updated = [...data.benefits];
+        updated.splice(index, 1);
+        setData("benefits", updated);
     };
 
     const handleImage = (e) => {
@@ -59,6 +95,7 @@ export default function Create({ className = "" }) {
             },
         });
     };
+
     return (
         <AuthenticatedLayout>
             <Head title="Servicios - Bimetica" />
@@ -84,7 +121,6 @@ export default function Create({ className = "" }) {
                                 onChange={(e) =>
                                     setData("title", e.target.value)
                                 }
-                                // required
                             />
                             <InputError
                                 className="mt-2"
@@ -106,7 +142,6 @@ export default function Create({ className = "" }) {
                                 onChange={(e) =>
                                     setData("description", e.target.value)
                                 }
-                                // required
                             />
                             <InputError
                                 className="mt-2"
@@ -124,7 +159,6 @@ export default function Create({ className = "" }) {
                                 onChange={(e) =>
                                     setData("type", e.target.value)
                                 }
-                                // required
                             >
                                 <option value="">Seleccione...</option>
                                 <option value="diseño">Diseño</option>
@@ -138,42 +172,123 @@ export default function Create({ className = "" }) {
                             />
                         </div>
 
-                        {/* CATEGORIES */}
+                        {/* ITEMS (Títulos con categorías anidadas) */}
                         <div>
-                            <InputLabel value="Categorías" />
+                            <InputLabel value="Items del servicio" />
+                            <p className="text-sm text-gray-600 mt-1 mb-3">
+                                Cada item tiene un título y sus propias
+                                categorías
+                            </p>
 
-                            {data.categories.map((cat, index) => (
-                                <div key={index} className="flex flex-col mt-2">
-                                    <div className="w-full grow flex">
-                                        <TextInput
-                                            className="flex-1"
-                                            value={cat}
-                                            onChange={(e) =>
-                                                handleChangeItem(
-                                                    "categories",
-                                                    index,
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
+                            {data.items.map((item, itemIndex) => (
+                                <div
+                                    key={itemIndex}
+                                    className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50"
+                                >
+                                    {/* Título del Item */}
+                                    <div className="flex items-start gap-2 mb-3">
+                                        <div className="flex-1">
+                                            <InputLabel
+                                                value={`Título del item ${
+                                                    itemIndex + 1
+                                                }`}
+                                            />
+                                            <TextInput
+                                                className="w-full mt-1"
+                                                placeholder="Ej: PLANOS ARQUITECTÓNICOS"
+                                                value={item.title}
+                                                onChange={(e) =>
+                                                    handleChangeItemTitle(
+                                                        itemIndex,
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                className="mt-1"
+                                                message={
+                                                    errors[
+                                                        `items.${itemIndex}.title`
+                                                    ]
+                                                }
+                                            />
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                handleRemoveItem(
-                                                    "categories",
-                                                    index
-                                                )
+                                                handleRemoveItem(itemIndex)
                                             }
-                                            className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
+                                            className="bg-red-500 text-white px-3 py-2 rounded-md text-sm hover:bg-red-600 mt-6"
                                         >
-                                            X
+                                            Eliminar Item
                                         </button>
                                     </div>
-                                    <div className="error">
+
+                                    {/* Categorías del Item */}
+                                    <div className="ml-4">
+                                        <InputLabel
+                                            value="Categorías"
+                                            className="text-sm"
+                                        />
+
+                                        {item.categories.map(
+                                            (category, categoryIndex) => (
+                                                <div
+                                                    key={categoryIndex}
+                                                    className="flex items-start gap-2 mt-2"
+                                                >
+                                                    <TextInput
+                                                        className="flex-1"
+                                                        placeholder="Nombre de la categoría"
+                                                        value={category}
+                                                        onChange={(e) =>
+                                                            handleChangeCategory(
+                                                                itemIndex,
+                                                                categoryIndex,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleRemoveCategory(
+                                                                itemIndex,
+                                                                categoryIndex
+                                                            )
+                                                        }
+                                                        className="bg-red-400 text-white px-3 py-2 rounded-md text-sm hover:bg-red-500"
+                                                    >
+                                                        X
+                                                    </button>
+                                                    <InputError
+                                                        className="mt-1"
+                                                        message={
+                                                            errors[
+                                                                `items.${itemIndex}.categories.${categoryIndex}`
+                                                            ]
+                                                        }
+                                                    />
+                                                </div>
+                                            )
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleAddCategory(itemIndex)
+                                            }
+                                            className="mt-2 text-indigo-600 hover:underline text-sm"
+                                        >
+                                            + Añadir categoría
+                                        </button>
+
                                         <InputError
-                                            className="mt-2"
+                                            className="mt-1"
                                             message={
-                                                errors[`categories.${index}`]
+                                                errors[
+                                                    `items.${itemIndex}.categories`
+                                                ]
                                             }
                                         />
                                     </div>
@@ -182,15 +297,15 @@ export default function Create({ className = "" }) {
 
                             <button
                                 type="button"
-                                onClick={() => handleAddItem("categories")}
-                                className="mt-2 text-indigo-600 hover:underline text-sm"
+                                onClick={handleAddItem}
+                                className="mt-2 bg-indigo-500 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-600"
                             >
-                                + Añadir categoría
+                                + Añadir nuevo item
                             </button>
 
                             <InputError
                                 className="mt-2"
-                                message={errors.categories}
+                                message={errors.items}
                             />
                         </div>
 
@@ -199,17 +314,13 @@ export default function Create({ className = "" }) {
                             <InputLabel value="Beneficios" />
 
                             {data.benefits.map((ben, index) => (
-                                <div
-                                    key={index}
-                                    className="flex flex-col  mt-2"
-                                >
+                                <div key={index} className="flex flex-col mt-2">
                                     <div className="flex">
                                         <TextInput
                                             className="flex-1"
                                             value={ben}
                                             onChange={(e) =>
-                                                handleChangeItem(
-                                                    "benefits",
+                                                handleChangeBenefit(
                                                     index,
                                                     e.target.value
                                                 )
@@ -218,10 +329,7 @@ export default function Create({ className = "" }) {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                handleRemoveItem(
-                                                    "benefits",
-                                                    index
-                                                )
+                                                handleRemoveBenefit(index)
                                             }
                                             className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
                                         >
@@ -237,7 +345,7 @@ export default function Create({ className = "" }) {
 
                             <button
                                 type="button"
-                                onClick={() => handleAddItem("benefits")}
+                                onClick={handleAddBenefit}
                                 className="mt-2 text-indigo-600 hover:underline text-sm"
                             >
                                 + Añadir beneficio
@@ -250,19 +358,18 @@ export default function Create({ className = "" }) {
                         </div>
 
                         {/* IMAGE */}
-                        {/* IMAGE DRAG & DROP */}
                         <div>
                             <InputLabel htmlFor="image" value="Imagen" />
 
                             <div
                                 className={`
-            mt-2 border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition
-            ${
-                preview
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-gray-300 hover:border-indigo-400"
-            }
-        `}
+                                    mt-2 border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition
+                                    ${
+                                        preview
+                                            ? "border-indigo-500 bg-indigo-50"
+                                            : "border-gray-300 hover:border-indigo-400"
+                                    }
+                                `}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={(e) => {
                                     e.preventDefault();
@@ -281,7 +388,6 @@ export default function Create({ className = "" }) {
                                         .click()
                                 }
                             >
-                                {/* Input invisible */}
                                 <input
                                     id="dropzoneFile"
                                     type="file"

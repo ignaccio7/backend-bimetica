@@ -57,3 +57,8 @@ Testimonios en capturas
 Imágenes pequeñas para clientes servicios y proyectos
 
 Cambiar logo azul por el blanco
+
+## Para el diseño de las tarjetas
+
+https://shuffle.js.org/docs/demos/react
+https://github.com/glen-cheney/Shuffle

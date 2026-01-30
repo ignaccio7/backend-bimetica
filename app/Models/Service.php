@@ -16,7 +16,7 @@ class Service extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'categories' => 'array',
+        'items' => 'array',
         'benefits' => 'array'
     ];
 

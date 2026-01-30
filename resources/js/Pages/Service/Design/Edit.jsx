@@ -14,7 +14,7 @@ export default function Edit({ service }) {
             title: service.title,
             description: service.description,
             type: service.type,
-            categories: service.categories || [],
+            items: service.items || [],
             benefits: service.benefits || [],
             image: null,
         });
@@ -25,6 +25,61 @@ export default function Edit({ service }) {
             ? service.image
             : `/storage/${service.image}`
         : "";
+
+    console.log(errors);
+
+    // Funciones para manejar ITEMS (con título y categorías anidadas)
+    const handleAddItem = () => {
+        setData("items", [...data.items, { title: "", categories: [] }]);
+    };
+
+    const handleChangeItemTitle = (index, value) => {
+        const updated = [...data.items];
+        updated[index].title = value;
+        setData("items", updated);
+    };
+
+    const handleRemoveItem = (index) => {
+        const updated = [...data.items];
+        updated.splice(index, 1);
+        setData("items", updated);
+    };
+
+    // Funciones para manejar CATEGORÍAS dentro de cada ITEM
+    const handleAddCategory = (itemIndex) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories.push("");
+        setData("items", updated);
+    };
+
+    const handleChangeCategory = (itemIndex, categoryIndex, value) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories[categoryIndex] = value;
+        setData("items", updated);
+    };
+
+    const handleRemoveCategory = (itemIndex, categoryIndex) => {
+        const updated = [...data.items];
+        updated[itemIndex].categories.splice(categoryIndex, 1);
+        setData("items", updated);
+    };
+
+    // Funciones para manejar BENEFITS
+    const handleAddBenefit = () => {
+        setData("benefits", [...data.benefits, ""]);
+    };
+
+    const handleChangeBenefit = (index, value) => {
+        const updated = [...data.benefits];
+        updated[index] = value;
+        setData("benefits", updated);
+    };
+
+    const handleRemoveBenefit = (index) => {
+        const updated = [...data.benefits];
+        updated.splice(index, 1);
+        setData("benefits", updated);
+    };
 
     const submit = (event) => {
         event.preventDefault();
@@ -39,24 +94,6 @@ export default function Edit({ service }) {
                 }
             )
         );
-    };
-
-    console.log(errors);
-
-    const handleAddItem = (key) => {
-        setData(key, [...data[key], ""]);
-    };
-
-    const handleChangeItem = (key, index, value) => {
-        const updated = [...data[key]];
-        updated[index] = value;
-        setData(key, updated);
-    };
-
-    const handleRemoveItem = (key, index) => {
-        const updated = [...data[key]];
-        updated.splice(index, 1);
-        setData(key, updated);
     };
 
     return (
@@ -84,7 +121,6 @@ export default function Edit({ service }) {
                                 onChange={(e) =>
                                     setData("title", e.target.value)
                                 }
-                                // required
                             />
                             <InputError
                                 className="mt-2"
@@ -106,7 +142,6 @@ export default function Edit({ service }) {
                                 onChange={(e) =>
                                     setData("description", e.target.value)
                                 }
-                                // required
                             />
                             <InputError
                                 className="mt-2"
@@ -124,7 +159,6 @@ export default function Edit({ service }) {
                                 onChange={(e) =>
                                     setData("type", e.target.value)
                                 }
-                                // required
                             >
                                 <option value="">Seleccione...</option>
                                 <option value="diseño">Diseño</option>
@@ -138,58 +172,142 @@ export default function Edit({ service }) {
                             />
                         </div>
 
-                        {/* CATEGORIES */}
+                        {/* ITEMS (Títulos con categorías anidadas) */}
                         <div>
-                            <InputLabel value="Categorías" />
+                            <InputLabel value="Items del servicio" />
+                            <p className="text-sm text-gray-600 mt-1 mb-3">
+                                Cada item tiene un título y sus propias
+                                categorías
+                            </p>
 
-                            {data.categories.map((cat, index) => (
+                            {data.items.map((item, itemIndex) => (
                                 <div
-                                    className="flex flex-col gap-2"
-                                    key={index}
+                                    key={itemIndex}
+                                    className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50"
                                 >
-                                    <div className="flex gap-2 mt-2">
-                                        <TextInput
-                                            className="flex-1"
-                                            value={cat}
-                                            onChange={(e) =>
-                                                handleChangeItem(
-                                                    "categories",
-                                                    index,
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
+                                    {/* Título del Item */}
+                                    <div className="flex items-start gap-2 mb-3">
+                                        <div className="flex-1">
+                                            <InputLabel
+                                                value={`Título del item ${
+                                                    itemIndex + 1
+                                                }`}
+                                            />
+                                            <TextInput
+                                                className="w-full mt-1"
+                                                placeholder="Ej: PLANOS ARQUITECTÓNICOS"
+                                                value={item.title}
+                                                onChange={(e) =>
+                                                    handleChangeItemTitle(
+                                                        itemIndex,
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                className="mt-1"
+                                                message={
+                                                    errors[
+                                                        `items.${itemIndex}.title`
+                                                    ]
+                                                }
+                                            />
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                handleRemoveItem(
-                                                    "categories",
-                                                    index
-                                                )
+                                                handleRemoveItem(itemIndex)
                                             }
-                                            className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
+                                            className="bg-red-500 text-white px-3 py-2 rounded-md text-sm hover:bg-red-600 mt-6"
                                         >
-                                            X
+                                            Eliminar Item
                                         </button>
                                     </div>
-                                    {/* Mostrar error específicamente para categories.index */}
-                                    <InputError
-                                        message={errors[`categories.${index}`]}
-                                    />
+
+                                    {/* Categorías del Item */}
+                                    <div className="ml-4">
+                                        <InputLabel
+                                            value="Categorías"
+                                            className="text-sm"
+                                        />
+
+                                        {item.categories.map(
+                                            (category, categoryIndex) => (
+                                                <div
+                                                    key={categoryIndex}
+                                                    className="flex flex-col gap-2 mt-2"
+                                                >
+                                                    <div className="flex items-start gap-2">
+                                                        <TextInput
+                                                            className="flex-1"
+                                                            placeholder="Nombre de la categoría"
+                                                            value={category}
+                                                            onChange={(e) =>
+                                                                handleChangeCategory(
+                                                                    itemIndex,
+                                                                    categoryIndex,
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleRemoveCategory(
+                                                                    itemIndex,
+                                                                    categoryIndex
+                                                                )
+                                                            }
+                                                            className="bg-red-400 text-white px-3 py-2 rounded-md text-sm hover:bg-red-500"
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </div>
+                                                    <InputError
+                                                        message={
+                                                            errors[
+                                                                `items.${itemIndex}.categories.${categoryIndex}`
+                                                            ]
+                                                        }
+                                                    />
+                                                </div>
+                                            )
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleAddCategory(itemIndex)
+                                            }
+                                            className="mt-2 text-indigo-600 hover:underline text-sm"
+                                        >
+                                            + Añadir categoría
+                                        </button>
+
+                                        <InputError
+                                            className="mt-1"
+                                            message={
+                                                errors[
+                                                    `items.${itemIndex}.categories`
+                                                ]
+                                            }
+                                        />
+                                    </div>
                                 </div>
                             ))}
 
                             <button
                                 type="button"
-                                onClick={() => handleAddItem("categories")}
-                                className="mt-2 text-indigo-600 hover:underline text-sm"
+                                onClick={handleAddItem}
+                                className="mt-2 bg-indigo-500 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-600"
                             >
-                                + Añadir categoría
+                                + Añadir nuevo item
                             </button>
 
                             <InputError
                                 className="mt-2"
-                                message={errors.categories}
+                                message={errors.items}
                             />
                         </div>
 
@@ -207,8 +325,7 @@ export default function Edit({ service }) {
                                             className="flex-1"
                                             value={ben}
                                             onChange={(e) =>
-                                                handleChangeItem(
-                                                    "benefits",
+                                                handleChangeBenefit(
                                                     index,
                                                     e.target.value
                                                 )
@@ -217,17 +334,13 @@ export default function Edit({ service }) {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                handleRemoveItem(
-                                                    "benefits",
-                                                    index
-                                                )
+                                                handleRemoveBenefit(index)
                                             }
                                             className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
                                         >
                                             X
                                         </button>
                                     </div>
-                                    {/* Mostrar error específicamente para beneficios.index */}
                                     <InputError
                                         message={errors[`benefits.${index}`]}
                                     />
@@ -236,7 +349,7 @@ export default function Edit({ service }) {
 
                             <button
                                 type="button"
-                                onClick={() => handleAddItem("benefits")}
+                                onClick={handleAddBenefit}
                                 className="mt-2 text-indigo-600 hover:underline text-sm"
                             >
                                 + Añadir beneficio
@@ -249,7 +362,6 @@ export default function Edit({ service }) {
                         </div>
 
                         {/* IMAGE */}
-                        {/* IMAGE DRAG & DROP */}
                         <div>
                             <InputLabel htmlFor="image" value="Imagen" />
 
@@ -262,6 +374,7 @@ export default function Edit({ service }) {
 
                                     <img
                                         src={preview || currentImageUrl}
+                                        alt="Imagen del servicio"
                                         className="w-40 h-40 object-cover rounded-lg shadow"
                                     />
                                 </div>
@@ -326,6 +439,7 @@ export default function Edit({ service }) {
                                         ) : (
                                             <img
                                                 src={preview}
+                                                alt="Preview"
                                                 className="mx-auto w-40 h-40 object-cover rounded-lg shadow"
                                             />
                                         )}
@@ -342,7 +456,7 @@ export default function Edit({ service }) {
                         {/* SUBMIT */}
                         <div className="flex items-center gap-4">
                             <PrimaryButton disabled={processing} type="submit">
-                                Registrar servicio
+                                Actualizar servicio
                             </PrimaryButton>
 
                             <Transition

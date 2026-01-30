@@ -5,8 +5,11 @@ import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 
 export default function Index(
-    { auth, users } = { auth: {}, users: { data: [] } }
+    // { auth, users } = { auth: {}, users: { data: [] } }
+    { auth, users },
 ) {
+    console.log(users);
+
     // 1️⃣ DEFINIR COLUMNAS (headers)
     const columnas = [
         { campo: "Nombre" },
@@ -91,7 +94,7 @@ export default function Index(
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="py-6">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                     <CustomDataTable
                         titulo="Gestión de Usuarios"
                         subtitulo="Administra los usuarios del sistema"

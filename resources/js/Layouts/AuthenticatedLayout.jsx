@@ -84,6 +84,13 @@ export default function AuthenticatedLayout({ header, children }) {
                             <IconTeam />
                             Gestionar usuarios
                         </NavLink>
+                        <NavLink
+                            href={route("user.create")}
+                            active={route().current("user.create")}
+                        >
+                            <IconTeam />
+                            Crear usuario
+                        </NavLink>
                     </div>
                     <h3 className="text-secondary-400 text-step-2 font-semibold">
                         Servicios
