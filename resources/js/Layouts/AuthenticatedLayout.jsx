@@ -1,7 +1,13 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
-import { IconHome, IconPlus, IconTeam, IconUser } from "@/Icons/icons";
+import {
+    IconHome,
+    IconPlus,
+    IconTeam,
+    IconUser,
+    IconUserPlus,
+} from "@/Icons/icons";
 // import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -9,6 +15,8 @@ import { useState } from "react";
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const rol = user.role || "user";
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -73,53 +81,6 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
 
                     <h3 className="text-secondary-400 text-step-2 font-semibold">
-                        Usuarios
-                    </h3>
-
-                    <div className="links flex flex-col gap-1">
-                        <NavLink
-                            href={route("user.index")}
-                            active={route().current("user.index")}
-                        >
-                            <IconTeam />
-                            Gestionar usuarios
-                        </NavLink>
-                        <NavLink
-                            href={route("user.create")}
-                            active={route().current("user.create")}
-                        >
-                            <IconTeam />
-                            Crear usuario
-                        </NavLink>
-                    </div>
-                    <h3 className="text-secondary-400 text-step-2 font-semibold">
-                        Servicios
-                    </h3>
-
-                    <div className="links flex flex-col gap-1">
-                        <NavLink
-                            href={route("service.index")}
-                            active={route().current("service.index")}
-                        >
-                            <IconHome />
-                            Gestionar servicios
-                        </NavLink>
-                        <NavLink
-                            href={route("service.create")}
-                            active={route().current("service.create")}
-                        >
-                            <IconPlus />
-                            Crear nuevo
-                        </NavLink>
-                        {/* <NavLink
-                            href={route("service.index")}
-                            active={route().current("service.index")}
-                        >
-                            <IconHome />
-                            Construcción
-                        </NavLink> */}
-                    </div>
-                    <h3 className="text-secondary-400 text-step-2 font-semibold">
                         Proyectos
                     </h3>
 
@@ -139,6 +100,58 @@ export default function AuthenticatedLayout({ header, children }) {
                             Gestionar proyectos
                         </NavLink> */}
                     </div>
+
+                    {rol === "admin" && (
+                        <>
+                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                                Usuarios
+                            </h3>
+
+                            <div className="links flex flex-col gap-1">
+                                <NavLink
+                                    href={route("user.index")}
+                                    active={route().current("user.index")}
+                                >
+                                    <IconTeam />
+                                    Gestionar usuarios
+                                </NavLink>
+                                <NavLink
+                                    href={route("user.create")}
+                                    active={route().current("user.create")}
+                                >
+                                    <IconUserPlus />
+                                    Crear usuario
+                                </NavLink>
+                            </div>
+                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                                Servicios
+                            </h3>
+
+                            <div className="links flex flex-col gap-1">
+                                <NavLink
+                                    href={route("service.index")}
+                                    active={route().current("service.index")}
+                                >
+                                    <IconHome />
+                                    Gestionar servicios
+                                </NavLink>
+                                <NavLink
+                                    href={route("service.create")}
+                                    active={route().current("service.create")}
+                                >
+                                    <IconPlus />
+                                    Crear nuevo
+                                </NavLink>
+                                {/* <NavLink
+                            href={route("service.index")}
+                            active={route().current("service.index")}
+                        >
+                            <IconHome />
+                            Construcción
+                        </NavLink> */}
+                            </div>
+                        </>
+                    )}
                 </nav>
             </div>
 

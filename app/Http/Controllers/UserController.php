@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,6 +16,7 @@ class UserController extends Controller
     {
         // dd($request->headers->all());
         $users = User::all();
+        Log::info($users);
         return Inertia::render('User/List', [
             'users' => $users
         ]);
@@ -27,13 +29,17 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        Log::info($request);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'rol' => 'required|string|max:255',
-            'password' => 'required|string|max:255',
-            // 'password_confirmation' => 'nullable|string|max:255',
+            'password' => 'required|string|max:255|confirmed',
+            'password_confirmation' => 'required|string|max:255',
         ]);
+
+        Log::info($validated);
 
         User::create([
             'name' => $validated['name'],
@@ -42,6 +48,13 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        return redirect()->route('user.index');
+    }
+
+    public function destroy(User $user)
+    {
+        Log::info("Eliminando usuario: " . $user->username);
+        $user->delete();
         return redirect()->route('user.index');
     }
 }

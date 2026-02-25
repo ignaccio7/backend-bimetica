@@ -12,7 +12,6 @@ import {
 } from "@inertiajs/react";
 
 export default function Login({
-    status,
     landingUrl = "",
     // canResetPassword
 }) {
@@ -33,71 +32,78 @@ export default function Login({
     return (
         <GuestLayout>
             <Head title="Log in" />
-            <div className="min-h-screen w-full bg-[#0f172a] absolute top-0 left-0 -z-10">
-                {/* Blue Radial Glow Background */}
-                <div
-                    className="absolute inset-0 z-0"
-                    style={{
-                        backgroundImage: `radial-gradient(circle 600px at 50% 50%, rgba(59,130,246,0.3), transparent)`,
-                    }}
-                />
-            </div>
+            <div class="absolute inset-0 -z-10 h-full w-full bg-gray-100 [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#003d68_100%)]"></div>
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
+            <div className="w-full h-full flex flex-row bg-white shadow-md">
+                <div className="logo bg-[#003e65] w-full hidden md:flex items-center justify-center">
+                    <picture className="size-32 p-4 bg-white rounded-full grid place-content-center">
+                        <img
+                            src="/b_logo.png"
+                            alt="Logo ipb"
+                            className="w-full h-auto"
+                        />
+                    </picture>
                 </div>
-            )}
-
-            <form onSubmit={submit} className="login flex flex-col gap-4 py-8">
-                <IconUser
-                    size="64"
-                    className="mx-auto bg-primary-500 text-white rounded-full p-3"
-                />
-                <h1 className="text-center text-step-4 font-bold text-primary-500">
-                    Iniciar sesión
-                </h1>
-                <div>
-                    {/* <InputLabel
+                <div className="w-full min-h-96 border border-gray-100">
+                    <div className="flex flex-col gap-8 justify-center h-full px-4">
+                        <form
+                            onSubmit={submit}
+                            className="login flex flex-col gap-4 py-8"
+                        >
+                            <h1 className="text-center text-step-4 font-bold text-primary-500">
+                                Iniciar sesión
+                            </h1>
+                            <div>
+                                {/* <InputLabel
                         htmlFor="username"
                         value="Introduzca su usuario"
                     /> */}
 
-                    <TextInput
-                        // id="email"
-                        // type="email"
-                        placeholder="Introduzca su usuario"
-                        id="username"
-                        type="text"
-                        name="username"
-                        value={data.username}
-                        className="block w-full bg-gray-100"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData("username", e.target.value)}
-                    />
+                                <TextInput
+                                    // id="email"
+                                    // type="email"
+                                    placeholder="Introduzca su usuario"
+                                    id="username"
+                                    type="text"
+                                    name="username"
+                                    value={data.username}
+                                    className="block w-full bg-gray-100"
+                                    autoComplete="username"
+                                    isFocused={true}
+                                    onChange={(e) =>
+                                        setData("username", e.target.value)
+                                    }
+                                />
 
-                    <InputError message={errors.username} className="mt-2" />
-                </div>
+                                <InputError
+                                    message={errors.username}
+                                    className="mt-2"
+                                />
+                            </div>
 
-                <div className="mt-0">
-                    {/* <InputLabel htmlFor="password" value="Password" /> */}
+                            <div className="mt-0">
+                                {/* <InputLabel htmlFor="password" value="Password" /> */}
 
-                    <TextInput
-                        placeholder="Introduzca su contraseña"
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full bg-gray-100"
-                        autoComplete="current-password"
-                        onChange={(e) => setData("password", e.target.value)}
-                    />
+                                <TextInput
+                                    placeholder="Introduzca su contraseña"
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    value={data.password}
+                                    className="mt-1 block w-full bg-gray-100"
+                                    autoComplete="current-password"
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
+                                />
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
+                                <InputError
+                                    message={errors.password}
+                                    className="mt-2"
+                                />
+                            </div>
 
-                {/* <div className="mt-4 block">
+                            {/* <div className="mt-4 block">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -112,8 +118,8 @@ export default function Login({
                     </label>
                 </div> */}
 
-                <div className="mt-2 flex flex-col items-center justify-between gap-2">
-                    {/* {canResetPassword && (
+                            <div className="mt-2 flex flex-col items-center justify-between gap-2">
+                                {/* {canResetPassword && (
                         <Link
                             href={route("password.request")}
                             className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -122,22 +128,25 @@ export default function Login({
                         </Link>
                     )} */}
 
-                    <PrimaryButton
-                        className="w-full text-center flex justify-center"
-                        disabled={processing}
-                        type="submit"
-                    >
-                        Inicia sesión
-                    </PrimaryButton>
-                    <a
-                        href={landingUrl}
-                        className="text-secondary-500 px-4 py-2 rounded-md text-step-1 font-semibold text-white uppercase"
-                        type="button"
-                    >
-                        Volver a la página
-                    </a>
+                                <PrimaryButton
+                                    className="w-full text-center flex justify-center"
+                                    disabled={processing}
+                                    type="submit"
+                                >
+                                    Inicia sesión
+                                </PrimaryButton>
+                                <a
+                                    href={landingUrl}
+                                    className="text-secondary-500 px-4 py-2 rounded-md text-step-1 font-semibold text-gray-600 uppercase"
+                                    type="button"
+                                >
+                                    Volver a la página
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         </GuestLayout>
     );
 }

@@ -19,7 +19,8 @@ class UserSeeder extends Seeder
             'name' => 'Nestor Rojas',
             'username' => 'admin',
             'password' => Hash::make('123123'),
-            'role' => 'admin'
+            'role' => 'admin',
+            'status' => 'active',
         ]);
 
         // Usuario por defecto
@@ -27,7 +28,8 @@ class UserSeeder extends Seeder
             'name' => 'Lucas Chavez',
             'username' => 'user',
             'password' => Hash::make('123123'),
-            'role' => 'user'
+            'role' => 'user',
+            'status' => 'active',
         ]);
     }
 }

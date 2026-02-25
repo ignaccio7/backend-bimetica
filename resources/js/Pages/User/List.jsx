@@ -20,52 +20,48 @@ export default function Index(
     ];
 
     // 2️⃣ FUNCIÓN PARA ELIMINAR
-    // const handleDelete = (userId) => {
-    //     if (confirm("¿Estás seguro de eliminar este usuario?")) {
-    //         router.delete(route("users.destroy", userId));
-    //     }
-    // };
+    const handleDelete = (userId) => {
+        if (confirm("¿Estás seguro de eliminar este usuario?")) {
+            router.delete(route("user.destroy", userId));
+        }
+    };
 
     // 3️⃣ TRANSFORMAR DATA A MATRIZ DE ReactNode[][]
-    // const contenidoTabla = users?.data?.map((user) => [
-    //     // Cada array interno es UNA FILA
-    //     // Cada elemento es UNA CELDA (debe coincidir con columnas)
+    // Cada array interno es UNA FILA
+    // Cada elemento es UNA CELDA (debe coincidir con columnas)
+    const contenidoTabla = users?.map((user) => [
+        <span className="font-medium">{user.name}</span>,
+        <span>{user.username}</span>,
+        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+            {user.role}
+        </span>,
+        <span
+            className={`px-2 py-1 text-xs rounded-full ${
+                user.status
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+            }`}
+        >
+            {user.status ? "Activo" : "Inactivo"}
+        </span>,
+        <div className="flex gap-2">
+            {/* <Link
+                    href={route("users.edit", user.id)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                </Link> */}
+            Editar
+            <button
+                onClick={() => handleDelete(user.id)}
+                className="text-red-600 hover:text-red-800 text-sm font-medium"
+            >
+                Eliminar
+            </button>
+        </div>,
+    ]);
+    console.log(contenidoTabla);
 
-    //     <span className="font-medium">{user.name}</span>,
-
-    //     <span>{user.email}</span>,
-
-    //     <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-    //         {user.role}
-    //     </span>,
-
-    //     <span
-    //         className={`px-2 py-1 text-xs rounded-full ${
-    //             user.active
-    //                 ? "bg-green-100 text-green-800"
-    //                 : "bg-red-100 text-red-800"
-    //         }`}
-    //     >
-    //         {user.active ? "Activo" : "Inactivo"}
-    //     </span>,
-
-    //     // ⚠️ ACCIONES: Puedes poner múltiples botones en una celda
-    //     <div className="flex gap-2">
-    //         {/* <Link
-    //             href={route("users.edit", user.id)}
-    //             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-    //         >
-    //         </Link> */}
-    //         Editar
-    //         <button
-    //             onClick={() => handleDelete(user.id)}
-    //             className="text-red-600 hover:text-red-800 text-sm font-medium"
-    //         >
-    //             Eliminar
-    //         </button>
-    //     </div>,
-    // ]);
-    const contenidoTabla = [];
+    // const contenidoTabla = [[<></>, <></>, <></>, <></>, <></>]];
 
     // 4️⃣ COMPONENTE DE PAGINACIÓN (opcional)
     // const Paginacion = () => (
@@ -91,6 +87,10 @@ export default function Index(
     //     </div>
     // );
 
+    // const createUser = () => {
+    //     router.get(route("user.create"));
+    // };
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="py-6">
@@ -102,7 +102,13 @@ export default function Index(
                         // <Link href={route("users.create")}>
                         // </Link>,
                         acciones={[
-                            <PrimaryButton>+ Nuevo Usuario</PrimaryButton>,
+                            <Link
+                                href={route("user.create")}
+                                className={`inline-flex items-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900`}
+                            >
+                                {/* <PrimaryButton onClick={createUser}> */}+
+                                Nuevo Usuario
+                            </Link>,
                         ]}
                         columnas={columnas}
                         contenidoTabla={contenidoTabla}

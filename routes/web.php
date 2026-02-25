@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
     Route::post('/users', [UserController::class, 'store'])->name('user.store');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 
     // Services Routes 
     Route::get('/services', [ServiceController::class, 'index'])->name('service.index');
