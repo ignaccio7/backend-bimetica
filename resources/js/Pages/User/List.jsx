@@ -3,6 +3,7 @@ import { Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
+import { IconPencil, IconTrash, IconSecurity } from "@/Icons/icons";
 
 export default function Index(
     // { auth, users } = { auth: {}, users: { data: [] } }
@@ -15,7 +16,6 @@ export default function Index(
         { campo: "Nombre" },
         { campo: "Usuario" },
         { campo: "Rol" },
-        { campo: "Estado" },
         { campo: "Acciones" },
     ];
 
@@ -23,6 +23,30 @@ export default function Index(
     const handleDelete = (userId) => {
         if (confirm("¿Estás seguro de eliminar este usuario?")) {
             router.delete(route("user.destroy", userId));
+        }
+    };
+
+    const handleResetPassword = (userId) => {
+        if (
+            confirm(
+                "¿Estás seguro de restablecer la contraseña para este usuario?",
+            )
+        ) {
+            router.patch(
+                route("user.resetPassword", userId),
+                {},
+                {
+                    onSuccess: (page) => {
+                        const newPassword = page.props.flash.new_password;
+
+                        if (newPassword) {
+                            alert(
+                                `La contraseña ha sido restablecida. La contraseña es: ${newPassword}`,
+                            );
+                        }
+                    },
+                },
+            );
         }
     };
 
@@ -35,27 +59,24 @@ export default function Index(
         <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
             {user.role}
         </span>,
-        <span
-            className={`px-2 py-1 text-xs rounded-full ${
-                user.status
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-            }`}
-        >
-            {user.status ? "Activo" : "Inactivo"}
-        </span>,
         <div className="flex gap-2">
-            {/* <Link
-                    href={route("users.edit", user.id)}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                >
-                </Link> */}
-            Editar
+            <Link
+                href={route("user.edit", user.id)}
+                className="text-white hover:bg-blue-500 text-sm font-medium bg-blue-600 p-1 rounded-md transition-colors duration-300"
+            >
+                <IconPencil />
+            </Link>
             <button
                 onClick={() => handleDelete(user.id)}
-                className="text-red-600 hover:text-red-800 text-sm font-medium"
+                className="text-white hover:bg-red-500 text-sm font-medium bg-red-600 p-1 rounded-md transition-colors duration-300"
             >
-                Eliminar
+                <IconTrash />
+            </button>
+            <button
+                onClick={() => handleResetPassword(user.id)}
+                className="text-white hover:bg-yellow-500 text-sm font-medium bg-yellow-600 p-1 rounded-md transition-colors duration-300"
+            >
+                <IconSecurity />
             </button>
         </div>,
     ]);

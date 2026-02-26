@@ -34,6 +34,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'new_password' => fn() => $request->session()->get('new_password'),
+            ],
         ];
     }
 }

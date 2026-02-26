@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Pest\Support\Str;
 
 class UserController extends Controller
 {
@@ -51,10 +52,39 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
+    public function edit(User $user)
+    {
+        return Inertia::render('User/Edit', [
+            'user' => $user
+        ]);
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'rol' => 'required|string|max:255',
+        ]);
+
+        $user->update($validated);
+        return redirect()->route('user.index');
+    }
+
     public function destroy(User $user)
     {
         Log::info("Eliminando usuario: " . $user->username);
         $user->delete();
         return redirect()->route('user.index');
+    }
+
+    public function resetPassword(User $user)
+    {
+        $newPassword = Str::random(10);
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+
+        return back()->with('new_password', $newPassword);
     }
 }

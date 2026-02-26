@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
     Route::post('/users', [UserController::class, 'store'])->name('user.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('user.update');
 
     // Services Routes 
     Route::get('/services', [ServiceController::class, 'index'])->name('service.index');
@@ -42,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/services/{service}/edit', [ServiceController::class, 'edit'])->name('service.edit');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('service.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
+    Route::patch('/user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.resetPassword');
 
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
