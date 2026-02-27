@@ -1,7 +1,7 @@
 import { IconCalendar, IconClock, IconLocation, IconUser } from "@/Icons/icons";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Gallery from "./components/Gallery";
 import Magazine from "./components/Magazine";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function Show({}) {
     return (
