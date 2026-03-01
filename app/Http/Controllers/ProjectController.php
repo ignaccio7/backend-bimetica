@@ -15,7 +15,18 @@ class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('Project/List', []);
+        return Inertia::render('Project/Index', []);
+    }
+
+    public function list()
+    {
+        $projects = Project::latest()
+            ->select('id', 'title', 'slug', 'pdf_path', 'created_at')
+            ->get();
+
+        return Inertia::render('Project/List', [
+            'projects' => $projects,
+        ]);
     }
 
     /**
@@ -23,7 +34,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Project/Create');
     }
 
     /**
@@ -31,7 +42,31 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'pdf' => 'required|file|mimes:pdf|max:102400', // 100MB
+        ]);
+
+        // Guardar PDF en carpeta privada
+        $pdfPath = $request->file('pdf')->store('projects', 'private');
+
+        $project = Project::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'pdf_path' => $pdfPath,
+        ]);
+
+        return redirect()
+            ->route('project.list')
+            ->with('success', 'Proyecto creado correctamente');
+    }
+
+    public function pdf(Project $project)
+    {
+        return response()->file(
+            storage_path('app/private/' . $project->pdf_path)
+        );
     }
 
     /**

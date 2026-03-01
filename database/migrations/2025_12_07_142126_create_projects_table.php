@@ -15,15 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique()->isNotEmpty();
             $table->string('title')->unique();
-            $table->string('description');
-            $table->string('category');
-            $table->string('status')->default('En proceso');
-            $table->json('tags');
-            $table->json('characteristics');
-            $table->json('challenges');
-            $table->json('solutions');
+            $table->string('description')->nullable();
+            $table->string('category')->nullable();
+            $table->string('status')->default('En proceso')->nullable();
+            $table->json('tags')->nullable();
+            $table->json('characteristics')->nullable();
+            $table->json('challenges')->nullable();
+            $table->json('solutions')->nullable();
             $table->json('gallery_equirectangular')->nullable();
-            $table->json('gallery_images')->nullable();
+            $table->string('pdf_path')->nullable();
             $table->timestamps();
         });
     }

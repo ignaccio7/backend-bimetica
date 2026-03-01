@@ -92,13 +92,24 @@ export default function AuthenticatedLayout({ header, children }) {
                             <IconHome />
                             Nuestros proyectos
                         </NavLink>
-                        {/* <NavLink
-                            href={route("service.create")}
-                            active={route().current("service.create")}
-                        >
-                            <IconPlus />
-                            Gestionar proyectos
-                        </NavLink> */}
+                        {rol === "admin" && (
+                            <>
+                                <NavLink
+                                    href={route("project.list")}
+                                    active={route().current("project.list")}
+                                >
+                                    <IconTeam />
+                                    Gestionar proyectos
+                                </NavLink>
+                                <NavLink
+                                    href={route("project.create")}
+                                    active={route().current("project.create")}
+                                >
+                                    <IconUserPlus />
+                                    Crear proyecto
+                                </NavLink>
+                            </>
+                        )}
                     </div>
 
                     {rol === "admin" && (

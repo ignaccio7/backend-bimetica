@@ -46,11 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
     Route::patch('/user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.resetPassword');
 
+    //Ruta para gestionar proyectos
+    Route::get('/projects/list', [ProjectController::class, 'list'])->name('project.list');
+    Route::get('/projects/create', [ProjectController::class, 'create'])->name('project.create');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('/projects/{project}/pdf', [ProjectController::class, 'pdf'])->name('project.pdf');
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
-    Route::get('/projects/create', [ProjectController::class, 'create'])->name('project.create');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('project');
 });
 
 require __DIR__ . '/auth.php';
