@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import * as pdfjsLib from "pdfjs-dist";
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min.js?url";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default function PdfToImages({ pdfUrl, onLoad }) {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const loadPdf = async () => {
             try {
-                const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+                setLoading(true);
+                const pdf = await getDocument(pdfUrl).promise;
                 const totalPages = pdf.numPages;
-
                 const images = [];
 
                 for (let i = 1; i <= totalPages; i++) {
@@ -37,6 +37,7 @@ export default function PdfToImages({ pdfUrl, onLoad }) {
                 setLoading(false);
             } catch (error) {
                 console.error("Error cargando PDF:", error);
+                setLoading(false);
             }
         };
 

@@ -1,7 +1,6 @@
 import { useRef, forwardRef, useState, useEffect } from "react";
 import HTMLFlipBook from "react-pageflip";
 
-// Iconos simples inline (reemplaza con tus iconos importados)
 const IconMaximize = () => <span>⊡</span>;
 const IconMinimize = () => <span>⊟</span>;
 const IconReset = () => <span>↻</span>;
@@ -9,14 +8,22 @@ const IconZoomIn = () => <span>🔍+</span>;
 const IconZoomOut = () => <span>🔍-</span>;
 
 const Page = forwardRef(({ imgUrl }, ref) => (
-    <div ref={ref} style={{ backgroundColor: "#fff" }}>
+    <div
+        ref={ref}
+        style={{
+            backgroundColor: "#fff",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+        }}
+    >
         <img
             src={imgUrl}
             alt="Magazine page"
             style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                objectFit: "contain", // "contain" para no cortar nada
             }}
             draggable={false}
         />
@@ -30,9 +37,7 @@ function useMediaQuery(query) {
 
     useEffect(() => {
         const media = window.matchMedia(query);
-        if (media.matches !== matches) {
-            setMatches(media.matches);
-        }
+        if (media.matches !== matches) setMatches(media.matches);
         const listener = () => setMatches(media.matches);
         media.addEventListener("change", listener);
         return () => media.removeEventListener("change", listener);
@@ -41,7 +46,8 @@ function useMediaQuery(query) {
     return matches;
 }
 
-export default function Magazine({ images = [] }) {
+// orientation: "vertical" | "horizontal"
+export default function Magazine({ images = [], orientation = "vertical" }) {
     const bookRef = useRef(null);
     const containerRef = useRef(null);
     const bookWrapperRef = useRef(null);
@@ -58,6 +64,7 @@ export default function Magazine({ images = [] }) {
     const [currentPage, setCurrentPage] = useState(0);
 
     const isMobile = useMediaQuery("(max-width: 767px)");
+    const isHorizontal = orientation === "horizontal";
 
     const pages = [...images];
     if (pages.length % 2 !== 0) {
@@ -69,7 +76,20 @@ export default function Magazine({ images = [] }) {
             if (bookWrapperRef.current) {
                 const wrapper = bookWrapperRef.current;
                 const width = wrapper.clientWidth;
-                const height = isMobile ? width * 1.41 : width * 0.66;
+
+                let height;
+                if (isMobile) {
+                    // En móvil siempre una página, ajustar según orientación
+                    height = isHorizontal ? width * 0.7 : width * 1.41;
+                } else {
+                    // En desktop: el libro tiene 2 páginas de ancho
+                    // Para horizontal: cada página es landscape (ancho > alto)
+                    // Para vertical: cada página es portrait (alto > ancho)
+                    height = isHorizontal
+                        ? (width / 2) * 0.7
+                        : (width / 2) * 1.41;
+                }
+
                 setContainerSize({ width, height });
             }
         };
@@ -77,7 +97,7 @@ export default function Magazine({ images = [] }) {
         updateSize();
         window.addEventListener("resize", updateSize);
         return () => window.removeEventListener("resize", updateSize);
-    }, [isFullscreen, isMobile]);
+    }, [isFullscreen, isMobile, isHorizontal]);
 
     const nextPage = () => {
         if (isFlipping || zoom > 1) return;
@@ -85,7 +105,7 @@ export default function Magazine({ images = [] }) {
         try {
             bookRef.current?.pageFlip()?.flipNext();
         } catch (e) {
-            console.error("Error al voltear página:", e);
+            console.error(e);
         }
         setTimeout(() => setIsFlipping(false), 700);
     };
@@ -96,7 +116,7 @@ export default function Magazine({ images = [] }) {
         try {
             bookRef.current?.pageFlip()?.flipPrev();
         } catch (e) {
-            console.error("Error al voltear página:", e);
+            console.error(e);
         }
         setTimeout(() => setIsFlipping(false), 700);
     };
@@ -111,17 +131,11 @@ export default function Magazine({ images = [] }) {
         }
     };
 
-    const handleZoomIn = () => {
-        setZoom((prev) => Math.min(prev + 0.25, 3));
-    };
-
+    const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
     const handleZoomOut = () => {
         setZoom((prev) => Math.max(prev - 0.25, 1));
-        if (zoom <= 1.25) {
-            setPan({ x: 0, y: 0 });
-        }
+        if (zoom <= 1.25) setPan({ x: 0, y: 0 });
     };
-
     const handleReset = () => {
         setZoom(1);
         setPan({ x: 0, y: 0 });
@@ -132,10 +146,7 @@ export default function Magazine({ images = [] }) {
             e.preventDefault();
             e.stopPropagation();
             setIsDragging(true);
-            setDragStart({
-                x: e.clientX - pan.x,
-                y: e.clientY - pan.y,
-            });
+            setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
         }
     };
 
@@ -143,10 +154,7 @@ export default function Magazine({ images = [] }) {
         if (isDragging && zoom > 1) {
             e.preventDefault();
             e.stopPropagation();
-            setPan({
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y,
-            });
+            setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
         }
     };
 
@@ -164,22 +172,17 @@ export default function Magazine({ images = [] }) {
             e.stopPropagation();
             return;
         }
-
         const bookElement = bookWrapperRef.current;
         if (!bookElement) return;
-
         const rect = bookElement.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const bookWidth = rect.width;
         const edgeZone = bookWidth * 0.15;
-
-        if (clickX < edgeZone) {
-            prevPage();
-        } else if (clickX > bookWidth - edgeZone) {
-            nextPage();
-        }
+        if (clickX < edgeZone) prevPage();
+        else if (clickX > bookWidth - edgeZone) nextPage();
     };
 
+    // En horizontal el libro es más ancho que alto, cada página ocupa width/2
     const pageWidth = isMobile ? containerSize.width : containerSize.width / 2;
 
     return (
@@ -197,7 +200,7 @@ export default function Magazine({ images = [] }) {
                 width: "100%",
             }}
         >
-            {/* Controles superiores */}
+            {/* Controles */}
             <div
                 style={{
                     display: "flex",
@@ -211,46 +214,22 @@ export default function Magazine({ images = [] }) {
                     <button
                         onClick={prevPage}
                         disabled={isFlipping || zoom > 1}
-                        style={{
-                            padding: isMobile
-                                ? "0.5rem 1rem"
-                                : "0.75rem 1.5rem",
-                            backgroundColor:
-                                isFlipping || zoom > 1 ? "#94a3b8" : "#3b82f6",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor:
-                                isFlipping || zoom > 1
-                                    ? "not-allowed"
-                                    : "pointer",
-                            fontSize: isMobile ? "0.875rem" : "1rem",
-                            fontWeight: "600",
-                            opacity: isFlipping || zoom > 1 ? 0.6 : 1,
-                        }}
+                        style={btnStyle(
+                            isFlipping || zoom > 1,
+                            "#3b82f6",
+                            isMobile,
+                        )}
                     >
                         ← {isMobile ? "Ant" : "Anterior"}
                     </button>
                     <button
                         onClick={nextPage}
                         disabled={isFlipping || zoom > 1}
-                        style={{
-                            padding: isMobile
-                                ? "0.5rem 1rem"
-                                : "0.75rem 1.5rem",
-                            backgroundColor:
-                                isFlipping || zoom > 1 ? "#94a3b8" : "#3b82f6",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor:
-                                isFlipping || zoom > 1
-                                    ? "not-allowed"
-                                    : "pointer",
-                            fontSize: isMobile ? "0.875rem" : "1rem",
-                            fontWeight: "600",
-                            opacity: isFlipping || zoom > 1 ? 0.6 : 1,
-                        }}
+                        style={btnStyle(
+                            isFlipping || zoom > 1,
+                            "#3b82f6",
+                            isMobile,
+                        )}
                     >
                         {isMobile ? "Sig" : "Siguiente"} →
                     </button>
@@ -260,19 +239,7 @@ export default function Magazine({ images = [] }) {
                     <button
                         onClick={handleZoomOut}
                         disabled={zoom <= 1}
-                        style={{
-                            padding: isMobile ? "0.5rem" : "0.75rem",
-                            backgroundColor: zoom <= 1 ? "#94a3b8" : "#10b981",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor: zoom <= 1 ? "not-allowed" : "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            opacity: zoom <= 1 ? 0.6 : 1,
-                            fontSize: isMobile ? "0.875rem" : "1rem",
-                        }}
+                        style={iconBtnStyle(zoom <= 1, "#10b981", isMobile)}
                     >
                         <IconZoomOut />
                         {!isMobile && <span>Alejar</span>}
@@ -280,19 +247,7 @@ export default function Magazine({ images = [] }) {
                     <button
                         onClick={handleZoomIn}
                         disabled={zoom >= 3}
-                        style={{
-                            padding: isMobile ? "0.5rem" : "0.75rem",
-                            backgroundColor: zoom >= 3 ? "#94a3b8" : "#10b981",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor: zoom >= 3 ? "not-allowed" : "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            opacity: zoom >= 3 ? 0.6 : 1,
-                            fontSize: isMobile ? "0.875rem" : "1rem",
-                        }}
+                        style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
                     >
                         <IconZoomIn />
                         {!isMobile && <span>Acercar</span>}
@@ -300,19 +255,7 @@ export default function Magazine({ images = [] }) {
                     <button
                         onClick={handleReset}
                         disabled={zoom === 1}
-                        style={{
-                            padding: isMobile ? "0.5rem" : "0.75rem",
-                            backgroundColor: zoom === 1 ? "#94a3b8" : "#f59e0b",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor: zoom === 1 ? "not-allowed" : "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            opacity: zoom === 1 ? 0.6 : 1,
-                            fontSize: isMobile ? "0.875rem" : "1rem",
-                        }}
+                        style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
                     >
                         <IconReset />
                         {!isMobile && <span>Reset</span>}
@@ -322,17 +265,7 @@ export default function Magazine({ images = [] }) {
                 {!isMobile && (
                     <button
                         onClick={toggleFullscreen}
-                        style={{
-                            padding: "0.75rem",
-                            backgroundColor: "#8b5cf6",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "0.5rem",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                        }}
+                        style={iconBtnStyle(false, "#8b5cf6", isMobile)}
                     >
                         {isFullscreen ? <IconMinimize /> : <IconMaximize />}
                         <span>
@@ -372,6 +305,7 @@ export default function Magazine({ images = [] }) {
                 </div>
             )}
 
+            {/* Contenedor del libro */}
             <div
                 style={{
                     width: "100%",
@@ -416,9 +350,7 @@ export default function Magazine({ images = [] }) {
                                     ? "grabbing"
                                     : "grab"
                                 : "default",
-                        transform: `scale(${zoom}) translate(${
-                            pan.x / zoom
-                        }px, ${pan.y / zoom}px)`,
+                        transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
                         transition: isDragging
                             ? "none"
                             : "transform 0.2s ease-out",
@@ -426,7 +358,6 @@ export default function Magazine({ images = [] }) {
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
-                        pointerEvents: zoom > 1 ? "auto" : "auto",
                     }}
                 >
                     <div
@@ -437,19 +368,30 @@ export default function Magazine({ images = [] }) {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            border: "1px solid transparent",
+                            position: "relative",
                         }}
                     >
+                        {/* Bloquea drag interno del flipbook cuando hay zoom */}
+                        {zoom > 1 && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    zIndex: 10,
+                                    cursor: isDragging ? "grabbing" : "grab",
+                                }}
+                            />
+                        )}
                         <HTMLFlipBook
                             ref={bookRef}
-                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${zoom}`}
+                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${orientation}`}
                             width={pageWidth}
                             height={containerSize.height}
                             size="stretch"
                             usePortrait={isMobile}
-                            minWidth={300}
-                            maxWidth={1000}
-                            minHeight={400}
+                            minWidth={200}
+                            maxWidth={1400}
+                            minHeight={200}
                             maxHeight={1400}
                             showCover={false}
                             flippingTime={300}
@@ -486,9 +428,40 @@ export default function Magazine({ images = [] }) {
                 {zoom > 1
                     ? "Arrastra para moverte • Los botones de navegación están deshabilitados con zoom"
                     : isMobile
-                    ? "Desliza o usa los botones para cambiar de página"
-                    : "Haz clic en los bordes laterales para voltear páginas"}
+                      ? "Desliza o usa los botones para cambiar de página"
+                      : "Haz clic en los bordes laterales para voltear páginas"}
             </p>
         </div>
     );
+}
+
+// Helpers de estilos
+function btnStyle(disabled, color, isMobile) {
+    return {
+        padding: isMobile ? "0.5rem 1rem" : "0.75rem 1.5rem",
+        backgroundColor: disabled ? "#94a3b8" : color,
+        color: "white",
+        border: "none",
+        borderRadius: "0.5rem",
+        cursor: disabled ? "not-allowed" : "pointer",
+        fontSize: isMobile ? "0.875rem" : "1rem",
+        fontWeight: "600",
+        opacity: disabled ? 0.6 : 1,
+    };
+}
+
+function iconBtnStyle(disabled, color, isMobile) {
+    return {
+        padding: isMobile ? "0.5rem" : "0.75rem",
+        backgroundColor: disabled ? "#94a3b8" : color,
+        color: "white",
+        border: "none",
+        borderRadius: "0.5rem",
+        cursor: disabled ? "not-allowed" : "pointer",
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        opacity: disabled ? 0.6 : 1,
+        fontSize: isMobile ? "0.875rem" : "1rem",
+    };
 }

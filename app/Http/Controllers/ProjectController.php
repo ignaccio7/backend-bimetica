@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -21,8 +22,22 @@ class ProjectController extends Controller
     public function list()
     {
         $projects = Project::latest()
-            ->select('id', 'title', 'slug', 'pdf_path', 'created_at')
-            ->get();
+            ->select('id', 'title', 'slug', 'pdf_path', 'gallery_equirectangular', 'orientation', 'category', 'status', 'created_at')
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id'                      => $project->id,
+                    'title'                   => $project->title,
+                    'slug'                    => $project->slug,
+                    'category'                => $project->category,
+                    'status'                  => $project->status,
+                    'orientation'             => $project->orientation,
+                    'pdf_path'                => $project->pdf_path,
+                    'gallery_equirectangular' => $project->gallery_equirectangular ?? [],
+                    'gallery_count'           => count($project->gallery_equirectangular ?? []),
+                    'created_at'              => $project->created_at,
+                ];
+            });
 
         return Inertia::render('Project/List', [
             'projects' => $projects,
@@ -37,24 +52,49 @@ class ProjectController extends Controller
         return Inertia::render('Project/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'pdf' => 'required|file|mimes:pdf|max:102400', // 100MB
+            'title'                    => 'required|string|max:255|unique:projects,title',
+            'description'              => 'nullable|string',
+            'category'                 => 'nullable|string|max:255',
+            'status'                   => 'nullable|string|max:255',
+            'characteristics'          => 'nullable|string', // viene como JSON string
+            'orientation'              => 'required|in:horizontal,vertical',
+            'pdf'                      => 'nullable|file|mimes:pdf|max:102400',
+            'gallery_equirectangular'  => 'nullable|array',
+            'gallery_equirectangular.*' => 'file|mimes:jpg,jpeg,png,webp|max:20480',
         ]);
 
-        // Guardar PDF en carpeta privada
-        $pdfPath = $request->file('pdf')->store('projects', 'private');
+        // Guardar PDF
+        $pdfPath = null;
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('projects', 'private');
+        }
 
-        $project = Project::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'pdf_path' => $pdfPath,
+        // Guardar imágenes de galería equirectangular
+        $galleryPaths = [];
+        if ($request->hasFile('gallery_equirectangular')) {
+            foreach ($request->file('gallery_equirectangular') as $image) {
+                $galleryPaths[] = $image->store('projects/gallery', 'public');
+            }
+        }
+
+        // Parsear características (vienen como JSON string desde el form)
+        $characteristics = null;
+        if ($request->filled('characteristics')) {
+            $characteristics = json_decode($request->characteristics, true);
+        }
+
+        Project::create([
+            'title'                   => $request->title,
+            'description'             => $request->description,
+            'category'                => $request->category,
+            'status'                  => $request->status ?? 'En proceso',
+            'characteristics'         => $characteristics,
+            'orientation'             => $request->orientation,
+            'pdf_path'                => $pdfPath,
+            'gallery_equirectangular' => $galleryPaths ?: null,
         ]);
 
         return redirect()
@@ -64,9 +104,18 @@ class ProjectController extends Controller
 
     public function pdf(Project $project)
     {
-        return response()->file(
-            storage_path('app/private/' . $project->pdf_path)
-        );
+        $path = $project->pdf_path;
+
+        if (!$path || !Storage::disk('private')->exists($path)) {
+            abort(404);
+        }
+
+        $fullPath = Storage::disk('private')->path($path);
+
+        return response()->file($fullPath, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        ]);
     }
 
     /**

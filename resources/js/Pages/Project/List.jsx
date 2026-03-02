@@ -4,36 +4,25 @@ import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { IconEye } from "@/Icons/icons";
 import ProjectViewModal from "@/Components/ui/ProjectViewModal";
-import { useState, useEffect } from "react";
-import Magazine from "./components/Magazine";
-import PdfToImages from "@/Components/ui/PdfToImages";
+import { useState } from "react";
 
 export default function List({ auth, projects }) {
     console.log(projects);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
-    const [images, setImages] = useState([]);
 
     /* ===============================
-       ABRIR MODAL
+       ABRIR / CERRAR MODAL
     =============================== */
     const openModal = (project) => {
-        console.log("abriendo modal");
-        console.log(project);
-
-        setImages([]); // limpiar imágenes anteriores
         setSelectedProject(project);
         setIsModalOpen(true);
     };
 
-    /* ===============================
-       CERRAR MODAL
-    =============================== */
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedProject(null);
-        setImages([]);
     };
 
     /* ===============================
@@ -41,7 +30,10 @@ export default function List({ auth, projects }) {
     =============================== */
     const columnas = [
         { campo: "Título" },
-        { campo: "Slug" },
+        { campo: "Categoría" },
+        { campo: "Estado" },
+        { campo: "PDF" },
+        { campo: "Galería 360°" },
         { campo: "Fecha" },
         { campo: "Acciones" },
     ];
@@ -50,13 +42,61 @@ export default function List({ auth, projects }) {
        DATA TABLA
     =============================== */
     const contenidoTabla = projects?.map((project) => [
-        <span className="font-medium">{project.title}</span>,
-        <span className="text-gray-500">{project.slug}</span>,
-        <span>{new Date(project.created_at).toLocaleDateString()}</span>,
+        /* Título */
+        <div>
+            <p className="font-medium text-gray-900">{project.title}</p>
+            <p className="text-xs text-gray-400">{project.slug}</p>
+        </div>,
+
+        /* Categoría */
+        project.category ? (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                {project.category}
+            </span>
+        ) : (
+            <span className="text-gray-300 text-xs">—</span>
+        ),
+
+        /* Estado */
+        <StatusBadge status={project.status} />,
+
+        /* PDF */
+        project.pdf_path ? (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded">
+                ✓ PDF
+                <span className="text-gray-400 capitalize">
+                    ({project.orientation})
+                </span>
+            </span>
+        ) : (
+            <span className="text-gray-300 text-xs">Sin PDF</span>
+        ),
+
+        /* Galería */
+        project.gallery_count > 0 ? (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                🖼 {project.gallery_count} imagen
+                {project.gallery_count !== 1 ? "es" : ""}
+            </span>
+        ) : (
+            <span className="text-gray-300 text-xs">Sin galería</span>
+        ),
+
+        /* Fecha */
+        <span className="text-sm text-gray-500">
+            {new Date(project.created_at).toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            })}
+        </span>,
+
+        /* Acciones */
         <div className="flex gap-2">
             <button
                 onClick={() => openModal(project)}
                 className="text-white hover:bg-blue-500 text-sm font-medium bg-blue-600 p-1 rounded-md transition-colors duration-300"
+                title="Ver proyecto"
             >
                 <IconEye />
             </button>
@@ -99,14 +139,37 @@ export default function List({ auth, projects }) {
                 </div>
             </div>
 
-            {/* ===============================
-               MODAL VISOR PDF
-            =============================== */}
+            {/* Modal visor PDF */}
             <ProjectViewModal
                 isOpen={isModalOpen}
                 closeModal={closeModal}
                 project={selectedProject}
             />
         </AuthenticatedLayout>
+    );
+}
+
+/* ===============================
+   BADGE DE ESTADO
+=============================== */
+function StatusBadge({ status }) {
+    const map = {
+        "En proceso": "bg-yellow-100 text-yellow-800",
+        "En construcción": "bg-orange-100 text-orange-800",
+        Completado: "bg-green-100 text-green-800",
+        Pausado: "bg-gray-100 text-gray-600",
+        Cancelado: "bg-red-100 text-red-700",
+    };
+
+    const cls = map[status] ?? "bg-gray-100 text-gray-500";
+
+    return status ? (
+        <span
+            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${cls}`}
+        >
+            {status}
+        </span>
+    ) : (
+        <span className="text-gray-300 text-xs">—</span>
     );
 }

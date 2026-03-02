@@ -13,10 +13,7 @@ class Project extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'tags' => 'object',
         'characteristics' => 'array',
-        'challenges' => 'array',
-        'solutions' => 'array',
         'gallery_equirectangular' => 'array',
         'gallery_images' => 'array',
     ];

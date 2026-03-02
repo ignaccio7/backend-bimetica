@@ -18,12 +18,10 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('category')->nullable();
             $table->string('status')->default('En proceso')->nullable();
-            $table->json('tags')->nullable();
             $table->json('characteristics')->nullable();
-            $table->json('challenges')->nullable();
-            $table->json('solutions')->nullable();
             $table->json('gallery_equirectangular')->nullable();
             $table->string('pdf_path')->nullable();
+            $table->enum('orientation', ['horizontal', 'vertical'])->default('vertical');
             $table->timestamps();
         });
     }

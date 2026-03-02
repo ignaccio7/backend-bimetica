@@ -64,7 +64,10 @@ export default function ProjectViewModal({ isOpen, closeModal, project }) {
 
                                 {/* Revista */}
                                 {images.length > 0 && (
-                                    <Magazine images={images} />
+                                    <Magazine
+                                        images={images}
+                                        orientation={project.orientation}
+                                    />
                                 )}
 
                                 <div className="mt-6 flex justify-end">
