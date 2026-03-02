@@ -49,8 +49,18 @@ Route::middleware('auth')->group(function () {
     //Ruta para gestionar proyectos
     Route::get('/projects/list', [ProjectController::class, 'list'])->name('project.list');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('project.create');
+    Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])
+        ->name('project.edit');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])
+        ->name('project.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])
+        ->name('project.destroy');
     Route::post('/projects', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/projects/{project}/pdf', [ProjectController::class, 'pdf'])->name('project.pdf');
+    Route::get('/projects/{project}/cover', [ProjectController::class, 'cover'])
+        ->name('project.cover');
+    Route::get('/projects/{project}/gallery/{index}', [ProjectController::class, 'galleryImage'])
+        ->name('project.gallery.image');
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');

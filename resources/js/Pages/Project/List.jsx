@@ -2,15 +2,43 @@ import { Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { IconEye } from "@/Icons/icons";
+import { IconEye, IconPencil, IconTrash } from "@/Icons/icons";
 import ProjectViewModal from "@/Components/ui/ProjectViewModal";
 import { useState } from "react";
+import ModalConfirm from "@/Components/ui/ModalConfirm";
+import { router } from "@inertiajs/react";
 
 export default function List({ auth, projects }) {
     console.log(projects);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
+
+    /* ===============================
+       MODAL DE CONFIRMACION
+    =============================== */
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [projectToDelete, setProjectToDelete] = useState(null);
+
+    const openDeleteModal = (project) => {
+        setProjectToDelete(project);
+        setIsConfirmOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setProjectToDelete(null);
+        setIsConfirmOpen(false);
+    };
+
+    const confirmDelete = () => {
+        if (!projectToDelete) return;
+
+        router.delete(route("project.destroy", projectToDelete.slug), {
+            onSuccess: () => {
+                closeDeleteModal();
+            },
+        });
+    };
 
     /* ===============================
        ABRIR / CERRAR MODAL
@@ -95,10 +123,21 @@ export default function List({ auth, projects }) {
         <div className="flex gap-2">
             <button
                 onClick={() => openModal(project)}
-                className="text-white hover:bg-blue-500 text-sm font-medium bg-blue-600 p-1 rounded-md transition-colors duration-300"
-                title="Ver proyecto"
+                className="text-white bg-blue-600 p-1 rounded-md"
             >
                 <IconEye />
+            </button>
+            <Link
+                href={route("project.edit", project.slug)}
+                className="bg-yellow-500 text-white p-1 rounded-md"
+            >
+                <IconPencil />
+            </Link>
+            <button
+                onClick={() => openDeleteModal(project)}
+                className="bg-red-600 text-white p-1 rounded-md"
+            >
+                <IconTrash />
             </button>
         </div>,
     ]);
@@ -144,6 +183,19 @@ export default function List({ auth, projects }) {
                 isOpen={isModalOpen}
                 closeModal={closeModal}
                 project={selectedProject}
+            />
+
+            {/* Modal Confirm */}
+            <ModalConfirm
+                isOpen={isConfirmOpen}
+                closeModal={closeDeleteModal}
+                onConfirm={confirmDelete}
+                title="Eliminar Proyecto"
+                message={
+                    projectToDelete
+                        ? `¿Seguro que deseas eliminar el proyecto "${projectToDelete.title}"? Esta acción no se puede deshacer.`
+                        : ""
+                }
             />
         </AuthenticatedLayout>
     );

@@ -41,6 +41,7 @@ export default function CreateProject({ auth }) {
         status: "En proceso",
         orientation: "vertical",
         characteristics: "",
+        image: null,
         pdf: null,
         gallery_equirectangular: [],
     });
@@ -224,6 +225,20 @@ export default function CreateProject({ auth }) {
                                     placeholder="Descripción del proyecto..."
                                 />
                                 <InputError message={errors.description} />
+                            </div>
+
+                            {/* ===== IMAGEN COVER ===== */}
+                            <div className="md:col-span-2">
+                                <InputLabel value="Imagen de portada" />
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                    onChange={(e) =>
+                                        setData("image", e.target.files[0])
+                                    }
+                                />
+                                <InputError message={errors.image} />
                             </div>
 
                             {/* ===== CARACTERÍSTICAS ===== */}
