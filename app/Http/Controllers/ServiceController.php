@@ -145,12 +145,15 @@ class ServiceController extends Controller
         // options design -> solo obtener slug y title
         Log::info('✅ Menu de servicios');
         $design = Service::where('type', 'diseño')->get(['slug', 'title']);
+        $construction = Service::where('type', 'construccion')->get(['slug', 'title']);
 
 
         Log::info($design);
+        Log::info($construction);
 
         return response()->json([
-            'design' => $design
+            'design' => $design,
+            'construction' => $construction
         ]);
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique()->isNotEmpty();
             $table->string('title')->unique();
             $table->string('description')->nullable();
-            $table->string('image_path')->nullable(); // ESTA SERA LA IMAGEN PRINCIPAL DEL PROYECTO
+            $table->string('image_path')->nullable();
             $table->string('category')->nullable();
             $table->string('status')->default('En proceso')->nullable();
             $table->json('characteristics')->nullable();

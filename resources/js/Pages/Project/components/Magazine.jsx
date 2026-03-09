@@ -1,11 +1,14 @@
 import { useRef, forwardRef, useState, useEffect } from "react";
 import HTMLFlipBook from "react-pageflip";
-
-const IconMaximize = () => <span>⊡</span>;
-const IconMinimize = () => <span>⊟</span>;
-const IconReset = () => <span>↻</span>;
-const IconZoomIn = () => <span>🔍+</span>;
-const IconZoomOut = () => <span>🔍-</span>;
+import {
+    IconMaximize,
+    IconMinimize,
+    IconReset,
+    IconZoomIn,
+    IconZoomOut,
+    IconChevronLeft,
+    IconChevronRight,
+} from "@/Icons/icons";
 
 const Page = forwardRef(({ imgUrl }, ref) => (
     <div
@@ -23,7 +26,7 @@ const Page = forwardRef(({ imgUrl }, ref) => (
             style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "contain", // "contain" para no cortar nada
+                objectFit: "contain",
             }}
             draggable={false}
         />
@@ -214,24 +217,28 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     <button
                         onClick={prevPage}
                         disabled={isFlipping || zoom > 1}
+                        className="flex flex-row gap-1 items-center"
                         style={btnStyle(
                             isFlipping || zoom > 1,
                             "#3b82f6",
                             isMobile,
                         )}
                     >
-                        ← {isMobile ? "Ant" : "Anterior"}
+                        <IconChevronLeft />
+                        {isMobile ? "Ant" : "Anterior"}
                     </button>
                     <button
                         onClick={nextPage}
                         disabled={isFlipping || zoom > 1}
+                        className="flex flex-row gap-1 items-center"
                         style={btnStyle(
                             isFlipping || zoom > 1,
                             "#3b82f6",
                             isMobile,
                         )}
                     >
-                        {isMobile ? "Sig" : "Siguiente"} →
+                        {isMobile ? "Sig" : "Siguiente"}
+                        <IconChevronRight />
                     </button>
                 </div>
 

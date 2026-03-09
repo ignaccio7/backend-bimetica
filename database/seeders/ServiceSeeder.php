@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Service;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ServiceSeeder extends Seeder
@@ -13,273 +12,326 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        // Service::factory()->count(10)->create();
-        // $services = [
-        //     [
-        //         'title' => 'Carpeta técnica',
-        //         'slug' => 'carpeta-tecnica',
-        //         'description' => 'Documentación completa que integra especificaciones, planos, memorias y normativas técnicas necesarias para la aprobación y ejecución de proyectos civiles.',
-        //         'type' => 'diseño',
-        //         'categories' => [
-        //             'Elaboración de memorias técnicas',
-        //             'Recolección de requisitos normativos',
-        //             'Planilla de cómputos métricos',
-        //             'Documentación para licencias',
-        //         ],
-        //         'benefits' => [
-        //             'Facilita aprobaciones municipales',
-        //             'Reduce errores en obra',
-        //             'Asegura cumplimiento normativo',
-        //             'Organiza toda la información técnica del proyecto',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=1',
-        //     ],
-        //     [
-        //         'title' => 'Diseño de planos',
-        //         'slug' => 'planos',
-        //         'description' => 'Desarrollo profesional de planos arquitectónicos, eléctricos, sanitarios y estructurales siguiendo estándares técnicos y normativos actualizados.',
-        //         'type' => 'diseño',
-        //         'categories' => [
-        //             'Planos arquitectónicos',
-        //             'Planos estructurales',
-        //             'Instalaciones sanitarias y eléctricas',
-        //             'Detalles constructivos',
-        //         ],
-        //         'benefits' => [
-        //             'Claridad total en la ejecución',
-        //             'Minimiza correcciones durante la obra',
-        //             'Cumple con requisitos municipales',
-        //             'Facilita la visualización del proyecto',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=2',
-        //     ],
-        //     [
-        //         'title' => 'Diseño de trámites',
-        //         'slug' => 'tramites',
-        //         'description' => 'Preparación de documentación técnica requerida para procesos administrativos como licencias de construcción, ampliaciones y regularizaciones.',
-        //         'type' => 'diseño',
-        //         'categories' => [
-        //             'Licencias de construcción',
-        //             'Aprobación de planos',
-        //             'Regularizaciones',
-        //             'Tramitación documental',
-        //         ],
-        //         'benefits' => [
-        //             'Ahorro de tiempo en procesos burocráticos',
-        //             'Menos rechazos en trámites',
-        //             'Seguimiento continuo del proceso',
-        //             'Cumplimiento completo de requisitos legales',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=3',
-        //     ],
-        //     [
-        //         'title' => 'Computo de proyectos',
-        //         'slug' => 'computo',
-        //         'description' => 'Desarrollo de computos de proyectos para gestión de proyectos y gestión de recursos.',
-        //         'type' => 'diseño',
-        //         'categories' => [
-        //             'Computos de proyectos',
-        //             'Gestión de recursos',
-        //             'Gestión de proyectos',
-        //         ],
-        //         'benefits' => [
-        //             'Facilidad de gestión de proyectos',
-        //             'Reducción de tiempo y costos',
-        //             'Mejora de la gestión de recursos',
-        //             'Mejora de la gestión de proyectos',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=4',
-        //     ],
-        //     [
-        //         'title' => 'Construcción de obras civiles',
-        //         'slug' => 'construccion-de-obras-civiles',
-        //         'description' => 'Ejecución completa de proyectos civiles garantizando calidad, supervisión y cumplimiento de estándares técnicos en cada etapa de la obra.',
-        //         'type' => 'construccion',
-        //         'categories' => [
-        //             'Construcción de cimientos',
-        //             'Estructuras de concreto',
-        //             'Instalaciones técnicas',
-        //             'Acabados y terminaciones',
-        //         ],
-        //         'benefits' => [
-        //             'Calidad garantizada desde inicio a fin',
-        //             'Supervisión profesional',
-        //             'Reducción de riesgos constructivos',
-        //             'Cumplimiento estricto de plazos',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=4',
-        //     ],
-        //     [
-        //         'title' => 'Remodelación',
-        //         'slug' => 'remodelacion',
-        //         'description' => 'Rediseño y adecuación de espacios interiores y exteriores para mejorar funcionalidad, estética y valor del inmueble.',
-        //         'type' => 'construccion',
-        //         'categories' => [
-        //             'Remodelación de interiores',
-        //             'Renovación de fachadas',
-        //             'Optimización de espacios',
-        //             'Mejoras estructurales',
-        //         ],
-        //         'benefits' => [
-        //             'Modernización del espacio',
-        //             'Mejora del confort y estética',
-        //             'Incrementa el valor del inmueble',
-        //             'Adaptación del espacio a nuevas necesidades',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=5',
-        //     ],
-        //     [
-        //         'title' => 'Obra completa – llave en mano',
-        //         'slug' => 'obra-completa',
-        //         'description' => 'Desarrollo integral del proyecto desde la planificación hasta la entrega final, asegurando un proceso sin complicaciones para el cliente.',
-        //         'type' => 'construccion',
-        //         'categories' => [
-        //             'Planificación y diseño',
-        //             'Construcción completa',
-        //             'Supervisión y control de calidad',
-        //             'Entrega final lista para uso',
-        //         ],
-        //         'benefits' => [
-        //             'Cero preocupaciones para el cliente',
-        //             'Gestión total del proyecto',
-        //             'Ahorro de tiempo y coordinación',
-        //             'Entrega garantizada con estándares profesionales',
-        //         ],
-        //         'image' => 'https://picsum.photos/640/480?random=6',
-        //     ],
-        // ];
+        // Limpiar la tabla primero (opcional)
+        // Service::truncate();
 
         $services = [
             [
-                'title' => 'Diseño Arquitectónico',
-                'slug' => 'diseno-arquitectonico',
-                'description' => 'Desarrollo integral de proyectos arquitectónicos que combina planimetría técnica precisa con visualizaciones realistas, garantizando funcionalidad, estética y cumplimiento normativo desde la concepción hasta la aprobación municipal.',
+                'title' => 'Planos 2D',
+                'slug' => 'solo-planos-2d',
+                'description' => 'Desarrollo de la base técnica indispensable para cualquier edificación, proporcionando un plano claro y preciso que sirve como guía maestra para la ejecución en obra y la organización espacial.',
                 'type' => 'diseño',
                 'items' => [
                     [
-                        'title' => 'PLANOS ARQUITECTÓNICOS',
+                        'title' => 'Planos Técnicos',
                         'categories' => [
-                            'Plano de Plantas, esquema de fundaciones',
-                            'Cortes, Elevaciones, Sitio y Techo con Sistema de desalojo de aguas pluviales o servidas',
-                            'Planos AutoCAD y PDF (Alcaldía)',
-                        ],
-                    ],
-                    [
-                        'title' => 'VISUALIZACIÓN',
-                        'categories' => [
-                            'Video Recorrido 360',
-                            'Brochure Físico',
-                            'Visualización en 3D: Renders de cada ambiente con sugerencia de materiales',
-                            'Planos arquitectónicos referenciales',
-                            'Visualización isométrica',
+                            'Plantas arquitectónicas',
+                            'Cortes longitudinales y transversales',
+                            'Elevaciones detalladas en formatos AutoCAD y PDF',
+                            'Esquema de fundaciones y planos de sitio y techos con sistema de desalojo de aguas pluviales y servidas',
                         ],
                     ],
                 ],
                 'benefits' => [
-                    'Relevamiento y medición en obra al iniciar tu proyecto',
-                    'Presentaciones físicas o virtuales en cada etapa del diseño',
+                    'Precisión Constructiva: Evita errores de interpretación en obra con medidas y niveles exactos.',
+                    'Organización Técnica: Documentación estandarizada lista para ser consultada por cualquier profesional del área.',
                 ],
-                'image' => 'services/disenioarquitectonico.png',
+                'image' => 'https://damassets.autodesk.net/content/dam/autodesk/draftr/23812/how-is-architecture-drawing-software-used-1172x660.jpeg',
             ],
             [
                 'title' => 'Diseño de Interior',
                 'slug' => 'diseno-de-interior',
-                'description' => 'Creación de espacios interiores personalizados que optimizan la distribución, iluminación y funcionalidad, integrando elementos de carpintería, metal y aluminio para lograr ambientes únicos y acogedores.',
+                'description' => 'Propuesta estética y funcional que transforma los espacios internos en ambientes personalizados, optimizando cada metro cuadrado mediante el uso estratégico de materiales, luz y mobiliario.',
                 'type' => 'diseño',
                 'items' => [
                     [
-                        'title' => 'DISEÑO A DETALLE DE CADA AMBIENTE',
+                        'title' => 'Planificación Espacial',
                         'categories' => [
-                            'Planos de plantas, elevaciones, cortes y perspectivas de acuerdo a requerimiento de proyecto',
-                            'Detalle de Muebles',
-                            'Cuadro de requerimientos de materiales',
+                            'Planos de Layout, plantas generales y elevaciones internas.',
                         ],
                     ],
                     [
-                        'title' => 'CARPINTERÍA DE MADERA',
+                        'title' => 'Diseño de Detalles',
                         'categories' => [
-                            'Puertas, marcos, contramarco, hoja, jambas, bisagras y chapas, etc.',
+                            'Planos de iluminación, cielos falsos y detalles constructivos de mobiliario a medida.',
                         ],
                     ],
                     [
-                        'title' => 'CARPINTERÍA METÁLICA',
+                        'title' => 'Conceptualización',
                         'categories' => [
-                            'Bauleras, gradas, jardines, rejas, ingreso, etc.',
-                        ],
-                    ],
-                    [
-                        'title' => 'ALUMINIO',
-                        'categories' => [
-                            'Ventanas',
-                        ],
-                    ],
-                    [
-                        'title' => 'VISUALIZACIÓN',
-                        'categories' => [
-                            'Video Recorrido 360',
-                            'Brochure físico',
-                            'Visualización en 3D: Renders de cada ambiente',
+                            'Entrega de Moodboard (paleta de colores y texturas) y renders 3D detallados para visualización final.',
                         ],
                     ],
                 ],
                 'benefits' => [
-                    'Relevamiento y medición en obra al iniciar tu proyecto',
-                    'Presentaciones físicas o virtuales en cada etapa del diseño',
+                    'Personalización Total: Espacios diseñados exclusivamente para tu estilo de vida o identidad de marca.',
+                    'Optimización de Presupuesto: Selección previa de materiales y acabados que evitan compras innecesarias.',
                 ],
-                'image' => 'services/diseniodeinterior.png',
+                'image' => 'https://images.griddo.udit.es/c/cover/q/70/w/1920/h/1080/p/center/f/jpeg/blog-diseno-de-interiores-271025-8a64a90f-23c3-4146-95f6-4916d98a9b26',
             ],
             [
-                'title' => 'Diseño de Fachada',
-                'slug' => 'diseno-de-fachada',
-                'description' => 'Diseño especializado de fachadas que armonizan estética, funcionalidad y normativa municipal, creando una imagen exterior distintiva que refleja la identidad del proyecto y maximiza su impacto visual.',
+                'title' => 'Estudio de Suelos',
+                'slug' => 'estudio-suelos',
+                'description' => 'Análisis científico y técnico del terreno para determinar su capacidad de carga y comportamiento, garantizando que la estructura se diseñe sobre bases sólidas y seguras.',
                 'type' => 'diseño',
                 'items' => [
                     [
-                        'title' => 'PLANOS ARQUITECTÓNICOS',
+                        'title' => 'Análisis de Campo',
                         'categories' => [
-                            'Plano cortes y elevaciones',
-                            'Planos AutoCAD y PDF',
+                            'Ejecución de calicatas o sondeos y toma de muestras.',
                         ],
                     ],
                     [
-                        'title' => 'VISUALIZACIÓN',
+                        'title' => 'Laboratorio',
                         'categories' => [
-                            'Video Recorrido',
-                            'Brochure Físico',
-                            'Visualización en 3D: Renders de la fachada',
-                            'Planos arquitectónicos referenciales',
+                            'Informe detallado de laboratorio de suelos con propiedades físicas y mecánicas.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Certificación',
+                        'categories' => [
+                            'Formulario resumen de estudio geológico-geotécnico y respaldo profesional legalizado.',
                         ],
                     ],
                 ],
                 'benefits' => [
-                    'Relevamiento y medición en obra al iniciar tu proyecto',
-                    'Presentaciones físicas o virtuales en cada etapa del diseño',
+                    'Seguridad Estructural: Prevención de asentamientos, grietas o fallas catastróficas en la edificación.',
+                    'Ahorro en Cimientos: Permite diseñar la cimentación justa y necesaria sin sobredimensionar costos.',
                 ],
-                'image' => 'services/diseniodefachada.png',
+                'image' => 'https://usil-blog.s3.amazonaws.com/PROD/blog/image/planos-arquitectura.jpg',
             ],
             [
-                'title' => 'Planos 2D',
-                'slug' => 'solo-planos-2d',
-                'description' => 'Elaboración exclusiva de planimetría técnica 2D cumpliendo todos los requisitos municipales para aprobación, ideal para proyectos que requieren documentación formal sin necesidad de visualizaciones avanzadas.',
+                'title' => 'Cálculo Estructural',
+                'slug' => 'calculo-estructural',
+                'description' => 'Ingeniería de alta precisión dedicada al diseño de los elementos portantes de la edificación, asegurando la estabilidad y resistencia del proyecto ante cargas vivas, muertas y eventos sísmicos.',
                 'type' => 'diseño',
                 'items' => [
                     [
-                        'title' => 'PLANOS ARQUITECTÓNICOS',
+                        'title' => 'Diseño Estructural',
                         'categories' => [
-                            'Plano de Plantas, esquema de fundaciones',
-                            'Cortes, Elevaciones, Sitio y Techo con Sistema de desalojo de aguas pluviales o servidas',
-                            'Planos AutoCAD y PDF (Alcaldía)',
+                            'Planos de vigas, columnas, losas, muros y escaleras.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Documentación Técnica',
+                        'categories' => [
+                            'Memorias de cálculo estructural y plan de contingencias.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Validez Legal',
+                        'categories' => [
+                            'Formularios de resumen de cálculo y credenciales profesionales para trámites municipales.',
                         ],
                     ],
                 ],
                 'benefits' => [
-                    'Relevamiento y medición en obra al iniciar tu proyecto',
-                    'Presentaciones físicas o virtuales en cada etapa del diseño',
+                    'Tranquilidad y Garantía: Estructuras que cumplen con las normas de seguridad vigentes.',
+                    'Eficiencia de Materiales: Uso optimizado de acero y hormigón para reducir costos sin comprometer la resistencia.',
                 ],
-                'image' => 'services/planos2d.png',
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Planos Eléctricos e Hidrosanitarios',
+                'slug' => 'planos-electricos-hidrosanitarios',
+                'description' => 'Diseño de las redes vitales del edificio, enfocándose en la eficiencia energética, el confort del usuario y el suministro constante de servicios básicos.',
+                'type' => 'diseño',
+                'items' => [
+                    [
+                        'title' => 'Red Eléctrica',
+                        'categories' => [
+                            'Circuitos de iluminación, tomacorrientes, cuadros de carga, diagramas unifilares y sistemas especiales (domótica/sonido).',
+                        ],
+                    ],
+                    [
+                        'title' => 'Red Hidrosanitaria',
+                        'categories' => [
+                            'Planos de agua fría, agua caliente, desagües, isométricos y memorias de cálculo de presión.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Funcionalidad Sin Fallas: Sistemas diseñados para evitar sobrecargas eléctricas o problemas de presión de agua.',
+                    'Facilidad de Mantenimiento: Ubicación exacta de cada tubería y cableado para reparaciones futuras sencillas.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Cómputo y Presupuesto de Obra',
+                'slug' => 'computo-y-presupuesto-de-obra',
+                'description' => 'Análisis financiero y cuantificación detallada de todos los recursos necesarios para la construcción, brindando transparencia y control total sobre la inversión.',
+                'type' => 'diseño',
+                'items' => [
+                    [
+                        'title' => 'Cuantificación',
+                        'categories' => [
+                            'Cómputos métricos detallados por cada ítem de obra.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Análisis Económico',
+                        'categories' => [
+                            'Análisis de Precios Unitarios (APU) y presupuesto general consolidado.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Resumen Ejecutivo',
+                        'categories' => [
+                            'Resumen general de inversión.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Control Financiero: Evita fugas de capital y sorpresas económicas durante la construcción.',
+                    'Planificación de Compras: Permite programar la adquisición de materiales de manera inteligente.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Trámites Municipales',
+                'slug' => 'tramites-municipales',
+                'description' => 'Gestión administrativa profesional para la regularización legal de tu proyecto, asegurando que todos los permisos de construcción estén en orden ante las autoridades locales.',
+                'type' => 'diseño',
+                'items' => [
+                    [
+                        'title' => 'Gestión Documental',
+                        'categories' => [
+                            'Llenado de formularios y subida de archivos al sistema de la Alcaldía.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Seguimiento',
+                        'categories' => [
+                            'Subsanación de observaciones técnicas en planos y control del proceso de trámite.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Finalización',
+                        'categories' => [
+                            'Entrega oficial del permiso de construcción aprobado.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Ahorro de Tiempo: Nosotros nos encargamos de la burocracia para que tú te enfoques en disfrutar tu proyecto.',
+                    'Respaldo Legal: Construcción protegida contra multas o paralizaciones por falta de permisos.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Obra Gruesa',
+                'slug' => 'obra-gruesa',
+                'description' => 'Representa la etapa medular del proyecto donde se consolida la estabilidad y la forma estructural de la edificación, siguiendo rigurosamente las especificaciones de ingeniería.',
+                'type' => 'construccion',
+                'items' => [
+                    [
+                        'title' => 'Fundaciones y Estructura',
+                        'categories' => [
+                            'Ejecución de zapatas, vigas de fundación, columnas y losas conforme al cálculo estructural.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Levantamiento de Muros',
+                        'categories' => [
+                            'Construcción de muros portantes y tabiquería de cierre según la planimetría.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Cubiertas y Techumbres',
+                        'categories' => [
+                            'Instalación de estructuras de techo y sistemas de impermeabilización básica.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Instalaciones Embutidas',
+                        'categories' => [
+                            'Colocación de ductería primaria para servicios eléctricos e hidrosanitarios.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Solidez Garantizada: Estructuras ejecutadas bajo normas de seguridad que aseguran la vida útil del inmueble.',
+                    'Base para Acabados: Entrega de superficies niveladas y plomadas, facilitando la posterior etapa de terminaciones.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Obra Fina',
+                'slug' => 'obra-fina',
+                'description' => 'Etapa de personalización y detalle donde se aplican los revestimientos y acabados finales que definen la estética, el confort y la funcionalidad de cada ambiente.',
+                'type' => 'construccion',
+                'items' => [
+                    [
+                        'title' => 'Revestimientos y Pisos',
+                        'categories' => [
+                            'Colocación de cerámicas, porcelanatos, revoques de yeso y acabados de pintura.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Cielos y Carpintería',
+                        'categories' => [
+                            'Instalación de cielos falsos, puertas, ventanas y detalles de carpintería fina.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Terminaciones Técnicas',
+                        'categories' => [
+                            'Instalación de luminarias, piezas sanitarias, griferías y accesorios eléctricos finales.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Detalles de Diseño',
+                        'categories' => [
+                            'Ejecución de acabados especiales según el proyecto de diseño de interiores.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Estética Superior: Transformación visual del proyecto con materiales de alta calidad y mano de obra especializada.',
+                    'Habitabilidad Inmediata: Espacios listos para el uso cotidiano con instalaciones totalmente funcionales.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
+            ],
+            [
+                'title' => 'Obra Completa (Llave en Mano)',
+                'slug' => 'obra-completa',
+                'description' => 'Es nuestra solución integral de gestión total, donde asumimos la responsabilidad absoluta desde la excavación inicial hasta la limpieza final de entrega.',
+                'type' => 'construccion',
+                'items' => [
+                    [
+                        'title' => 'Gestión 360°',
+                        'categories' => [
+                            'Ejecución secuencial y coordinada de la Obra Gruesa y la Obra Fina sin interrupciones.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Administración de Recursos',
+                        'categories' => [
+                            'Control de presupuestos, compra de materiales y supervisión de personal especializado.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Control de Calidad',
+                        'categories' => [
+                            'Verificación constante de cada hito constructivo para asegurar la fidelidad al diseño original.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Entrega Final',
+                        'categories' => [
+                            'Limpieza profunda de obra y entrega oficial de las llaves del proyecto terminado.',
+                        ],
+                    ],
+                ],
+                'benefits' => [
+                    'Cero Estrés: El cliente delega toda la complejidad técnica y operativa en un solo equipo responsable.',
+                    'Optimización de Tiempos: Reducción de plazos de entrega al evitar baches logísticos entre diferentes contratistas.',
+                ],
+                'image' => 'https://images.homify.com/v1540327099/p/photo/image/2761639/fyhny.jpg',
             ],
         ];
 
+        // Insertar todos los servicios
         foreach ($services as $service) {
             Service::create($service);
         }

@@ -2,7 +2,13 @@ import { Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { IconEye, IconPencil, IconTrash } from "@/Icons/icons";
+import {
+    IconEye,
+    IconImage,
+    IconPDF,
+    IconPencil,
+    IconTrash,
+} from "@/Icons/icons";
 import ProjectViewModal from "@/Components/ui/ProjectViewModal";
 import { useState } from "react";
 import ModalConfirm from "@/Components/ui/ModalConfirm";
@@ -91,7 +97,7 @@ export default function List({ auth, projects }) {
         /* PDF */
         project.pdf_path ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded">
-                ✓ PDF
+                <IconPDF />
                 <span className="text-gray-400 capitalize">
                     ({project.orientation})
                 </span>
@@ -103,7 +109,7 @@ export default function List({ auth, projects }) {
         /* Galería */
         project.gallery_count > 0 ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
-                🖼 {project.gallery_count} imagen
+                <IconImage /> {project.gallery_count} imagen
                 {project.gallery_count !== 1 ? "es" : ""}
             </span>
         ) : (
@@ -121,12 +127,18 @@ export default function List({ auth, projects }) {
 
         /* Acciones */
         <div className="flex gap-2">
-            <button
+            {/* <button
                 onClick={() => openModal(project)}
                 className="text-white bg-blue-600 p-1 rounded-md"
             >
                 <IconEye />
-            </button>
+            </button> */}
+            <Link
+                href={route("project.show", project.slug)}
+                className="text-white bg-blue-600 p-1 rounded-md"
+            >
+                <IconEye />
+            </Link>
             <Link
                 href={route("project.edit", project.slug)}
                 className="bg-yellow-500 text-white p-1 rounded-md"

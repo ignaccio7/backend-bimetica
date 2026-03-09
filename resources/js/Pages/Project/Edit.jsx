@@ -26,25 +26,23 @@ const ESTADOS = [
 ];
 
 export default function EditProject({ auth, project }) {
-    // console.log(project);
-
-    /* ===============================
-       ESTADOS
-    =============================== */
     const [characteristics, setCharacteristics] = useState([]);
     const [galleryPreviews, setGalleryPreviews] = useState([]);
 
     /* ===============================
-       FORM
+       FORM — image arranca en null,
+       solo se setea si el usuario sube
+       un archivo nuevo
     =============================== */
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
+        _method: "PUT", // spoofing para PUT con FormData
         title: project.title || "",
         description: project.description || "",
         category: project.category || "",
         status: project.status || "En proceso",
         orientation: project.orientation || "vertical",
-        image: project.image_path || null,
         characteristics: "",
+        image: null, // ← nunca string, solo File o null
         pdf: null,
         gallery_equirectangular: [],
     });
@@ -61,9 +59,14 @@ export default function EditProject({ auth, project }) {
             setData("characteristics", JSON.stringify(project.characteristics));
         }
 
-        if (project.gallery_equirectangular) {
+        if (project.gallery_equirectangular?.length > 0) {
             setGalleryPreviews(
-                project.gallery_equirectangular.map((img) => `/storage/${img}`),
+                project.gallery_equirectangular.map((_, i) =>
+                    route("project.gallery.image", {
+                        project: project.slug,
+                        index: i,
+                    }),
+                ),
             );
         }
     }, []);
@@ -85,13 +88,18 @@ export default function EditProject({ auth, project }) {
         updated.forEach(({ key, value }) => {
             if (key.trim()) obj[key.trim()] = value;
         });
-
         setData("characteristics", JSON.stringify(obj));
     };
 
     const removeCharacteristic = (index) => {
         const updated = characteristics.filter((_, i) => i !== index);
         setCharacteristics(updated);
+
+        const obj = {};
+        updated.forEach(({ key, value }) => {
+            if (key.trim()) obj[key.trim()] = value;
+        });
+        setData("characteristics", JSON.stringify(obj));
     };
 
     /* ===============================
@@ -100,50 +108,19 @@ export default function EditProject({ auth, project }) {
     const handleGalleryChange = (e) => {
         const files = Array.from(e.target.files);
         setData("gallery_equirectangular", files);
-
-        const previews = files.map((f) => URL.createObjectURL(f));
-        setGalleryPreviews(previews);
+        setGalleryPreviews(files.map((f) => URL.createObjectURL(f)));
     };
 
     /* ===============================
-       SUBMIT
+       SUBMIT — usa post() con _method:PUT
+       para que FormData funcione en Laravel
     =============================== */
     const submit = (e) => {
-        console.log(project);
-
         e.preventDefault();
-        put(
-            route("project.update", {
-                project: project.slug,
-            }),
-            {
-                forceFormData: true,
-            },
-        );
+        post(route("project.update", { project: project.slug }), {
+            forceFormData: true,
+        });
     };
-
-    // Reemplaza el useEffect de galería:
-    useEffect(() => {
-        if (project.characteristics) {
-            const rows = Object.entries(project.characteristics).map(
-                ([key, value]) => ({ key, value }),
-            );
-            setCharacteristics(rows);
-            setData("characteristics", JSON.stringify(project.characteristics));
-        }
-
-        // ✅ Galería desde rutas privadas del controlador
-        if (project.gallery_equirectangular?.length > 0) {
-            setGalleryPreviews(
-                project.gallery_equirectangular.map((_, i) =>
-                    route("project.gallery.image", {
-                        project: project.slug,
-                        index: i,
-                    }),
-                ),
-            );
-        }
-    }, []);
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -192,6 +169,7 @@ export default function EditProject({ auth, project }) {
                                         </option>
                                     ))}
                                 </select>
+                                <InputError message={errors.category} />
                             </div>
 
                             {/* ESTADO */}
@@ -210,6 +188,7 @@ export default function EditProject({ auth, project }) {
                                         </option>
                                     ))}
                                 </select>
+                                <InputError message={errors.status} />
                             </div>
 
                             {/* ORIENTACIÓN */}
@@ -217,7 +196,10 @@ export default function EditProject({ auth, project }) {
                                 <InputLabel value="Orientación PDF" />
                                 <div className="flex gap-6 mt-2">
                                     {["vertical", "horizontal"].map((ori) => (
-                                        <label key={ori} className="flex gap-2">
+                                        <label
+                                            key={ori}
+                                            className="flex gap-2 items-center"
+                                        >
                                             <input
                                                 type="radio"
                                                 value={ori}
@@ -231,10 +213,15 @@ export default function EditProject({ auth, project }) {
                                                     )
                                                 }
                                             />
-                                            {ori}
+                                            <span className="capitalize text-sm text-gray-700">
+                                                {ori === "vertical"
+                                                    ? "📄 Vertical (Portrait)"
+                                                    : "📰 Horizontal (Landscape)"}
+                                            </span>
                                         </label>
                                     ))}
                                 </div>
+                                <InputError message={errors.orientation} />
                             </div>
 
                             {/* DESCRIPCIÓN */}
@@ -248,16 +235,19 @@ export default function EditProject({ auth, project }) {
                                         setData("description", e.target.value)
                                     }
                                 />
+                                <InputError message={errors.description} />
                             </div>
 
-                            {/* IMAGEN COVER ACTUAL */}
+                            {/* IMAGEN COVER */}
                             <div className="md:col-span-2">
                                 <InputLabel value="Imagen de portada" />
 
+                                {/* Preview de imagen actual (solo lectura) */}
                                 {project.image_path && (
                                     <div className="mb-3">
                                         <p className="text-xs text-gray-500 mb-1">
-                                            Imagen actual:
+                                            Imagen actual (sube una nueva para
+                                            reemplazarla):
                                         </p>
                                         <img
                                             src={route(
@@ -275,7 +265,11 @@ export default function EditProject({ auth, project }) {
                                     accept="image/jpeg,image/png,image/webp"
                                     className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700"
                                     onChange={(e) =>
-                                        setData("image", e.target.files[0])
+                                        // Solo asigna si hay archivo seleccionado
+                                        setData(
+                                            "image",
+                                            e.target.files[0] ?? null,
+                                        )
                                     }
                                 />
                                 <InputError message={errors.image} />
@@ -284,92 +278,126 @@ export default function EditProject({ auth, project }) {
                             {/* CARACTERÍSTICAS */}
                             <div className="md:col-span-2">
                                 <InputLabel value="Características" />
-                                {characteristics.map((char, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex gap-2 mb-2"
-                                    >
-                                        <TextInput
-                                            className="w-1/3"
-                                            value={char.key}
-                                            onChange={(e) =>
-                                                updateCharacteristic(
-                                                    index,
-                                                    "key",
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                        <TextInput
-                                            className="flex-1"
-                                            value={char.value}
-                                            onChange={(e) =>
-                                                updateCharacteristic(
-                                                    index,
-                                                    "value",
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                removeCharacteristic(index)
-                                            }
-                                            className="text-red-500"
+                                <p className="text-xs text-gray-500 mb-2">
+                                    Ej: Ubicación → La Paz - Bolivia
+                                </p>
+                                <div className="space-y-2">
+                                    {characteristics.map((char, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex gap-2 items-center"
                                         >
-                                            ×
-                                        </button>
-                                    </div>
-                                ))}
+                                            <TextInput
+                                                className="w-1/3"
+                                                placeholder="Clave (ej: Año)"
+                                                value={char.key}
+                                                onChange={(e) =>
+                                                    updateCharacteristic(
+                                                        index,
+                                                        "key",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <TextInput
+                                                className="flex-1"
+                                                placeholder="Valor (ej: 2025)"
+                                                value={char.value}
+                                                onChange={(e) =>
+                                                    updateCharacteristic(
+                                                        index,
+                                                        "value",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    removeCharacteristic(index)
+                                                }
+                                                className="text-red-500 hover:text-red-700 font-bold text-lg px-2"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
                                 <button
                                     type="button"
                                     onClick={addCharacteristic}
-                                    className="text-indigo-600 text-sm"
+                                    className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
                                 >
                                     + Agregar característica
                                 </button>
+                                <InputError message={errors.characteristics} />
                             </div>
 
                             {/* PDF */}
                             <div className="md:col-span-2">
                                 <InputLabel value="Reemplazar PDF" />
+                                {project.pdf_path && (
+                                    <p className="text-xs text-gray-500 mb-1">
+                                        Ya tiene un PDF subido. Sube uno nuevo
+                                        solo si quieres reemplazarlo.
+                                    </p>
+                                )}
                                 <input
                                     type="file"
                                     accept="application/pdf"
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700"
                                     onChange={(e) =>
-                                        setData("pdf", e.target.files[0])
+                                        setData(
+                                            "pdf",
+                                            e.target.files[0] ?? null,
+                                        )
                                     }
                                 />
+                                <InputError message={errors.pdf} />
                             </div>
 
                             {/* GALERÍA */}
                             <div className="md:col-span-2">
                                 <InputLabel value="Agregar nuevas imágenes 360°" />
+                                <p className="text-xs text-gray-500 mb-2">
+                                    Las nuevas imágenes se agregan a las
+                                    existentes.
+                                </p>
                                 <input
                                     type="file"
                                     multiple
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700"
                                     onChange={handleGalleryChange}
+                                />
+                                <InputError
+                                    message={errors.gallery_equirectangular}
                                 />
 
                                 {galleryPreviews.length > 0 && (
-                                    <div className="grid grid-cols-4 gap-2 mt-3">
+                                    <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                                         {galleryPreviews.map((preview, i) => (
-                                            <img
-                                                key={i}
-                                                src={preview}
-                                                className="h-20 object-cover rounded"
-                                            />
+                                            <div key={i} className="relative">
+                                                <img
+                                                    src={preview}
+                                                    alt={`preview-${i}`}
+                                                    className="w-full h-20 object-cover rounded-md border border-gray-200"
+                                                />
+                                                <p className="text-xs text-center text-gray-400 mt-1">
+                                                    #{i + 1}
+                                                </p>
+                                            </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
 
+                            {/* SUBMIT */}
                             <div className="md:col-span-2 flex justify-end">
                                 <PrimaryButton
                                     disabled={processing}
                                     type="submit"
+                                    className="px-8"
                                 >
                                     {processing
                                         ? "Actualizando..."

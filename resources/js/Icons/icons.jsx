@@ -919,10 +919,234 @@ const IconReset = ({ className = "", size = "24" }) => (
     </svg>
 );
 
+const IconRuler = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M19.875 8c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75" />
+        <path d="M9 8v2" />
+        <path d="M6 8v3" />
+        <path d="M12 8v3" />
+        <path d="M18 8v3" />
+        <path d="M15 8v2" />
+    </svg>
+);
+
+const IconTag = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M6.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3" />
+    </svg>
+);
+
+const IconPDF = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+        <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
+        <path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" />
+        <path d="M17 18h2" />
+        <path d="M20 15h-3v6" />
+        <path d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1" />
+    </svg>
+);
+
+const IconImage = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" />
+        <path d="M4 16l16 0" />
+        <path d="M4 12l3 -3c.928 -.893 2.072 -.893 3 0l4 4" />
+        <path d="M13 12l2 -2c.928 -.893 2.072 -.893 3 0l2 2" />
+        <path d="M14 7l.01 0" />
+    </svg>
+);
+
+const IconChevronLeft = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M15 6l-6 6l6 6" />
+    </svg>
+);
+
+const IconChevronRight = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M9 6l6 6l-6 6" />
+    </svg>
+);
+
+const IconLibrary = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M5 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" />
+        <path d="M9 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" />
+        <path d="M5 8h4" />
+        <path d="M9 16h4" />
+        <path d="M13.803 4.56l2.184 -.53c.562 -.135 1.133 .19 1.282 .732l3.695 13.418a1.02 1.02 0 0 1 -.634 1.219l-.133 .041l-2.184 .53c-.562 .135 -1.133 -.19 -1.282 -.732l-3.695 -13.418a1.02 1.02 0 0 1 .634 -1.219l.133 -.041" />
+        <path d="M14 9l4 -1" />
+        <path d="M16 16l3.923 -.98" />
+    </svg>
+);
+
+const IconBlocks = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M14 4a1 1 0 0 1 1 -1h5a1 1 0 0 1 1 1v5a1 1 0 0 1 -1 1h-5a1 1 0 0 1 -1 -1l0 -5" />
+        <path d="M3 14h12a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h3a2 2 0 0 1 2 2v12" />
+    </svg>
+);
+
+const IconCubPlus = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        className={className}
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M21 12.5v-4.509a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.007c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0" />
+        <path d="M12 22v-10" />
+        <path d="M12 12l8.73 -5.04" />
+        <path d="M3.27 6.96l8.73 5.04" />
+        <path d="M16 19h6" />
+        <path d="M19 16v6" />
+    </svg>
+);
+
+const IconBuilding = ({ className = "", size = "24" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-building"
+    >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M3 21l18 0" />
+        <path d="M9 8l1 0" />
+        <path d="M9 12l1 0" />
+        <path d="M9 16l1 0" />
+        <path d="M14 8l1 0" />
+        <path d="M14 12l1 0" />
+        <path d="M14 16l1 0" />
+        <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
+    </svg>
+);
+
 // const Icon = ({ className = '', size = '24' }) => (
 
 // )
 export {
+    IconBuilding,
+    IconCubPlus,
+    IconBlocks,
+    IconLibrary,
+    IconChevronLeft,
+    IconChevronRight,
+    IconPDF,
+    IconImage,
+    IconTag,
+    IconRuler,
     IconLeft,
     IconRight,
     IconZoomIn,

@@ -11,22 +11,22 @@ import "./gallery.css";
 import "pannellum/build/pannellum.js";
 import "pannellum/build/pannellum.css";
 
-export default function Gallery360() {
+export default function Gallery360({ images }) {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const viewerRefs = useRef({});
     const viewerInstances = useRef({});
 
-    const images = [
-        // { id: 1, url: "https://pannellum.org/images/alma.jpg" },
-        { id: 2, url: "/projects-images/1.jpg" },
-        { id: 3, url: "/projects-images/2.jpg" },
-        { id: 4, url: "/projects-images/3.jpg" },
-        { id: 5, url: "/projects-images/4.jpg" },
-        { id: 6, url: "/projects-images/5.jpg" },
-        { id: 7, url: "/projects-images/6.jpg" },
-        { id: 8, url: "/projects-images/7.jpg" },
-    ];
+    // const images = [
+    //     // { id: 1, url: "https://pannellum.org/images/alma.jpg" },
+    //     { id: 2, url: "/projects-images/1.jpg" },
+    //     { id: 3, url: "/projects-images/2.jpg" },
+    //     { id: 4, url: "/projects-images/3.jpg" },
+    //     { id: 5, url: "/projects-images/4.jpg" },
+    //     { id: 6, url: "/projects-images/5.jpg" },
+    //     { id: 7, url: "/projects-images/6.jpg" },
+    //     { id: 8, url: "/projects-images/7.jpg" },
+    // ];
 
     useEffect(() => {
         const img = images[activeIndex];
@@ -48,7 +48,7 @@ export default function Gallery360() {
                         panorama: img.url,
                         autoLoad: true,
                         showControls: false,
-                    }
+                    },
                 );
             } catch (e) {
                 console.error("Error Pannellum:", e);

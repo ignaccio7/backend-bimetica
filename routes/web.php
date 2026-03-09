@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -63,7 +64,16 @@ Route::middleware('auth')->group(function () {
         ->name('project.gallery.image');
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('/resources', [ProjectController::class, 'resources'])->name('project.resources');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
+
+    // Public Projects Routes
+    Route::get('/public-projects', [PublicProjectController::class, 'index'])->name('public-project.index');
+    Route::get('/public-projects/create', [PublicProjectController::class, 'create'])->name('public-project.create');
+    Route::post('/public-projects', [PublicProjectController::class, 'store'])->name('public-project.store');
+    Route::get('/public-projects/{publicProject}/edit', [PublicProjectController::class, 'edit'])->name('public-project.edit');
+    Route::put('/public-projects/{publicProject}', [PublicProjectController::class, 'update'])->name('public-project.update');
+    Route::delete('/public-projects/{publicProject}', [PublicProjectController::class, 'destroy'])->name('public-project.destroy');
 });
 
 require __DIR__ . '/auth.php';

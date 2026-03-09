@@ -2,7 +2,11 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import {
+    IconBlocks,
+    IconBuilding,
+    IconCubPlus,
     IconHome,
+    IconLibrary,
     IconPlus,
     IconTeam,
     IconUser,
@@ -89,8 +93,15 @@ export default function AuthenticatedLayout({ header, children }) {
                             href={route("project.index")}
                             active={route().current("project.index")}
                         >
-                            <IconHome />
+                            <IconBuilding />
                             Nuestros proyectos
+                        </NavLink>
+                        <NavLink
+                            href={route("project.resources")}
+                            active={route().current("project.resources")}
+                        >
+                            <IconLibrary />
+                            Nuestros recursos
                         </NavLink>
                         {rol === "admin" && (
                             <>
@@ -98,14 +109,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route("project.list")}
                                     active={route().current("project.list")}
                                 >
-                                    <IconTeam />
+                                    <IconBlocks />
                                     Gestionar proyectos
                                 </NavLink>
                                 <NavLink
                                     href={route("project.create")}
                                     active={route().current("project.create")}
                                 >
-                                    <IconUserPlus />
+                                    <IconCubPlus />
                                     Crear proyecto
                                 </NavLink>
                             </>
@@ -160,6 +171,30 @@ export default function AuthenticatedLayout({ header, children }) {
                             <IconHome />
                             Construcción
                         </NavLink> */}
+                            </div>
+                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                                Proyectos Publicos
+                            </h3>
+
+                            <div className="links flex flex-col gap-1">
+                                <NavLink
+                                    href={route("public-project.index")}
+                                    active={route().current(
+                                        "public-project.index",
+                                    )}
+                                >
+                                    <IconBuilding />
+                                    Gestionar proyectos
+                                </NavLink>
+                                <NavLink
+                                    href={route("public-project.create")}
+                                    active={route().current(
+                                        "public-project.create",
+                                    )}
+                                >
+                                    <IconCubPlus />
+                                    Crear proyecto
+                                </NavLink>
                             </div>
                         </>
                     )}

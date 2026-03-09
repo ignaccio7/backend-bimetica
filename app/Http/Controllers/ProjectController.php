@@ -17,7 +17,29 @@ class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('Project/Index', []);
+        $projects = Project::latest()
+            ->get()
+            ->map(fn($p) => [
+                'slug'            => $p->slug,
+                'title'           => $p->title,
+                'description'     => $p->description,
+                'category'        => $p->category,
+                'status'          => $p->status,
+                'pdf_path'        => $p->pdf_path,
+                'characteristics' => $p->characteristics ?? [],
+                'gallery_count'   => count($p->gallery_equirectangular ?? []),
+                'created_at'      => $p->created_at,
+                'cover_url'       => $p->image_path
+                    ? route('project.cover', $p)
+                    : null,
+            ]);
+
+        return Inertia::render('Project/Index', ['projects' => $projects]);
+    }
+
+    public function resources()
+    {
+        return Inertia::render('Project/Resources');
     }
 
     public function list()
@@ -158,11 +180,42 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($project)
+    public function show($slug)
     {
-        Log::info($project);
+        $project = Project::where('slug', $slug)->firstOrFail();
+
+        $gallery = $project->gallery_equirectangular ?? [];
+
+        // ← Devuelve objetos {id, url} que es lo que Gallery360 espera
+        $galleryUrls = collect($gallery)
+            ->values()
+            ->map(fn($path, $i) => [
+                'id'  => $i,
+                'url' => route('project.gallery.image', [
+                    'project' => $project->slug,
+                    'index'   => $i,
+                ]),
+            ])
+            ->values()
+            ->toArray();
+
         return Inertia::render('Project/Show', [
-            'project' => $project
+            'project' => [
+                'slug'            => $project->slug,
+                'title'           => $project->title,
+                'description'     => $project->description,
+                'category'        => $project->category,
+                'status'          => $project->status,
+                'orientation'     => $project->orientation,
+                'characteristics' => $project->characteristics ?? [],
+                'cover_url'       => $project->image_path
+                    ? route('project.cover', $project->slug)
+                    : null,
+                'pdf_url'         => $project->pdf_path
+                    ? route('project.pdf', $project->slug)
+                    : null,
+                'gallery_urls'    => $galleryUrls,
+            ],
         ]);
     }
 

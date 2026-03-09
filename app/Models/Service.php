@@ -17,7 +17,7 @@ class Service extends Model
 
     protected $casts = [
         'items' => 'array',
-        'benefits' => 'array'
+        'benefits' => 'array',
     ];
 
     public function getSlugOptions(): SlugOptions
