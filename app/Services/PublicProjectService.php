@@ -11,23 +11,20 @@ class PublicProjectService
   /**
    * Guarda la imagen y crea el proyecto.
    */
-  public function store(string $name, UploadedFile $image): PublicProject
+  public function store(array $data, UploadedFile $image): PublicProject
   {
     $path = $image->store('public_projects', 'public');
 
-    return PublicProject::create([
-      'name'       => $name,
-      'image_path' => $path,
-    ]);
+    return PublicProject::create(array_merge($data, [
+      'image_path' => $path
+    ]));
   }
 
   /**
    * Actualiza nombre y opcionalmente reemplaza la imagen.
    */
-  public function update(PublicProject $project, string $name, ?UploadedFile $image = null): PublicProject
+  public function update(PublicProject $project, array $data, ?UploadedFile $image = null): PublicProject
   {
-    $data = ['name' => $name];
-
     if ($image) {
       // Eliminar imagen anterior
       Storage::disk('public')->delete($project->image_path);

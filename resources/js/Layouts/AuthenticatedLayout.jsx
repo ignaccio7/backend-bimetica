@@ -84,45 +84,6 @@ export default function AuthenticatedLayout({ header, children }) {
                         </NavLink>
                     </div>
 
-                    <h3 className="text-secondary-400 text-step-2 font-semibold">
-                        Proyectos
-                    </h3>
-
-                    <div className="links flex flex-col gap-1">
-                        <NavLink
-                            href={route("project.index")}
-                            active={route().current("project.index")}
-                        >
-                            <IconBuilding />
-                            Nuestros proyectos
-                        </NavLink>
-                        <NavLink
-                            href={route("project.resources")}
-                            active={route().current("project.resources")}
-                        >
-                            <IconLibrary />
-                            Nuestros recursos
-                        </NavLink>
-                        {rol === "admin" && (
-                            <>
-                                <NavLink
-                                    href={route("project.list")}
-                                    active={route().current("project.list")}
-                                >
-                                    <IconBlocks />
-                                    Gestionar proyectos
-                                </NavLink>
-                                <NavLink
-                                    href={route("project.create")}
-                                    active={route().current("project.create")}
-                                >
-                                    <IconCubPlus />
-                                    Crear proyecto
-                                </NavLink>
-                            </>
-                        )}
-                    </div>
-
                     {rol === "admin" && (
                         <>
                             <h3 className="text-secondary-400 text-step-2 font-semibold">
@@ -164,6 +125,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconPlus />
                                     Crear nuevo
                                 </NavLink>
+                                <NavLink
+                                    href={route("project.resources")}
+                                    active={route().current(
+                                        "project.resources",
+                                    )}
+                                >
+                                    <IconLibrary />
+                                    Nuestros recursos
+                                </NavLink>
                                 {/* <NavLink
                             href={route("service.index")}
                             active={route().current("service.index")}
@@ -198,6 +168,38 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </>
                     )}
+
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Proyectos
+                    </h3>
+
+                    <div className="links flex flex-col gap-1">
+                        <NavLink
+                            href={route("project.index")}
+                            active={route().current("project.index")}
+                        >
+                            <IconBuilding />
+                            Nuestros proyectos
+                        </NavLink>
+                        {rol === "admin" && (
+                            <>
+                                <NavLink
+                                    href={route("project.list")}
+                                    active={route().current("project.list")}
+                                >
+                                    <IconBlocks />
+                                    Gestionar proyectos
+                                </NavLink>
+                                <NavLink
+                                    href={route("project.create")}
+                                    active={route().current("project.create")}
+                                >
+                                    <IconCubPlus />
+                                    Crear proyecto
+                                </NavLink>
+                            </>
+                        )}
+                    </div>
                 </nav>
             </div>
 

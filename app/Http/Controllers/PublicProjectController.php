@@ -29,6 +29,22 @@ class PublicProjectController extends Controller
         ]);
     }
 
+    public function list()
+    {
+        $projects = PublicProject::latest()->where('status', 'active')->get()->map(function ($project) {
+            return [
+                'id'        => $project->id,
+                'name'      => $project->name,
+                'image_url' => $project->image_url,
+                'status'    => $project->status,
+            ];
+        });
+
+        return response()->json(
+            $projects
+        );
+    }
+
     public function create(): Response
     {
         return Inertia::render('PublicProject/Create');
@@ -41,9 +57,10 @@ class PublicProjectController extends Controller
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'status' => 'required|in:active,disabled'
         ]);
 
-        $this->service->store($validated['name'], $request->file('image'));
+        $this->service->store($validated, $request->file('image'));
 
         return redirect()->route('public-project.index');
     }
@@ -54,6 +71,7 @@ class PublicProjectController extends Controller
             'project' => [
                 'id'        => $publicProject->id,
                 'name'      => $publicProject->name,
+                'status'    => $publicProject->status,
                 'image_url' => $publicProject->image_url,
             ],
         ]);
@@ -64,11 +82,12 @@ class PublicProjectController extends Controller
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'status' => 'required|in:active,disabled'
         ]);
 
         $this->service->update(
             $publicProject,
-            $validated['name'],
+            $validated,
             $request->hasFile('image') ? $request->file('image') : null
         );
 
