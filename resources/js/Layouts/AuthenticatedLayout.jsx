@@ -23,16 +23,16 @@ export default function AuthenticatedLayout({ header, children }) {
     const rol = user.role || "user";
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="h-screen bg-gray-100">
             {/* Sidebar para desktop - Fijo a la izquierda */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-64 bg-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
+                className={`fixed inset-y-0 left-0 z-50 w-64 h-screen bg-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
                 {/* Logo */}
-                <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-                    <Link href="/">
+                <div className="flex items-center justify-between px-6 border-b border-gray-200 basis-14 md:basis-16 shrink-0">
+                    <Link href="/" className="">
                         {/* <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" /> */}
                         <img
                             src="/bimetica_logo.png"
@@ -62,7 +62,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
 
                 {/* Navegación */}
-                <nav className="px-4 py-6 space-y-1 grow bg-primary-500 flex flex-col gap-2">
+                <nav className="px-4 py-6 space-y-1 grow bg-primary-500 flex flex-col gap-2 h-full overflow-y-auto pb-10">
                     <h3 className="text-secondary-400 text-step-2 font-semibold">
                         Principal
                     </h3>
@@ -98,13 +98,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconTeam />
                                     Gestionar usuarios
                                 </NavLink>
-                                <NavLink
+                                {/* <NavLink
                                     href={route("user.create")}
                                     active={route().current("user.create")}
                                 >
                                     <IconUserPlus />
                                     Crear usuario
-                                </NavLink>
+                                </NavLink> */}
                             </div>
                             <h3 className="text-secondary-400 text-step-2 font-semibold">
                                 Servicios
@@ -118,13 +118,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconHome />
                                     Gestionar servicios
                                 </NavLink>
-                                <NavLink
+                                {/* <NavLink
                                     href={route("service.create")}
                                     active={route().current("service.create")}
                                 >
                                     <IconPlus />
                                     Crear nuevo
-                                </NavLink>
+                                </NavLink> */}
                                 <NavLink
                                     href={route("resource.viewer")}
                                     active={route().current("resource.viewer")}
@@ -140,6 +140,28 @@ export default function AuthenticatedLayout({ header, children }) {
                             Construcción
                         </NavLink> */}
                             </div>
+
+                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                                Recursos
+                            </h3>
+
+                            <div className="links flex flex-col gap-1">
+                                <NavLink
+                                    href={route("resource.index")}
+                                    active={route().current("resource.index")}
+                                >
+                                    <IconBuilding />
+                                    Gestionar recursos
+                                </NavLink>
+                                {/* <NavLink
+                                    href={route("resource.create")}
+                                    active={route().current("resource.create")}
+                                >
+                                    <IconCubPlus />
+                                    Crear recurso
+                                </NavLink> */}
+                            </div>
+
                             <h3 className="text-secondary-400 text-step-2 font-semibold">
                                 Proyectos Publicos
                             </h3>
@@ -154,7 +176,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconBuilding />
                                     Gestionar proyectos
                                 </NavLink>
-                                <NavLink
+                                {/* <NavLink
                                     href={route("public-project.create")}
                                     active={route().current(
                                         "public-project.create",
@@ -162,28 +184,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     <IconCubPlus />
                                     Crear proyecto
-                                </NavLink>
-                            </div>
-
-                            <h3 className="text-secondary-400 text-step-2 font-semibold">
-                                Recursos
-                            </h3>
-
-                            <div className="links flex flex-col gap-1">
-                                <NavLink
-                                    href={route("resource.index")}
-                                    active={route().current("resource.index")}
-                                >
-                                    <IconBuilding />
-                                    Gestionar recursos
-                                </NavLink>
-                                <NavLink
-                                    href={route("resource.create")}
-                                    active={route().current("resource.create")}
-                                >
-                                    <IconCubPlus />
-                                    Crear recurso
-                                </NavLink>
+                                </NavLink> */}
                             </div>
                         </>
                     )}
@@ -193,13 +194,6 @@ export default function AuthenticatedLayout({ header, children }) {
                     </h3>
 
                     <div className="links flex flex-col gap-1">
-                        <NavLink
-                            href={route("project.index")}
-                            active={route().current("project.index")}
-                        >
-                            <IconBuilding />
-                            Nuestros proyectos
-                        </NavLink>
                         {rol === "admin" && (
                             <>
                                 <NavLink
@@ -209,15 +203,22 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconBlocks />
                                     Gestionar proyectos
                                 </NavLink>
-                                <NavLink
+                                {/* <NavLink
                                     href={route("project.create")}
                                     active={route().current("project.create")}
                                 >
                                     <IconCubPlus />
                                     Crear proyecto
-                                </NavLink>
+                                </NavLink> */}
                             </>
                         )}
+                        <NavLink
+                            href={route("project.index")}
+                            active={route().current("project.index")}
+                        >
+                            <IconBuilding />
+                            Nuestros proyectos
+                        </NavLink>
                     </div>
                 </nav>
             </div>
@@ -233,7 +234,7 @@ export default function AuthenticatedLayout({ header, children }) {
             {/* Contenido principal con margen para el sidebar en desktop */}
             <div className="lg:pl-64">
                 {/* Header superior */}
-                <nav className="border-b border-gray-100 bg-white sticky top-0 z-50">
+                <nav className="border-b border-gray-100 bg-white sticky top-0 z-50 h-14 md:h-16">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
                             {/* Botón hamburguesa en móvil */}
