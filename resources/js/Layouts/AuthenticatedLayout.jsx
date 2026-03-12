@@ -126,10 +126,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Crear nuevo
                                 </NavLink>
                                 <NavLink
-                                    href={route("project.resources")}
-                                    active={route().current(
-                                        "project.resources",
-                                    )}
+                                    href={route("resource.viewer")}
+                                    active={route().current("resource.viewer")}
                                 >
                                     <IconLibrary />
                                     Nuestros recursos
@@ -164,6 +162,27 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     <IconCubPlus />
                                     Crear proyecto
+                                </NavLink>
+                            </div>
+
+                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                                Recursos
+                            </h3>
+
+                            <div className="links flex flex-col gap-1">
+                                <NavLink
+                                    href={route("resource.index")}
+                                    active={route().current("resource.index")}
+                                >
+                                    <IconBuilding />
+                                    Gestionar recursos
+                                </NavLink>
+                                <NavLink
+                                    href={route("resource.create")}
+                                    active={route().current("resource.create")}
+                                >
+                                    <IconCubPlus />
+                                    Crear recurso
                                 </NavLink>
                             </div>
                         </>

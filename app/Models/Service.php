@@ -34,4 +34,9 @@ class Service extends Model
     {
         return 'slug';
     }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class)->orderBy('order');
+    }
 }

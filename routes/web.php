@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PublicProjectController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -64,7 +65,7 @@ Route::middleware('auth')->group(function () {
         ->name('project.gallery.image');
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
-    Route::get('/resources', [ProjectController::class, 'resources'])->name('project.resources');
+    // Route::get('/resources', [ProjectController::class, 'resources'])->name('project.resources');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
 
     // Public Projects Routes
@@ -74,6 +75,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/public-projects/{publicProject}/edit', [PublicProjectController::class, 'edit'])->name('public-project.edit');
     Route::put('/public-projects/{publicProject}', [PublicProjectController::class, 'update'])->name('public-project.update');
     Route::delete('/public-projects/{publicProject}', [PublicProjectController::class, 'destroy'])->name('public-project.destroy');
+
+    // ADMIN — CRUD de recursos
+    Route::get('/resources/manage', [ResourceController::class, 'index'])->name('resource.index');
+    Route::get('/resources/create', [ResourceController::class, 'create'])->name('resource.create');
+    Route::post('/resources', [ResourceController::class, 'store'])->name('resource.store');
+    Route::get('/resources/{resource}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
+    Route::put('/resources/{resource}', [ResourceController::class, 'update'])->name('resource.update');
+    Route::delete('/resources/{resource}', [ResourceController::class, 'destroy'])->name('resource.destroy');
+
+    // Sirve el PDF privado
+    Route::get('/resources/{resource}/pdf', [ResourceController::class, 'pdf'])->name('resource.pdf');
+
+    // Vista usuario
+    Route::get('/resources', [ResourceController::class, 'viewer'])->name('resource.viewer');
 });
 
 require __DIR__ . '/auth.php';
