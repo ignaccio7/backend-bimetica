@@ -435,7 +435,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                             mobileScrollSupport={false}
                             onFlip={(e) => {
                                 if (isPrevTurnRef.current) {
-                                    isPrevTurnRef.current = false; // resetear flag, ignorar este evento
+                                    isPrevTurnRef.current = false;
                                     return;
                                 }
                                 console.log("[onFlip] nueva página:", e.data);
