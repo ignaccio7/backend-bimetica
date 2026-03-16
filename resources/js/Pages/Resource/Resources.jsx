@@ -1,6 +1,6 @@
 // resources/js/Pages/Resource/Resources.jsx
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, useEffect, Fragment } from "react";
+import { useState, Fragment } from "react";
 import {
     Dialog,
     DialogPanel,
@@ -10,6 +10,7 @@ import {
 } from "@headlessui/react";
 import PdfToImages from "@/Components/ui/PdfToImages";
 import Magazine from "@/Pages/Project/components/Magazine";
+import Gallery360 from "@/Pages/Project/components/Gallery";
 
 const COLORS = [
     { color: "#9AC72D", hover: "#7E9B1F" },
@@ -19,6 +20,7 @@ const COLORS = [
     { color: "#2A7A6F", hover: "#1A5A51" },
 ];
 
+// ─── Tarjeta PDF ──────────────────────────────────────────────────────────────
 function ResourceCard({ resource }) {
     const [images, setImages] = useState([]);
 
@@ -32,9 +34,9 @@ function ResourceCard({ resource }) {
                 borderRadius: "0.75rem",
                 border: "1px solid #e2e8f0",
                 padding: "1rem",
+                height: "100%",
             }}
         >
-            {/* Título */}
             {resource.title && (
                 <h3
                     style={{
@@ -48,7 +50,6 @@ function ResourceCard({ resource }) {
                 </h3>
             )}
 
-            {/* Categorías */}
             {resource.categories?.length > 0 && (
                 <ul
                     style={{
@@ -86,8 +87,7 @@ function ResourceCard({ resource }) {
                 </ul>
             )}
 
-            {/* PDF → Magazine — igual que en Show.jsx */}
-            {resource.pdf_url && (
+            {resource.pdf_url ? (
                 <div style={{ overflow: "hidden" }}>
                     <PdfToImages
                         pdfUrl={resource.pdf_url}
@@ -100,9 +100,7 @@ function ResourceCard({ resource }) {
                         />
                     )}
                 </div>
-            )}
-
-            {!resource.pdf_url && (
+            ) : (
                 <div
                     style={{
                         display: "flex",
@@ -121,13 +119,141 @@ function ResourceCard({ resource }) {
     );
 }
 
+// ─── Tarjeta Galería 360° ─────────────────────────────────────────────────────
+function GalleryCard({ gallery }) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+                backgroundColor: "#f8fafc",
+                borderRadius: "0.75rem",
+                border: "1px solid #e2e8f0",
+                padding: "1rem",
+                // ✅ Contiene el desbordamiento
+                overflow: "hidden",
+                width: "100%",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                {gallery.title && (
+                    <h3
+                        style={{
+                            fontSize: "0.95rem",
+                            fontWeight: "700",
+                            color: "#1e293b",
+                            margin: 0,
+                        }}
+                    >
+                        {gallery.title}
+                    </h3>
+                )}
+                <span
+                    style={{
+                        fontSize: "0.65rem",
+                        fontWeight: "700",
+                        color: "#fff",
+                        backgroundColor: "#9AC72D",
+                        padding: "0.15rem 0.5rem",
+                        borderRadius: "9999px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                        flexShrink: 0,
+                        marginLeft: "0.5rem",
+                    }}
+                >
+                    360°
+                </span>
+            </div>
+
+            {gallery.images?.length > 0 ? (
+                // ✅ Wrapper que fuerza ancho relativo al modal
+                <div
+                    style={{
+                        width: "100%",
+                        overflow: "hidden",
+                        // Reduce la altura del swiper principal dentro del modal
+                        "--gallery-height": "350px",
+                    }}
+                >
+                    <Gallery360 images={gallery.images} mainHeight={350} />
+                </div>
+            ) : (
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "60px",
+                        fontSize: "0.75rem",
+                        color: "#cbd5e1",
+                        fontStyle: "italic",
+                    }}
+                >
+                    Sin imágenes
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Sección con título separador ─────────────────────────────────────────────
+function SectionDivider({ label, count }) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                margin: "0.5rem 0",
+            }}
+        >
+            <span
+                style={{
+                    fontSize: "0.7rem",
+                    fontWeight: "700",
+                    color: "#94a3b8",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    whiteSpace: "nowrap",
+                }}
+            >
+                {label}
+            </span>
+            <span
+                style={{
+                    fontSize: "0.65rem",
+                    backgroundColor: "#f1f5f9",
+                    color: "#94a3b8",
+                    padding: "0.1rem 0.5rem",
+                    borderRadius: "9999px",
+                    fontWeight: "600",
+                }}
+            >
+                {count}
+            </span>
+            <div
+                style={{ flex: 1, height: "1px", backgroundColor: "#e2e8f0" }}
+            />
+        </div>
+    );
+}
+
 // ─── Modal del servicio ───────────────────────────────────────────────────────
 function ServiceModal({ service, isOpen, onClose }) {
     if (!service) return null;
 
-    console.log(service);
-
     const resources = service.resources ?? [];
+    const galleries = service.galleries ?? [];
+    const hasResources = resources.length > 0;
+    const hasGalleries = galleries.length > 0;
 
     return (
         <Transition show={isOpen} as={Fragment}>
@@ -204,23 +330,51 @@ function ServiceModal({ service, isOpen, onClose }) {
                                     >
                                         {service.title}
                                     </DialogTitle>
-                                    <span
+                                    <div
                                         style={{
-                                            fontSize: "0.75rem",
-                                            color: "#94a3b8",
-                                            backgroundColor: "#f1f5f9",
-                                            padding: "0.25rem 0.625rem",
-                                            borderRadius: "9999px",
+                                            display: "flex",
+                                            gap: "0.5rem",
                                         }}
                                     >
-                                        {resources.length}{" "}
-                                        {resources.length === 1
-                                            ? "recurso"
-                                            : "recursos"}
-                                    </span>
+                                        {hasResources && (
+                                            <span
+                                                style={{
+                                                    fontSize: "0.75rem",
+                                                    color: "#6366f1",
+                                                    backgroundColor: "#eef2ff",
+                                                    padding: "0.25rem 0.625rem",
+                                                    borderRadius: "9999px",
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {resources.length} PDF
+                                                {resources.length !== 1
+                                                    ? "s"
+                                                    : ""}
+                                            </span>
+                                        )}
+                                        {hasGalleries && (
+                                            <span
+                                                style={{
+                                                    fontSize: "0.75rem",
+                                                    color: "#16a34a",
+                                                    backgroundColor: "#f0fdf4",
+                                                    padding: "0.25rem 0.625rem",
+                                                    borderRadius: "9999px",
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {galleries.length} galería
+                                                {galleries.length !== 1
+                                                    ? "s"
+                                                    : ""}{" "}
+                                                360°
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
-                                {/* Grid 2 columnas — último impar ocupa las 2 */}
+                                {/* CSS grid compartido */}
                                 <style>{`
                                     .resource-grid {
                                         display: grid;
@@ -239,27 +393,86 @@ function ServiceModal({ service, isOpen, onClose }) {
                                     }
                                 `}</style>
 
-                                <div className="resource-grid">
-                                    {resources.map((resource, i) => {
-                                        const isLastOdd =
-                                            resources.length % 2 !== 0 &&
-                                            i === resources.length - 1;
-                                        return (
-                                            <div
-                                                key={resource.id}
-                                                className={
-                                                    isLastOdd
-                                                        ? "resource-last-odd"
-                                                        : ""
-                                                }
-                                            >
-                                                <ResourceCard
-                                                    resource={resource}
+                                {/* ── SECCIÓN PDFs ── */}
+                                {hasResources && (
+                                    <div
+                                        style={{
+                                            marginBottom: hasGalleries
+                                                ? "2rem"
+                                                : 0,
+                                        }}
+                                    >
+                                        <SectionDivider
+                                            label="Recursos PDF"
+                                            count={resources.length}
+                                        />
+                                        <div
+                                            className="resource-grid"
+                                            style={{ marginTop: "1rem" }}
+                                        >
+                                            {resources.map((resource, i) => {
+                                                const isLastOdd =
+                                                    resources.length % 2 !==
+                                                        0 &&
+                                                    i === resources.length - 1;
+                                                return (
+                                                    <div
+                                                        key={resource.id}
+                                                        className={
+                                                            isLastOdd
+                                                                ? "resource-last-odd"
+                                                                : ""
+                                                        }
+                                                    >
+                                                        <ResourceCard
+                                                            resource={resource}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ── SECCIÓN GALERÍAS 360° ── */}
+                                {hasGalleries && (
+                                    <div>
+                                        <SectionDivider
+                                            label="Galerías 360°"
+                                            count={galleries.length}
+                                        />
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                gap: "1.25rem",
+                                                marginTop: "1rem",
+                                            }}
+                                        >
+                                            {galleries.map((gallery) => (
+                                                <GalleryCard
+                                                    key={gallery.id}
+                                                    gallery={gallery}
                                                 />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Sin contenido */}
+                                {!hasResources && !hasGalleries && (
+                                    <div
+                                        style={{
+                                            textAlign: "center",
+                                            color: "#cbd5e1",
+                                            padding: "3rem",
+                                            fontStyle: "italic",
+                                        }}
+                                    >
+                                        Este servicio no tiene recursos
+                                        registrados.
+                                    </div>
+                                )}
 
                                 {/* Cerrar */}
                                 <div

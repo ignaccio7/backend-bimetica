@@ -117,10 +117,14 @@ class ResourceController extends Controller
     // Vista para usuarios — manda todo via Inertia, sin fetch separado
     public function viewer(): Response
     {
-        $services = Service::with(['resources' => function ($q) {
-            $q->orderBy('order');
-        }])
-            ->whereHas('resources')
+        $services = Service::with([
+            'resources' => fn($q) => $q->orderBy('order'),
+            'galleries' => fn($q) => $q->orderBy('order'),
+        ])
+            ->where(function ($q) {
+                $q->whereHas('resources')
+                    ->orWhereHas('galleries');
+            })
             ->get(['id', 'title', 'slug', 'type'])
             ->map(function ($service) {
                 return [
@@ -133,6 +137,20 @@ class ResourceController extends Controller
                         'orientation' => $r->orientation,
                         'order'       => $r->order,
                         'pdf_url'     => route('resource.pdf', $r),
+                    ]),
+                    'galleries' => $service->galleries->map(fn($g) => [
+                        'id'     => $g->id,
+                        'title'  => $g->title,
+                        'order'  => $g->order,
+                        'images' => collect($g->images ?? [])
+                            ->map(fn($path, $i) => [
+                                'id'  => $i,
+                                'url' => route('resource-gallery.image', [
+                                    'gallery' => $g->id,
+                                    'index'   => $i,
+                                ]),
+                            ])
+                            ->values(),
                     ]),
                 ];
             });

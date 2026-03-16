@@ -151,7 +151,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current("resource.index")}
                                 >
                                     <IconBuilding />
-                                    Gestionar recursos
+                                    Gestionar pdfs
+                                </NavLink>
+                                <NavLink
+                                    href={route("resource-gallery.index")}
+                                    active={route().current(
+                                        "resource-gallery.index",
+                                    )}
+                                >
+                                    <IconBuilding />
+                                    Gestionar galerias
                                 </NavLink>
                                 {/* <NavLink
                                     href={route("resource.create")}

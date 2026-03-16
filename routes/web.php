@@ -5,6 +5,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\ResourceGalleryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -78,13 +79,31 @@ Route::middleware('auth')->group(function () {
     Route::put('/public-projects/{publicProject}', [PublicProjectController::class, 'update'])->name('public-project.update');
     Route::delete('/public-projects/{publicProject}', [PublicProjectController::class, 'destroy'])->name('public-project.destroy');
 
-    // ADMIN — CRUD de recursos
+    // ADMIN — CRUD DE RECURSOS
+
+    // CRUD de pdfs
     Route::get('/resources/manage', [ResourceController::class, 'index'])->name('resource.index');
     Route::get('/resources/create', [ResourceController::class, 'create'])->name('resource.create');
     Route::post('/resources', [ResourceController::class, 'store'])->name('resource.store');
     Route::get('/resources/{resource}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
     Route::put('/resources/{resource}', [ResourceController::class, 'update'])->name('resource.update');
     Route::delete('/resources/{resource}', [ResourceController::class, 'destroy'])->name('resource.destroy');
+
+    // CRUD de galerías
+    Route::get('/resource-galleries/manage', [ResourceGalleryController::class, 'index'])->name('resource-gallery.index');
+    Route::get('/resource-galleries/create', [ResourceGalleryController::class, 'create'])->name('resource-gallery.create');
+    Route::post('/resource-galleries', [ResourceGalleryController::class, 'store'])->name('resource-gallery.store');
+    Route::get('/resource-galleries/{resourceGallery}/edit', [ResourceGalleryController::class, 'edit'])->name('resource-gallery.edit');
+    Route::put('/resource-galleries/{resourceGallery}', [ResourceGalleryController::class, 'update'])->name('resource-gallery.update');
+    Route::delete('/resource-galleries/{resourceGallery}', [ResourceGalleryController::class, 'destroy'])->name('resource-gallery.destroy');
+
+    // Eliminar imagen individual
+    Route::delete('/resource-galleries/{resourceGallery}/images/{index}', [ResourceGalleryController::class, 'destroyImage'])->name('resource-gallery.image.destroy');
+    // Servir imagen privada
+    Route::get('/resource-galleries/{gallery}/images/{index}', [ResourceGalleryController::class, 'image'])->name('resource-gallery.image');
+    // Vista usuario
+    Route::get('/resource-galleries', [ResourceGalleryController::class, 'viewer'])->name('resource-gallery.viewer');
+
 
     // Sirve el PDF privado
     Route::get('/resources/{resource}/pdf', [ResourceController::class, 'pdf'])->name('resource.pdf');
