@@ -63,6 +63,8 @@ Route::middleware('auth')->group(function () {
         ->name('project.cover');
     Route::get('/projects/{project}/gallery/{index}', [ProjectController::class, 'galleryImage'])
         ->name('project.gallery.image');
+    Route::delete('/projects/{project}/gallery/{index}', [ProjectController::class, 'destroyGalleryImage'])
+        ->name('project.gallery.destroy');
     // Projects Routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
     // Route::get('/resources', [ProjectController::class, 'resources'])->name('project.resources');

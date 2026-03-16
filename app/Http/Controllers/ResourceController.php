@@ -49,7 +49,7 @@ class ResourceController extends Controller
 
         Resource::create($validated);
 
-        return redirect()->back()->with('success', 'Recurso creado');
+        return redirect()->route('resource.index')->with('success', 'Recurso creado exitosamente.');
     }
 
     public function edit(Resource $resource): Response

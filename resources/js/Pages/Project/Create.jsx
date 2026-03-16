@@ -79,12 +79,18 @@ export default function CreateProject({ auth }) {
        GALERÍA
     =============================== */
     const handleGalleryChange = (e) => {
-        const files = Array.from(e.target.files);
-        setData("gallery_equirectangular", files);
+        const newFiles = Array.from(e.target.files);
 
-        // Preview
-        const previews = files.map((f) => URL.createObjectURL(f));
-        setGalleryPreviews(previews);
+        // Acumular archivos nuevos a los existentes
+        const updatedFiles = [...data.gallery_equirectangular, ...newFiles];
+        setData("gallery_equirectangular", updatedFiles);
+
+        // Acumular previews nuevos a los existentes
+        const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
+        setGalleryPreviews((prev) => [...prev, ...newPreviews]);
+
+        // Limpiar el input para permitir re-seleccionar el mismo archivo
+        e.target.value = "";
     };
 
     const removeGalleryImage = (index) => {

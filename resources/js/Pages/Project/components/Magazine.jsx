@@ -213,9 +213,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             ref={containerRef}
             style={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "column-reverse",
                 alignItems: "center",
-                gap: "1.5rem",
+                gap: "1rem",
                 padding: isMobile ? "1rem" : "2rem",
                 backgroundColor: isFullscreen ? "#1e293b" : "transparent",
                 minHeight: isFullscreen ? "100vh" : "auto",
@@ -227,75 +227,87 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             <div
                 style={{
                     display: "flex",
-                    gap: isMobile ? "0.5rem" : "1rem",
+                    gap: isMobile ? "0.25rem" : "0.5rem",
                     flexWrap: "wrap",
                     justifyContent: "center",
                     width: "100%",
                 }}
             >
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                        onClick={prevPage}
-                        disabled={isFlipping || zoom > 1}
-                        className="flex flex-row gap-1 items-center"
-                        style={btnStyle(
-                            isFlipping || zoom > 1,
-                            "#3b82f6",
-                            isMobile,
-                        )}
-                    >
-                        <IconChevronLeft />
-                        {isMobile ? "Ant" : "Anterior"}
-                    </button>
-                    <button
-                        onClick={nextPage}
-                        disabled={isFlipping || zoom > 1}
-                        className="flex flex-row gap-1 items-center"
-                        style={btnStyle(
-                            isFlipping || zoom > 1,
-                            "#3b82f6",
-                            isMobile,
-                        )}
-                    >
-                        {isMobile ? "Sig" : "Siguiente"}
-                        <IconChevronRight />
-                    </button>
-                </div>
+                <button
+                    onClick={prevPage}
+                    disabled={isFlipping || zoom > 1}
+                    className="flex flex-col justify-center items-center"
+                    style={btnStyle(
+                        isFlipping || zoom > 1,
+                        "#3b82f6",
+                        isMobile,
+                    )}
+                >
+                    <IconChevronLeft />
+                    {/* <span className="text-[0.65rem]">
+                            {isMobile ? "Ant" : "Anterior"}
+                        </span> */}
+                </button>
+                <button
+                    onClick={nextPage}
+                    disabled={isFlipping || zoom > 1}
+                    className="flex flex-col items-center justify-center"
+                    style={btnStyle(
+                        isFlipping || zoom > 1,
+                        "#3b82f6",
+                        isMobile,
+                    )}
+                >
+                    {/* <span className="text-[0.65rem]">
+                            {isMobile ? "Sig" : "Siguiente"}
+                        </span> */}
+                    <IconChevronRight />
+                </button>
 
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                        onClick={handleZoomOut}
-                        disabled={zoom <= 1}
-                        style={iconBtnStyle(zoom <= 1, "#10b981", isMobile)}
-                    >
-                        <IconZoomOut />
-                        {!isMobile && <span>Alejar</span>}
-                    </button>
-                    <button
-                        onClick={handleZoomIn}
-                        disabled={zoom >= 3}
-                        style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
-                    >
-                        <IconZoomIn />
-                        {!isMobile && <span>Acercar</span>}
-                    </button>
-                    <button
-                        onClick={handleReset}
-                        disabled={zoom === 1}
-                        style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
-                    >
-                        <IconReset />
-                        {!isMobile && <span>Reset</span>}
-                    </button>
-                </div>
+                <button
+                    onClick={handleZoomOut}
+                    disabled={zoom <= 1}
+                    style={iconBtnStyle(zoom <= 1, "#10b981", isMobile)}
+                    className="flex flex-col items-center"
+                >
+                    <IconZoomOut />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Alejar</span>
+                        )} */}
+                </button>
+                <button
+                    onClick={handleZoomIn}
+                    disabled={zoom >= 3}
+                    className="flex flex-col items-center"
+                    style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
+                >
+                    <IconZoomIn />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Acercar</span>
+                        )} */}
+                </button>
+                <button
+                    onClick={handleReset}
+                    disabled={zoom === 1}
+                    className="flex flex-col items-center justify-center"
+                    style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
+                >
+                    <IconReset />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Reset</span>
+                        )} */}
+                </button>
 
                 {/* {!isMobile && ( */}
                 <button
                     onClick={toggleFullscreen}
+                    className="flex flex-col items-center"
                     style={iconBtnStyle(false, "#8b5cf6", isMobile)}
                 >
                     {isFullscreen ? <IconMinimize /> : <IconMaximize />}
-                    <span>{isFullscreen ? "Salir" : "Pantalla Completa"}</span>
+                    {/* <span className="text-[0.65rem]">
+                        {isFullscreen ? "Salir" : "Pantalla Completa"}
+                    </span> */}
                 </button>
                 {/* )} */}
             </div>
@@ -312,21 +324,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     }}
                 >
                     Zoom: {(zoom * 100).toFixed(0)}% • Arrastra para moverte
-                </div>
-            )}
-
-            {isMobile && (
-                <div
-                    style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#8b5cf6",
-                        color: "white",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.75rem",
-                        fontWeight: "600",
-                    }}
-                >
-                    📱 Modo Móvil - Vista de 1 página
                 </div>
             )}
 
@@ -476,7 +473,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
 // Helpers de estilos
 function btnStyle(disabled, color, isMobile) {
     return {
-        padding: isMobile ? "0.5rem 1rem" : "0.75rem 1.5rem",
+        padding: isMobile ? "0.2rem 0.5rem" : "0.5rem 0.5rem",
         backgroundColor: disabled ? "#94a3b8" : color,
         color: "white",
         border: "none",

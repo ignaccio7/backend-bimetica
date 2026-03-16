@@ -241,6 +241,30 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function destroyGalleryImage(Request $request, Project $project, int $index)
+    {
+        $gallery = $project->gallery_equirectangular ?? [];
+
+        if (!isset($gallery[$index])) {
+            abort(404, 'Imagen no encontrada');
+        }
+
+        // Borrar del disco
+        $path = $gallery[$index];
+        if (Storage::disk('private')->exists($path)) {
+            Storage::disk('private')->delete($path);
+        }
+
+        // Reindexar el array
+        array_splice($gallery, $index, 1);
+
+        $project->update([
+            'gallery_equirectangular' => !empty($gallery) ? array_values($gallery) : null,
+        ]);
+
+        return back()->with('success', 'Imagen eliminada');
+    }
+
     /**
      * Update the specified resource in storage.
      */
