@@ -197,25 +197,6 @@ function ServiceAccordion({ service, onDelete }) {
                         </p>
                     </div>
                 </div>
-                <Link
-                    href={route("resource-gallery.create")}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.25rem",
-                        padding: "0.375rem 0.75rem",
-                        backgroundColor: "#4f46e5",
-                        color: "#fff",
-                        borderRadius: "0.375rem",
-                        fontSize: "0.75rem",
-                        fontWeight: "600",
-                        textDecoration: "none",
-                        flexShrink: 0,
-                    }}
-                >
-                    + Galería
-                </Link>
             </button>
 
             <div
@@ -314,7 +295,7 @@ export default function List({ services }) {
                             </div>
                             <Link
                                 href={route("resource-gallery.create")}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-semibold hover:bg-indigo-500 transition-colors duration-200"
+                                className={`inline-flex items-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900`}
                             >
                                 + Nueva galería
                             </Link>

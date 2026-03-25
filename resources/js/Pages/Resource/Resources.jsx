@@ -20,6 +20,15 @@ const COLORS = [
     { color: "#2A7A6F", hover: "#1A5A51" },
 ];
 
+function getColor(index) {
+    if (index < COLORS.length) return COLORS[index];
+    // Distribuye el tono uniformemente en el círculo cromático
+    const hue = (index * 137) % 360; // 137° es el ángulo áureo, evita repeticiones
+    const color = `hsl(${hue}, 55%, 38%)`;
+    const hover = `hsl(${hue}, 55%, 28%)`;
+    return { color, hover };
+}
+
 // ─── Tarjeta PDF ──────────────────────────────────────────────────────────────
 function ResourceCard({ resource }) {
     const [images, setImages] = useState([]);
@@ -550,14 +559,16 @@ export default function Resources({ auth, services }) {
                     <section
                         style={{
                             display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            gap: "1.25rem",
+                            flexWrap: "wrap", // ← los botones bajan a la siguiente fila
+                            justifyContent: "center", // ← centrados horizontalmente
+                            gap: "0.875rem",
+                            maxWidth: "680px", // ← contenedor máximo
+                            margin: "0 auto",
                             padding: "1rem 0 2.5rem",
                         }}
                     >
                         {services.map((service, i) => {
-                            const palette = COLORS[i % COLORS.length];
+                            const palette = getColor(i); // ← usa la nueva función
                             return (
                                 <button
                                     key={service.id}
@@ -583,7 +594,13 @@ export default function Resources({ auth, services }) {
                                         boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
                                         fontSize: "0.875rem",
                                         fontWeight: "600",
-                                        minWidth: "260px",
+                                        // Tamaño según el texto, con límites
+                                        width: "fit-content", // ← se adapta al texto
+                                        minWidth: "140px", // ← mínimo para textos cortos
+                                        maxWidth: "300px", // ← máximo para textos largos
+                                        whiteSpace: "nowrap", // ← evita que el texto se parta
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
                                     }}
                                 >
                                     {service.title}

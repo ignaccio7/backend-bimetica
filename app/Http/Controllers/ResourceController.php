@@ -14,13 +14,26 @@ class ResourceController extends Controller
 {
     public function index(): Response
     {
-        $resources = Resource::with('service')
-            ->orderBy('service_id')
-            ->orderBy('order')
-            ->paginate(10);
+        $services = Service::with(['resources' => fn($q) => $q->orderBy('order')])
+            ->whereHas('resources')
+            ->get(['id', 'title', 'slug'])
+            ->map(function ($service) {
+                return [
+                    'id'        => $service->id,
+                    'title'     => $service->title,
+                    'resources' => $service->resources->map(fn($r) => [
+                        'id'          => $r->id,
+                        'title'       => $r->title,
+                        'order'       => $r->order,
+                        'orientation' => $r->orientation,
+                        'categories'  => $r->categories ?? [],
+                        'pdf_url'     => route('resource.pdf', $r),
+                    ]),
+                ];
+            });
 
         return Inertia::render('Resource/Design/List', [
-            'resources' => $resources,
+            'services' => $services,
         ]);
     }
 

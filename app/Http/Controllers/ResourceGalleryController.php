@@ -73,7 +73,8 @@ class ResourceGalleryController extends Controller
             'images'     => $paths,
         ]);
 
-        return redirect()->back()->with('success', 'Galería creada');
+        return redirect()->route('resource-gallery.index')
+            ->with('success', 'Galería creada');
     }
 
     public function edit(ResourceGallery $resourceGallery): Response

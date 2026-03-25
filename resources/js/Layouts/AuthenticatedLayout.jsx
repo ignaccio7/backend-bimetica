@@ -23,7 +23,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const rol = user.role || "user";
 
     return (
-        <div className="h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100">
             {/* Sidebar para desktop - Fijo a la izquierda */}
             <div
                 className={`fixed inset-y-0 left-0 z-50 w-64 h-screen bg-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
@@ -106,41 +106,47 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Crear usuario
                                 </NavLink> */}
                             </div>
-                            <h3 className="text-secondary-400 text-step-2 font-semibold">
-                                Servicios
-                            </h3>
+                        </>
+                    )}
+                    <h3 className="text-secondary-400 text-step-2 font-semibold">
+                        Servicios
+                    </h3>
 
-                            <div className="links flex flex-col gap-1">
-                                <NavLink
-                                    href={route("service.index")}
-                                    active={route().current("service.index")}
-                                >
-                                    <IconHome />
-                                    Gestionar servicios
-                                </NavLink>
-                                {/* <NavLink
+                    <div className="links flex flex-col gap-1">
+                        {rol === "admin" && (
+                            <NavLink
+                                href={route("service.index")}
+                                active={route().current("service.index")}
+                            >
+                                <IconHome />
+                                Gestionar servicios
+                            </NavLink>
+                        )}
+                        {/* <NavLink
                                     href={route("service.create")}
                                     active={route().current("service.create")}
                                 >
                                     <IconPlus />
                                     Crear nuevo
                                 </NavLink> */}
-                                <NavLink
-                                    href={route("resource.viewer")}
-                                    active={route().current("resource.viewer")}
-                                >
-                                    <IconLibrary />
-                                    Nuestros recursos
-                                </NavLink>
-                                {/* <NavLink
+                        <NavLink
+                            href={route("resource.viewer")}
+                            active={route().current("resource.viewer")}
+                        >
+                            <IconLibrary />
+                            Nuestros recursos
+                        </NavLink>
+                        {/* <NavLink
                             href={route("service.index")}
                             active={route().current("service.index")}
                         >
                             <IconHome />
                             Construcción
                         </NavLink> */}
-                            </div>
+                    </div>
 
+                    {rol === "admin" && (
+                        <>
                             <h3 className="text-secondary-400 text-step-2 font-semibold">
                                 Recursos
                             </h3>
@@ -210,7 +216,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current("project.list")}
                                 >
                                     <IconBlocks />
-                                    Gestionar proyectos
+                                    Gestionar proyectosasdsadsa
                                 </NavLink>
                                 {/* <NavLink
                                     href={route("project.create")}

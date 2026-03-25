@@ -44,6 +44,7 @@ class ProjectController extends Controller
 
     public function list()
     {
+        Log::info('Mostrando lista de proyectos');
         $projects = Project::latest()
             ->select('id', 'title', 'slug', 'pdf_path', 'gallery_equirectangular', 'orientation', 'category', 'status', 'created_at')
             ->get()
