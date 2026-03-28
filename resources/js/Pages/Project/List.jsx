@@ -15,7 +15,7 @@ import ModalConfirm from "@/Components/ui/ModalConfirm";
 import { router } from "@inertiajs/react";
 
 export default function List({ auth, projects }) {
-    console.log(projects);
+    // console.log(projects);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);

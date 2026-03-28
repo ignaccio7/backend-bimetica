@@ -428,7 +428,7 @@ export default function EditProject({ auth, project }) {
                                         </p>
                                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                                             {existingGallery.map((img) => {
-                                                console.log(img);
+                                                // console.log(img);
 
                                                 return (
                                                     <div

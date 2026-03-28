@@ -11,7 +11,7 @@ export default function UpdateProfileInformation({
     className = "",
 }) {
     const user = usePage().props.auth.user;
-    console.log(user);
+    // console.log(user);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
@@ -21,16 +21,16 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-        console.log("Actualizando");
-        console.log("Datos a enviar:", data);
+        // console.log("Actualizando");
+        // console.log("Datos a enviar:", data);
 
         patch(route("profile.update"), {
             preserveScroll: true,
             onSuccess: () => {
-                console.log("Perfil actualizado exitosamente");
+                // console.log("Perfil actualizado exitosamente");
             },
             onError: (errors) => {
-                console.log("Errores:", errors);
+                // console.log("Errores:", errors);
             },
         });
     };

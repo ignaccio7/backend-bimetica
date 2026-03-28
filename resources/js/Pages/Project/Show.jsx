@@ -50,7 +50,7 @@ function getCharIcon(key) {
 }
 
 export default function Show({ auth, project }) {
-    console.log(project);
+    // console.log(project);
 
     const [pdfImages, setPdfImages] = useState([]);
 

@@ -26,7 +26,7 @@ export default function Edit({ service }) {
             : `/storage/${service.image}`
         : "";
 
-    console.log(errors);
+    // console.log(errors);
 
     // Funciones para manejar ITEMS (con título y categorías anidadas)
     const handleAddItem = () => {
@@ -91,8 +91,8 @@ export default function Edit({ service }) {
                 },
                 {
                     forceFormData: true,
-                }
-            )
+                },
+            ),
         );
     };
 
@@ -200,7 +200,7 @@ export default function Edit({ service }) {
                                                 onChange={(e) =>
                                                     handleChangeItemTitle(
                                                         itemIndex,
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -247,7 +247,7 @@ export default function Edit({ service }) {
                                                                     itemIndex,
                                                                     categoryIndex,
                                                                     e.target
-                                                                        .value
+                                                                        .value,
                                                                 )
                                                             }
                                                         />
@@ -256,7 +256,7 @@ export default function Edit({ service }) {
                                                             onClick={() =>
                                                                 handleRemoveCategory(
                                                                     itemIndex,
-                                                                    categoryIndex
+                                                                    categoryIndex,
                                                                 )
                                                             }
                                                             className="bg-red-400 text-white px-3 py-2 rounded-md text-sm hover:bg-red-500"
@@ -272,7 +272,7 @@ export default function Edit({ service }) {
                                                         }
                                                     />
                                                 </div>
-                                            )
+                                            ),
                                         )}
 
                                         <button
@@ -327,7 +327,7 @@ export default function Edit({ service }) {
                                             onChange={(e) =>
                                                 handleChangeBenefit(
                                                     index,
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -402,7 +402,7 @@ export default function Edit({ service }) {
                                             ) {
                                                 setData("image", file);
                                                 setPreview(
-                                                    URL.createObjectURL(file)
+                                                    URL.createObjectURL(file),
                                                 );
                                             }
                                         }}
@@ -423,8 +423,8 @@ export default function Edit({ service }) {
                                                 if (file)
                                                     setPreview(
                                                         URL.createObjectURL(
-                                                            file
-                                                        )
+                                                            file,
+                                                        ),
                                                     );
                                             }}
                                         />

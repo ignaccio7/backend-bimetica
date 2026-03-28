@@ -8,7 +8,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function List({ services }) {
-    console.log(services);
+    // console.log(services);
 
     const [modal, setModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);

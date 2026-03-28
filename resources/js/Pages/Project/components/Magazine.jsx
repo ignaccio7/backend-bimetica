@@ -435,7 +435,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                                     isPrevTurnRef.current = false;
                                     return;
                                 }
-                                console.log("[onFlip] nueva página:", e.data);
+                                // console.log("[onFlip] nueva página:", e.data);
                                 currentPageRef.current = e.data;
                                 setCurrentPage(e.data);
                             }}

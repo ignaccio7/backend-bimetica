@@ -16,8 +16,8 @@ export default function CreateUser({ auth }) {
 
     const submit = (event) => {
         event.preventDefault();
-        console.log("Creando el usuario");
-        console.log(data);
+        // console.log("Creando el usuario");
+        // console.log(data);
 
         post(
             route("user.store", {

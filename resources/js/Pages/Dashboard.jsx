@@ -159,17 +159,17 @@ const MODULES_ADMIN = [
             },
         ],
     },
-    {
-        title: "Proyectos públicos",
-        cards: [
-            {
-                label: "Gestionar proyectos públicos",
-                description: "Administra los proyectos visibles al público",
-                icon: IconBuilding,
-                href: route("public-project.index"),
-            },
-        ],
-    },
+    // {
+    //     title: "Proyectos públicos",
+    //     cards: [
+    //         {
+    //             label: "Gestionar proyectos públicos",
+    //             description: "Administra los proyectos visibles al público",
+    //             icon: IconBuilding,
+    //             href: route("public-project.index"),
+    //         },
+    //     ],
+    // },
     {
         title: "Proyectos",
         cards: [

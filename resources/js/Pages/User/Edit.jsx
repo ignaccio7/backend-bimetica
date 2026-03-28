@@ -6,7 +6,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 
 export default function EditUser({ user }) {
-    console.log(user);
+    // console.log(user);
 
     const { data, setData, put, processing, errors } = useForm({
         name: user.name,
@@ -16,8 +16,8 @@ export default function EditUser({ user }) {
 
     const submit = (event) => {
         event.preventDefault();
-        console.log("Creando el usuario");
-        console.log(data);
+        // console.log("Creando el usuario");
+        // console.log(data);
 
         put(
             route("user.update", {

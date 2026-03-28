@@ -59,7 +59,8 @@ class ServiceController extends Controller
 
         Service::create($validated);
 
-        return redirect()->back()->with('sucess', 'Servicio creado');
+        return redirect()->route('service.index')->with('success', 'Servicio creado');
+        // return redirect()->back()->with('sucess', 'Servicio creado');
     }
 
     /**

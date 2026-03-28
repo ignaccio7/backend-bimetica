@@ -177,11 +177,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </NavLink> */}
                             </div>
 
-                            <h3 className="text-secondary-400 text-step-2 font-semibold">
+                            {/* <h3 className="text-secondary-400 text-step-2 font-semibold">
                                 Proyectos Publicos
-                            </h3>
+                            </h3> */}
 
-                            <div className="links flex flex-col gap-1">
+                            {/* <div className="links flex flex-col gap-1">
                                 <NavLink
                                     href={route("public-project.index")}
                                     active={route().current(
@@ -190,8 +190,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     <IconBuilding />
                                     Gestionar proyectos
-                                </NavLink>
-                                {/* <NavLink
+                                </NavLink> */}
+                            {/* <NavLink
                                     href={route("public-project.create")}
                                     active={route().current(
                                         "public-project.create",
@@ -200,7 +200,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <IconCubPlus />
                                     Crear proyecto
                                 </NavLink> */}
-                            </div>
+                            {/* </div> */}
                         </>
                     )}
 
@@ -216,7 +216,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current("project.list")}
                                 >
                                     <IconBlocks />
-                                    Gestionar proyectosasdsadsa
+                                    Gestionar proyectos
                                 </NavLink>
                                 {/* <NavLink
                                     href={route("project.create")}
