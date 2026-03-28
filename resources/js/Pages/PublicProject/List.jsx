@@ -9,6 +9,7 @@ export default function List({ auth, projects }) {
     const columnas = [
         { campo: "Imagen" },
         { campo: "Nombre del Proyecto" },
+        { campo: "Estado" },
         { campo: "Acciones" },
     ];
 
@@ -25,6 +26,17 @@ export default function List({ auth, projects }) {
             className="h-14 w-20 object-cover rounded-md border border-gray-200"
         />,
         <span className="font-medium">{project.name}</span>,
+        <>
+            {project.status === "active" ? (
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    Activo
+                </span>
+            ) : (
+                <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    Inactivo
+                </span>
+            )}
+        </>,
         <div className="flex gap-2">
             <Link
                 href={route("public-project.edit", project.id)}

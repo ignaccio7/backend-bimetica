@@ -34,4 +34,14 @@ class Service extends Model
     {
         return 'slug';
     }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class)->orderBy('order');
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany(ResourceGallery::class)->orderBy('order');
+    }
 }

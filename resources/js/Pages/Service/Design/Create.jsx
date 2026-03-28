@@ -19,7 +19,7 @@ export default function Create({ className = "" }) {
             image: null,
         });
 
-    console.log(errors);
+    // console.log(errors);
 
     const [preview, setPreview] = useState(null);
 
@@ -91,7 +91,7 @@ export default function Create({ className = "" }) {
         post(route("service.store"), {
             forceFormData: true,
             onSuccess: () => {
-                console.log("Servicio creado");
+                // console.log("Servicio creado");
             },
         });
     };
@@ -200,7 +200,7 @@ export default function Create({ className = "" }) {
                                                 onChange={(e) =>
                                                     handleChangeItemTitle(
                                                         itemIndex,
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -245,7 +245,7 @@ export default function Create({ className = "" }) {
                                                             handleChangeCategory(
                                                                 itemIndex,
                                                                 categoryIndex,
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                     />
@@ -254,7 +254,7 @@ export default function Create({ className = "" }) {
                                                         onClick={() =>
                                                             handleRemoveCategory(
                                                                 itemIndex,
-                                                                categoryIndex
+                                                                categoryIndex,
                                                             )
                                                         }
                                                         className="bg-red-400 text-white px-3 py-2 rounded-md text-sm hover:bg-red-500"
@@ -270,7 +270,7 @@ export default function Create({ className = "" }) {
                                                         }
                                                     />
                                                 </div>
-                                            )
+                                            ),
                                         )}
 
                                         <button
@@ -322,7 +322,7 @@ export default function Create({ className = "" }) {
                                             onChange={(e) =>
                                                 handleChangeBenefit(
                                                     index,
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -398,7 +398,7 @@ export default function Create({ className = "" }) {
                                         setData("image", file);
                                         if (file)
                                             setPreview(
-                                                URL.createObjectURL(file)
+                                                URL.createObjectURL(file),
                                             );
                                     }}
                                 />

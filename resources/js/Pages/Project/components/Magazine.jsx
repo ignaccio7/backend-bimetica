@@ -64,7 +64,10 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         width: 900,
         height: 600,
     });
+    const currentPageRef = useRef(0); // fuente de verdad independiente
     const [currentPage, setCurrentPage] = useState(0);
+    const [isAnimatingPrev, setIsAnimatingPrev] = useState(false);
+    const isPrevTurnRef = useRef(false);
 
     const isMobile = useMediaQuery("(max-width: 767px)");
     const isHorizontal = orientation === "horizontal";
@@ -82,16 +85,15 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
 
                 let height;
                 if (isMobile) {
-                    // En móvil siempre una página, ajustar según orientación
                     height = isHorizontal ? width * 0.7 : width * 1.41;
                 } else {
-                    // En desktop: el libro tiene 2 páginas de ancho
-                    // Para horizontal: cada página es landscape (ancho > alto)
-                    // Para vertical: cada página es portrait (alto > ancho)
                     height = isHorizontal
                         ? (width / 2) * 0.7
                         : (width / 2) * 1.41;
                 }
+
+                const MIN_HEIGHT = isHorizontal ? 300 : 400;
+                height = Math.max(height, MIN_HEIGHT);
 
                 setContainerSize({ width, height });
             }
@@ -106,7 +108,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         if (isFlipping || zoom > 1) return;
         setIsFlipping(true);
         try {
-            bookRef.current?.pageFlip()?.flipNext();
+            const pf = bookRef.current?.pageFlip();
+            pf?.flipNext();
+            // onFlip se dispara correctamente en next, así que no tocamos el ref aquí
         } catch (e) {
             console.error(e);
         }
@@ -115,11 +119,27 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
 
     const prevPage = () => {
         if (isFlipping || zoom > 1) return;
+        if (currentPageRef.current <= 0) return;
         setIsFlipping(true);
-        try {
-            bookRef.current?.pageFlip()?.flipPrev();
-        } catch (e) {
-            console.error(e);
+
+        if (isMobile) {
+            setIsAnimatingPrev(true);
+            setTimeout(() => {
+                const pf = bookRef.current?.pageFlip();
+                const target = Math.max(0, currentPageRef.current - 1);
+                isPrevTurnRef.current = true; // activar flag ANTES del turn
+                pf?.turnToPrevPage();
+                currentPageRef.current = target; // nuestra fuente de verdad
+                setCurrentPage(target);
+                setIsAnimatingPrev(false);
+            }, 150);
+        } else {
+            try {
+                const pf = bookRef.current?.pageFlip();
+                pf?.flipPrev();
+            } catch (e) {
+                console.error(e);
+            }
         }
         setTimeout(() => setIsFlipping(false), 700);
     };
@@ -193,9 +213,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             ref={containerRef}
             style={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "column-reverse",
                 alignItems: "center",
-                gap: "1.5rem",
+                gap: "1rem",
                 padding: isMobile ? "1rem" : "2rem",
                 backgroundColor: isFullscreen ? "#1e293b" : "transparent",
                 minHeight: isFullscreen ? "100vh" : "auto",
@@ -207,79 +227,89 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             <div
                 style={{
                     display: "flex",
-                    gap: isMobile ? "0.5rem" : "1rem",
+                    gap: isMobile ? "0.25rem" : "0.5rem",
                     flexWrap: "wrap",
                     justifyContent: "center",
                     width: "100%",
                 }}
             >
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                        onClick={prevPage}
-                        disabled={isFlipping || zoom > 1}
-                        className="flex flex-row gap-1 items-center"
-                        style={btnStyle(
-                            isFlipping || zoom > 1,
-                            "#3b82f6",
-                            isMobile,
-                        )}
-                    >
-                        <IconChevronLeft />
-                        {isMobile ? "Ant" : "Anterior"}
-                    </button>
-                    <button
-                        onClick={nextPage}
-                        disabled={isFlipping || zoom > 1}
-                        className="flex flex-row gap-1 items-center"
-                        style={btnStyle(
-                            isFlipping || zoom > 1,
-                            "#3b82f6",
-                            isMobile,
-                        )}
-                    >
-                        {isMobile ? "Sig" : "Siguiente"}
-                        <IconChevronRight />
-                    </button>
-                </div>
+                <button
+                    onClick={prevPage}
+                    disabled={isFlipping || zoom > 1}
+                    className="flex flex-col justify-center items-center"
+                    style={btnStyle(
+                        isFlipping || zoom > 1,
+                        "#3b82f6",
+                        isMobile,
+                    )}
+                >
+                    <IconChevronLeft />
+                    {/* <span className="text-[0.65rem]">
+                            {isMobile ? "Ant" : "Anterior"}
+                        </span> */}
+                </button>
+                <button
+                    onClick={nextPage}
+                    disabled={isFlipping || zoom > 1}
+                    className="flex flex-col items-center justify-center"
+                    style={btnStyle(
+                        isFlipping || zoom > 1,
+                        "#3b82f6",
+                        isMobile,
+                    )}
+                >
+                    {/* <span className="text-[0.65rem]">
+                            {isMobile ? "Sig" : "Siguiente"}
+                        </span> */}
+                    <IconChevronRight />
+                </button>
 
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                        onClick={handleZoomOut}
-                        disabled={zoom <= 1}
-                        style={iconBtnStyle(zoom <= 1, "#10b981", isMobile)}
-                    >
-                        <IconZoomOut />
-                        {!isMobile && <span>Alejar</span>}
-                    </button>
-                    <button
-                        onClick={handleZoomIn}
-                        disabled={zoom >= 3}
-                        style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
-                    >
-                        <IconZoomIn />
-                        {!isMobile && <span>Acercar</span>}
-                    </button>
-                    <button
-                        onClick={handleReset}
-                        disabled={zoom === 1}
-                        style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
-                    >
-                        <IconReset />
-                        {!isMobile && <span>Reset</span>}
-                    </button>
-                </div>
+                <button
+                    onClick={handleZoomOut}
+                    disabled={zoom <= 1}
+                    style={iconBtnStyle(zoom <= 1, "#10b981", isMobile)}
+                    className="flex flex-col items-center"
+                >
+                    <IconZoomOut />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Alejar</span>
+                        )} */}
+                </button>
+                <button
+                    onClick={handleZoomIn}
+                    disabled={zoom >= 3}
+                    className="flex flex-col items-center"
+                    style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
+                >
+                    <IconZoomIn />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Acercar</span>
+                        )} */}
+                </button>
+                <button
+                    onClick={handleReset}
+                    disabled={zoom === 1}
+                    className="flex flex-col items-center justify-center"
+                    style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
+                >
+                    <IconReset />
+                    {/* {!isMobile && (
+                            <span className="text-[0.65rem]">Reset</span>
+                        )} */}
+                </button>
 
-                {!isMobile && (
-                    <button
-                        onClick={toggleFullscreen}
-                        style={iconBtnStyle(false, "#8b5cf6", isMobile)}
-                    >
-                        {isFullscreen ? <IconMinimize /> : <IconMaximize />}
-                        <span>
-                            {isFullscreen ? "Salir" : "Pantalla Completa"}
-                        </span>
-                    </button>
-                )}
+                {/* {!isMobile && ( */}
+                <button
+                    onClick={toggleFullscreen}
+                    className="flex flex-col items-center"
+                    style={iconBtnStyle(false, "#8b5cf6", isMobile)}
+                >
+                    {isFullscreen ? <IconMinimize /> : <IconMaximize />}
+                    {/* <span className="text-[0.65rem]">
+                        {isFullscreen ? "Salir" : "Pantalla Completa"}
+                    </span> */}
+                </button>
+                {/* )} */}
             </div>
 
             {zoom > 1 && (
@@ -294,21 +324,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     }}
                 >
                     Zoom: {(zoom * 100).toFixed(0)}% • Arrastra para moverte
-                </div>
-            )}
-
-            {isMobile && (
-                <div
-                    style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#8b5cf6",
-                        color: "white",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.75rem",
-                        fontWeight: "600",
-                    }}
-                >
-                    📱 Modo Móvil - Vista de 1 página
                 </div>
             )}
 
@@ -376,6 +391,11 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                             justifyContent: "center",
                             alignItems: "center",
                             position: "relative",
+                            // Animación CSS cuando retrocede en mobile
+                            transition: isAnimatingPrev
+                                ? "opacity 0.15s ease-out"
+                                : "none",
+                            opacity: isAnimatingPrev ? 0.3 : 1,
                         }}
                     >
                         {/* Bloquea drag interno del flipbook cuando hay zoom */}
@@ -410,7 +430,15 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                             disableFlipByClick={true}
                             clickEventForward={false}
                             mobileScrollSupport={false}
-                            onFlip={(e) => setCurrentPage(e.data)}
+                            onFlip={(e) => {
+                                if (isPrevTurnRef.current) {
+                                    isPrevTurnRef.current = false;
+                                    return;
+                                }
+                                // console.log("[onFlip] nueva página:", e.data);
+                                currentPageRef.current = e.data;
+                                setCurrentPage(e.data);
+                            }}
                             style={{
                                 minHeight: 0,
                                 height: containerSize.height,
@@ -445,7 +473,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
 // Helpers de estilos
 function btnStyle(disabled, color, isMobile) {
     return {
-        padding: isMobile ? "0.5rem 1rem" : "0.75rem 1.5rem",
+        padding: isMobile ? "0.2rem 0.5rem" : "0.5rem 0.5rem",
         backgroundColor: disabled ? "#94a3b8" : color,
         color: "white",
         border: "none",

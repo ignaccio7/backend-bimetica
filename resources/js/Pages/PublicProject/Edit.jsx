@@ -13,6 +13,7 @@ export default function Edit({ auth, project }) {
     const { data, setData, post, processing, errors } = useForm({
         name: project.name,
         image: null,
+        status: project.status,
         _method: "PUT",
     });
 
@@ -44,20 +45,41 @@ export default function Edit({ auth, project }) {
             <Head title="Editar Proyecto Público" />
 
             <div className="py-6">
-                <div className="mx-auto max-w-2xl space-y-6 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="bg-white p-6 shadow sm:rounded-lg">
                         <form onSubmit={submit} className="space-y-5">
-                            {/* Nombre */}
-                            <div>
-                                <InputLabel value="Nombre del Proyecto" />
-                                <TextInput
-                                    className="mt-1 block w-full"
-                                    value={data.name}
-                                    onChange={(e) =>
-                                        setData("name", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors.name} />
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                                {/* Nombre */}
+                                <div className="col-span-1 md:col-span-3">
+                                    <InputLabel value="Nombre del Proyecto" />
+                                    <TextInput
+                                        className="mt-1 block w-full"
+                                        value={data.name}
+                                        onChange={(e) =>
+                                            setData("name", e.target.value)
+                                        }
+                                    />
+                                    <InputError message={errors.name} />
+                                </div>
+                                {/* ===== ESTADO ===== */}
+                                <div>
+                                    <InputLabel value="Estado" />
+                                    <select
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                        value={data.status}
+                                        onChange={(e) =>
+                                            setData("status", e.target.value)
+                                        }
+                                    >
+                                        <option key="active" value="active">
+                                            Activo
+                                        </option>
+                                        <option key="disabled" value="disabled">
+                                            Inactivo
+                                        </option>
+                                    </select>
+                                    <InputError message={errors.status} />
+                                </div>
                             </div>
 
                             {/* Imagen actual */}

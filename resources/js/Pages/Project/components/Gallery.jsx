@@ -11,7 +11,7 @@ import "./gallery.css";
 import "pannellum/build/pannellum.js";
 import "pannellum/build/pannellum.css";
 
-export default function Gallery360({ images }) {
+export default function Gallery360({ images, mainHeight = 600 }) {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const viewerRefs = useRef({});
@@ -75,7 +75,7 @@ export default function Gallery360({ images }) {
                     allowTouchMove={false}
                     simulateTouch={false}
                     noSwiping={true}
-                    style={{ height: "600px" }}
+                    style={{ height: `${mainHeight}px` }}
                 >
                     {images.map((img, index) => (
                         <SwiperSlide key={img.id}>

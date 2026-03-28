@@ -3,7 +3,7 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, router } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 
 const CATEGORIAS = [
@@ -27,22 +27,25 @@ const ESTADOS = [
 
 export default function EditProject({ auth, project }) {
     const [characteristics, setCharacteristics] = useState([]);
-    const [galleryPreviews, setGalleryPreviews] = useState([]);
 
-    /* ===============================
-       FORM — image arranca en null,
-       solo se setea si el usuario sube
-       un archivo nuevo
-    =============================== */
+    // Imágenes YA guardadas en el servidor
+    const [existingGallery, setExistingGallery] = useState([]);
+
+    // Imágenes NUEVAS que el usuario está por subir (solo locales)
+    const [newGalleryFiles, setNewGalleryFiles] = useState([]);
+    const [newGalleryPreviews, setNewGalleryPreviews] = useState([]);
+
+    const [deletingIndex, setDeletingIndex] = useState(null);
+
     const { data, setData, post, processing, errors } = useForm({
-        _method: "PUT", // spoofing para PUT con FormData
+        _method: "PUT",
         title: project.title || "",
         description: project.description || "",
         category: project.category || "",
         status: project.status || "En proceso",
         orientation: project.orientation || "vertical",
         characteristics: "",
-        image: null, // ← nunca string, solo File o null
+        image: null,
         pdf: null,
         gallery_equirectangular: [],
     });
@@ -51,6 +54,7 @@ export default function EditProject({ auth, project }) {
        CARGAR DATOS INICIALES
     =============================== */
     useEffect(() => {
+        // Características
         if (project.characteristics) {
             const rows = Object.entries(project.characteristics).map(
                 ([key, value]) => ({ key, value }),
@@ -59,21 +63,100 @@ export default function EditProject({ auth, project }) {
             setData("characteristics", JSON.stringify(project.characteristics));
         }
 
+        // Galería existente — guardamos índice + url para poder eliminar por índice
         if (project.gallery_equirectangular?.length > 0) {
-            setGalleryPreviews(
-                project.gallery_equirectangular.map((_, i) =>
+            const bust = Date.now();
+            const items = project.gallery_equirectangular.map((_, i) => ({
+                index: i,
+                url:
                     route("project.gallery.image", {
                         project: project.slug,
                         index: i,
-                    }),
-                ),
-            );
+                    }) + `?t=${bust}`,
+            }));
+            setExistingGallery(items);
         }
     }, []);
 
     /* ===============================
+       ELIMINAR IMAGEN EXISTENTE
+    =============================== */
+    const handleDeleteExisting = (serverIndex) => {
+        if (!confirm("¿Eliminar esta imagen del servidor?")) return;
+
+        setDeletingIndex(serverIndex);
+
+        router.delete(
+            route("project.gallery.destroy", {
+                project: project.slug,
+                index: serverIndex,
+            }),
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setExistingGallery((prev) => {
+                        const filtered = prev.filter(
+                            (img) => img.index !== serverIndex,
+                        );
+                        const bust = Date.now(); // ← cache-buster
+                        return filtered.map((img, i) => ({
+                            index: i,
+                            url:
+                                route("project.gallery.image", {
+                                    project: project.slug,
+                                    index: i,
+                                }) + `?t=${bust}`, // ← fuerza nueva petición
+                        }));
+                    });
+                    setDeletingIndex(null);
+                },
+                onError: () => setDeletingIndex(null),
+            },
+        );
+    };
+
+    /* ===============================
+       AGREGAR IMÁGENES NUEVAS (acumulando)
+    =============================== */
+    const handleGalleryChange = (e) => {
+        const incoming = Array.from(e.target.files);
+
+        const updatedFiles = [...newGalleryFiles, ...incoming];
+        setNewGalleryFiles(updatedFiles);
+        setData("gallery_equirectangular", updatedFiles);
+
+        const newPreviews = incoming.map((f) => URL.createObjectURL(f));
+        setNewGalleryPreviews((prev) => [...prev, ...newPreviews]);
+
+        // Limpiar input para permitir re-seleccionar el mismo archivo
+        e.target.value = "";
+    };
+
+    /* ===============================
+       ELIMINAR IMAGEN NUEVA (aún no subida)
+    =============================== */
+    const removeNewGalleryImage = (index) => {
+        const updatedFiles = newGalleryFiles.filter((_, i) => i !== index);
+        const updatedPreviews = newGalleryPreviews.filter(
+            (_, i) => i !== index,
+        );
+
+        setNewGalleryFiles(updatedFiles);
+        setNewGalleryPreviews(updatedPreviews);
+        setData("gallery_equirectangular", updatedFiles);
+    };
+
+    /* ===============================
        CARACTERÍSTICAS
     =============================== */
+    const syncChars = (rows) => {
+        const obj = {};
+        rows.forEach(({ key, value }) => {
+            if (key.trim()) obj[key.trim()] = value;
+        });
+        setData("characteristics", JSON.stringify(obj));
+    };
+
     const addCharacteristic = () => {
         setCharacteristics([...characteristics, { key: "", value: "" }]);
     };
@@ -83,37 +166,17 @@ export default function EditProject({ auth, project }) {
             i === index ? { ...c, [field]: value } : c,
         );
         setCharacteristics(updated);
-
-        const obj = {};
-        updated.forEach(({ key, value }) => {
-            if (key.trim()) obj[key.trim()] = value;
-        });
-        setData("characteristics", JSON.stringify(obj));
+        syncChars(updated);
     };
 
     const removeCharacteristic = (index) => {
         const updated = characteristics.filter((_, i) => i !== index);
         setCharacteristics(updated);
-
-        const obj = {};
-        updated.forEach(({ key, value }) => {
-            if (key.trim()) obj[key.trim()] = value;
-        });
-        setData("characteristics", JSON.stringify(obj));
+        syncChars(updated);
     };
 
     /* ===============================
-       GALERÍA NUEVA
-    =============================== */
-    const handleGalleryChange = (e) => {
-        const files = Array.from(e.target.files);
-        setData("gallery_equirectangular", files);
-        setGalleryPreviews(files.map((f) => URL.createObjectURL(f)));
-    };
-
-    /* ===============================
-       SUBMIT — usa post() con _method:PUT
-       para que FormData funcione en Laravel
+       SUBMIT
     =============================== */
     const submit = (e) => {
         e.preventDefault();
@@ -154,7 +217,7 @@ export default function EditProject({ auth, project }) {
                             <div>
                                 <InputLabel value="Categoría" />
                                 <select
-                                    className="mt-1 block w-full border-gray-300 rounded-md"
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     value={data.category}
                                     onChange={(e) =>
                                         setData("category", e.target.value)
@@ -176,7 +239,7 @@ export default function EditProject({ auth, project }) {
                             <div>
                                 <InputLabel value="Estado" />
                                 <select
-                                    className="mt-1 block w-full border-gray-300 rounded-md"
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     value={data.status}
                                     onChange={(e) =>
                                         setData("status", e.target.value)
@@ -228,7 +291,7 @@ export default function EditProject({ auth, project }) {
                             <div className="md:col-span-2">
                                 <InputLabel value="Descripción" />
                                 <textarea
-                                    className="mt-1 block w-full border-gray-300 rounded-md"
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     rows="4"
                                     value={data.description}
                                     onChange={(e) =>
@@ -241,8 +304,6 @@ export default function EditProject({ auth, project }) {
                             {/* IMAGEN COVER */}
                             <div className="md:col-span-2">
                                 <InputLabel value="Imagen de portada" />
-
-                                {/* Preview de imagen actual (solo lectura) */}
                                 {project.image_path && (
                                     <div className="mb-3">
                                         <p className="text-xs text-gray-500 mb-1">
@@ -259,13 +320,11 @@ export default function EditProject({ auth, project }) {
                                         />
                                     </div>
                                 )}
-
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp"
-                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700"
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                                     onChange={(e) =>
-                                        // Solo asigna si hay archivo seleccionado
                                         setData(
                                             "image",
                                             e.target.files[0] ?? null,
@@ -345,7 +404,7 @@ export default function EditProject({ auth, project }) {
                                 <input
                                     type="file"
                                     accept="application/pdf"
-                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700"
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                                     onChange={(e) =>
                                         setData(
                                             "pdf",
@@ -356,38 +415,111 @@ export default function EditProject({ auth, project }) {
                                 <InputError message={errors.pdf} />
                             </div>
 
-                            {/* GALERÍA */}
+                            {/* ===== GALERÍA ===== */}
                             <div className="md:col-span-2">
-                                <InputLabel value="Agregar nuevas imágenes 360°" />
+                                <InputLabel value="Galería Equirectangular (imágenes 360°)" />
+
+                                {/* — Imágenes YA guardadas en el servidor — */}
+                                {existingGallery.length > 0 && (
+                                    <div className="mb-4">
+                                        <p className="text-xs text-gray-500 mb-2">
+                                            Imágenes actuales — haz clic en ✕
+                                            para eliminar del servidor:
+                                        </p>
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                                            {existingGallery.map((img) => {
+                                                // console.log(img);
+
+                                                return (
+                                                    <div
+                                                        key={img.index}
+                                                        className="relative group"
+                                                    >
+                                                        <img
+                                                            src={img.url}
+                                                            alt={`existing-${img.index}`}
+                                                            className="w-full h-20 object-cover rounded-md border border-gray-200"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            disabled={
+                                                                deletingIndex ===
+                                                                img.index
+                                                            }
+                                                            onClick={() =>
+                                                                handleDeleteExisting(
+                                                                    img.index,
+                                                                )
+                                                            }
+                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-60"
+                                                        >
+                                                            {deletingIndex ===
+                                                            img.index
+                                                                ? "…"
+                                                                : "×"}
+                                                        </button>
+                                                        <p className="text-xs text-center text-gray-400 mt-1">
+                                                            #{img.index + 1}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* — Subir imágenes nuevas — */}
                                 <p className="text-xs text-gray-500 mb-2">
-                                    Las nuevas imágenes se agregan a las
-                                    existentes.
+                                    Agrega más imágenes (se suman a las
+                                    existentes):
                                 </p>
                                 <input
                                     type="file"
-                                    multiple
                                     accept="image/jpeg,image/png,image/webp"
-                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700"
+                                    multiple
+                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                                     onChange={handleGalleryChange}
                                 />
                                 <InputError
                                     message={errors.gallery_equirectangular}
                                 />
 
-                                {galleryPreviews.length > 0 && (
-                                    <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                        {galleryPreviews.map((preview, i) => (
-                                            <div key={i} className="relative">
-                                                <img
-                                                    src={preview}
-                                                    alt={`preview-${i}`}
-                                                    className="w-full h-20 object-cover rounded-md border border-gray-200"
-                                                />
-                                                <p className="text-xs text-center text-gray-400 mt-1">
-                                                    #{i + 1}
-                                                </p>
-                                            </div>
-                                        ))}
+                                {/* Previews de imágenes NUEVAS */}
+                                {newGalleryPreviews.length > 0 && (
+                                    <div className="mt-3">
+                                        <p className="text-xs text-gray-500 mb-2">
+                                            Nuevas imágenes por subir:
+                                        </p>
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                                            {newGalleryPreviews.map(
+                                                (preview, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className="relative group"
+                                                    >
+                                                        <img
+                                                            src={preview}
+                                                            alt={`new-${i}`}
+                                                            className="w-full h-20 object-cover rounded-md border-2 border-green-300"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeNewGalleryImage(
+                                                                    i,
+                                                                )
+                                                            }
+                                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                        <p className="text-xs text-center text-green-500 mt-1 font-medium">
+                                                            nuevo
+                                                        </p>
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </div>

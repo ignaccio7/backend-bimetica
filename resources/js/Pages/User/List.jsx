@@ -9,7 +9,7 @@ export default function Index(
     // { auth, users } = { auth: {}, users: { data: [] } }
     { auth, users },
 ) {
-    console.log(users);
+    // console.log(users);
 
     // 1️⃣ DEFINIR COLUMNAS (headers)
     const columnas = [
@@ -80,7 +80,7 @@ export default function Index(
             </button>
         </div>,
     ]);
-    console.log(contenidoTabla);
+    // console.log(contenidoTabla);
 
     // const contenidoTabla = [[<></>, <></>, <></>, <></>, <></>]];
 

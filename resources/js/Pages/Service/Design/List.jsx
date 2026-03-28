@@ -8,7 +8,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function List({ services }) {
-    console.log(services);
+    // console.log(services);
 
     const [modal, setModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
@@ -33,7 +33,7 @@ export default function List({ services }) {
                     console.log("Servicio eliminado");
                     closeModal();
                 },
-            }
+            },
         );
     };
 
@@ -119,13 +119,14 @@ export default function List({ services }) {
                                 subtitulo={
                                     "Administra los servicios del sistema"
                                 }
-                                acciones={
-                                    [
-                                        // <PrimaryButton>
-                                        //     Registrar nuevo servicio
-                                        // </PrimaryButton>,
-                                    ]
-                                }
+                                acciones={[
+                                    <Link
+                                        href={route("service.create")}
+                                        className={`inline-flex items-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900`}
+                                    >
+                                        + Nuevo Servicio
+                                    </Link>,
+                                ]}
                                 columnas={columnas}
                                 contenidoTabla={contenidoTabla}
                                 paginacion={
