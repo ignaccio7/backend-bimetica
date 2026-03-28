@@ -3,13 +3,14 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import { IconUser } from "@/Icons/icons";
+import { IconEye, IconEyeOff, IconUser } from "@/Icons/icons";
 import GuestLayout from "@/Layouts/GuestLayout";
 import {
     Head,
     // Link,
     useForm,
 } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function Login({
     landingUrl = "",
@@ -20,6 +21,8 @@ export default function Login({
         password: "",
         remember: false,
     });
+
+    const [inputType, setInputType] = useState("password");
 
     const submit = (e) => {
         e.preventDefault();
@@ -83,11 +86,10 @@ export default function Login({
 
                             <div className="mt-0">
                                 {/* <InputLabel htmlFor="password" value="Password" /> */}
-
                                 <TextInput
                                     placeholder="Introduzca su contraseña"
                                     id="password"
-                                    type="password"
+                                    type={inputType}
                                     name="password"
                                     value={data.password}
                                     className="mt-1 block w-full bg-gray-100"
@@ -95,8 +97,32 @@ export default function Login({
                                     onChange={(e) =>
                                         setData("password", e.target.value)
                                     }
+                                    children={
+                                        data.password ? (
+                                            inputType === "password" ? (
+                                                <IconEye
+                                                    className="w-5 h-5 text-gray-500"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        setInputType("text");
+                                                    }}
+                                                />
+                                            ) : (
+                                                <IconEyeOff
+                                                    className="w-5 h-5 text-gray-500"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        setInputType(
+                                                            "password",
+                                                        );
+                                                    }}
+                                                />
+                                            )
+                                        ) : null
+                                    }
                                 />
-
                                 <InputError
                                     message={errors.password}
                                     className="mt-2"

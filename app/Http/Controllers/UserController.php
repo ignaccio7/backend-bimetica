@@ -6,9 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Pest\Support\Str;
 
 class UserController extends Controller
 {
@@ -34,7 +34,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
             'rol' => 'required|string|max:255',
             'password' => 'required|string|max:255|confirmed',
             'password_confirmation' => 'required|string|max:255',
@@ -49,7 +49,8 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')
+            ->with('success', 'Usuario creado correctamente.');
     }
 
     public function edit(User $user)
@@ -63,19 +64,21 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
             'rol' => 'required|string|max:255',
         ]);
 
         $user->update($validated);
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')
+            ->with('success', 'Usuario actualizado correctamente.');
     }
 
     public function destroy(User $user)
     {
         Log::info("Eliminando usuario: " . $user->username);
         $user->delete();
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')
+            ->with('success', 'Usuario eliminado correctamente.');
     }
 
     public function resetPassword(User $user)

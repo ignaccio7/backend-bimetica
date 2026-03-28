@@ -98,7 +98,8 @@ class ResourceController extends Controller
 
         $resource->update($validated);
 
-        return redirect()->route('resource.index');
+        return redirect()->route('resource.index')
+            ->with('success', 'Recurso actualizado exitosamente.');
     }
 
     public function destroy(Resource $resource)
@@ -109,7 +110,8 @@ class ResourceController extends Controller
 
         $resource->delete();
 
-        return redirect()->route('resource.index');
+        return redirect()->route('resource.index')
+            ->with('success', 'Recurso eliminado exitosamente.');
     }
 
     // Sirve el PDF privado — solo autenticados

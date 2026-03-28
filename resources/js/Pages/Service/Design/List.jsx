@@ -57,7 +57,7 @@ export default function List({ services }) {
 
         return [
             service.title,
-            service.description,
+            <p className="min-w-full">{service.description}</p>,
             <div>
                 {service.items?.map((item) => (
                     <div key={item.title} className="mb-2">

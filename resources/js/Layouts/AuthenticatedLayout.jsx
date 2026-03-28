@@ -14,16 +14,24 @@ import {
 } from "@/Icons/icons";
 // import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { flash, errors } = usePage().props;
 
     const rol = user.role || "user";
 
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+    }, [flash, errors]);
+
     return (
         <div className="min-h-screen bg-gray-100">
+            <Toaster position="bottom-right" richColors />
             {/* Sidebar para desktop - Fijo a la izquierda */}
             <div
                 className={`fixed inset-y-0 left-0 z-50 w-64 h-screen bg-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col ${

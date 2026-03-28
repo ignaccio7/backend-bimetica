@@ -42,7 +42,7 @@ class ServiceController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'required|string|max:5000',
             'type' => 'required|string',
             'items' => 'nullable|array',
             'items.*.title' => 'required|string',
@@ -59,7 +59,8 @@ class ServiceController extends Controller
 
         Service::create($validated);
 
-        return redirect()->route('service.index')->with('success', 'Servicio creado');
+        return redirect()->route('service.index')
+            ->with('success', 'Servicio creado correctamente.');
         // return redirect()->back()->with('sucess', 'Servicio creado');
     }
 
@@ -94,7 +95,7 @@ class ServiceController extends Controller
         Log::info($request->hasFile('image'));
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'required|string|max:5000',
             'type' => 'required|string',
             'items' => 'nullable|array',
             'items.*.title' => 'required|string',
@@ -120,7 +121,8 @@ class ServiceController extends Controller
         $service->update($validated);
 
         // return redirect()->back()->with('sucess', 'Servicio actualizado');
-        return redirect()->route('service.index');
+        return redirect()->route('service.index')
+            ->with('success', 'Servicio actualizado correctamente.');
     }
 
     /**
@@ -133,7 +135,8 @@ class ServiceController extends Controller
         }
 
         $service->delete();
-        return redirect()->route('service.index');
+        return redirect()->route('service.index')
+            ->with('success', 'Servicio eliminado correctamente.');
     }
 
     public function list(string $type)

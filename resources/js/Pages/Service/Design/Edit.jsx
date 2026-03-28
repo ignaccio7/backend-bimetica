@@ -366,7 +366,7 @@ export default function Edit({ service }) {
                                     </p>
 
                                     <img
-                                        src={preview || currentImageUrl}
+                                        src={currentImageUrl}
                                         alt="Imagen del servicio"
                                         className="w-40 h-40 object-cover rounded-lg shadow"
                                     />

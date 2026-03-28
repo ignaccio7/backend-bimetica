@@ -97,7 +97,7 @@ export default function EditUser({ user }) {
                                         type="submit"
                                         className="w-fit px-6 col-span-1 md:col-span-2"
                                     >
-                                        Crear usuario
+                                        Actualizar usuario
                                     </PrimaryButton>
                                 </form>
                             </div>

@@ -129,7 +129,8 @@ class ResourceGalleryController extends Controller
             'images'     => $paths,
         ]);
 
-        return redirect()->route('resource-gallery.index');
+        return redirect()->route('resource-gallery.index')
+            ->with('success', 'Galería actualizada exitosamente.');
     }
 
     // Eliminar una imagen individual de la galería (igual que project.gallery.destroy)
@@ -165,7 +166,8 @@ class ResourceGalleryController extends Controller
 
         $resourceGallery->delete();
 
-        return redirect()->route('resource-gallery.index');
+        return redirect()->route('resource-gallery.index')
+            ->with('success', 'Galería eliminada exitosamente.');
     }
 
     // Sirve imagen privada — solo autenticados
