@@ -83,17 +83,9 @@ export default function Edit({ service }) {
 
     const submit = (event) => {
         event.preventDefault();
-        put(
-            route(
-                "service.update",
-                {
-                    service: service.slug,
-                },
-                {
-                    forceFormData: true,
-                },
-            ),
-        );
+        put(route("service.update", { service: service.slug }), {
+            forceFormData: true,
+        });
     };
 
     return (
