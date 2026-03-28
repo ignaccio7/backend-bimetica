@@ -9,8 +9,9 @@ import { Transition } from "@headlessui/react";
 import { useState } from "react";
 
 export default function Edit({ service }) {
-    const { data, setData, put, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
+            _method: "PUT",
             title: service.title,
             description: service.description,
             type: service.type,
@@ -83,7 +84,7 @@ export default function Edit({ service }) {
 
     const submit = (event) => {
         event.preventDefault();
-        put(route("service.update", { service: service.slug }), {
+        post(route("service.update", { service: service.slug }), {
             forceFormData: true,
         });
     };
