@@ -34,7 +34,7 @@ export default function Error({ status }) {
                 </h1>
                 <p className="my-2 text-gray-500">{description}</p>
                 <Link
-                    href={route("dashboard")}
+                    href={"/"}
                     className="mt-8 inline-block bg-primary-500 text-white px-6 py-2 rounded-md hover:bg-primary-600 transition"
                 >
                     Ir al inicio
