@@ -29,7 +29,7 @@ export default forwardRef(function TextInput(
     }, [isFocused]);
 
     return (
-        <div className={"overflow-hidden " + className}>
+        <div className={"relative overflow-hidden " + className}>
             <input
                 {...props}
                 type={type}
