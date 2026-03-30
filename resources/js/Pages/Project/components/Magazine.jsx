@@ -214,26 +214,46 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         <div
             ref={containerRef}
             style={{
+                // ── En fullscreen: ocupa toda la pantalla sin padding ──
                 display: "flex",
-                flexDirection: "column-reverse",
+                flexDirection: isFullscreen ? "column" : "column-reverse",
                 alignItems: "center",
-                gap: "1rem",
-                padding: isMobile ? "1rem" : "2rem",
-                backgroundColor: isFullscreen ? "#1e293b" : "transparent",
+                gap: isFullscreen ? 0 : "1rem",
+                padding: isFullscreen ? 0 : isMobile ? "1rem" : "2rem",
+                backgroundColor: isFullscreen ? "#0f172a" : "transparent",
                 minHeight: isFullscreen ? "100vh" : "auto",
                 justifyContent: isFullscreen ? "center" : "flex-start",
                 width: "100%",
+                position: "relative", // ← necesario para los botones absolutos
             }}
         >
-            {/* Controles */}
+            {/* ── Controles: flotantes en fullscreen, inline en normal ── */}
             <div
-                style={{
-                    display: "flex",
-                    gap: isMobile ? "0.25rem" : "0.5rem",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                    width: "100%",
-                }}
+                style={
+                    isFullscreen
+                        ? {
+                              position: "fixed", // ← fixed para que queden sobre el fullscreen
+                              bottom: "1.5rem",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              zIndex: 100,
+                              display: "flex",
+                              gap: "0.4rem",
+                              flexWrap: "nowrap",
+                              backgroundColor: "rgba(15,23,42,0.7)",
+                              backdropFilter: "blur(8px)",
+                              padding: "0.5rem 0.875rem",
+                              borderRadius: "9999px",
+                              boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+                          }
+                        : {
+                              display: "flex",
+                              gap: isMobile ? "0.25rem" : "0.5rem",
+                              flexWrap: "wrap",
+                              justifyContent: "center",
+                              width: "100%",
+                          }
+                }
             >
                 <button
                     onClick={prevPage}
@@ -246,9 +266,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     )}
                 >
                     <IconChevronLeft />
-                    {/* <span className="text-[0.65rem]">
-                            {isMobile ? "Ant" : "Anterior"}
-                        </span> */}
                 </button>
                 <button
                     onClick={nextPage}
@@ -260,9 +277,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                         isMobile,
                     )}
                 >
-                    {/* <span className="text-[0.65rem]">
-                            {isMobile ? "Sig" : "Siguiente"}
-                        </span> */}
                     <IconChevronRight />
                 </button>
 
@@ -273,9 +287,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     className="flex flex-col items-center"
                 >
                     <IconZoomOut />
-                    {/* {!isMobile && (
-                            <span className="text-[0.65rem]">Alejar</span>
-                        )} */}
                 </button>
                 <button
                     onClick={handleZoomIn}
@@ -284,9 +295,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     style={iconBtnStyle(zoom >= 3, "#10b981", isMobile)}
                 >
                     <IconZoomIn />
-                    {/* {!isMobile && (
-                            <span className="text-[0.65rem]">Acercar</span>
-                        )} */}
                 </button>
                 <button
                     onClick={handleReset}
@@ -295,49 +303,70 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                     style={iconBtnStyle(zoom === 1, "#f59e0b", isMobile)}
                 >
                     <IconReset />
-                    {/* {!isMobile && (
-                            <span className="text-[0.65rem]">Reset</span>
-                        )} */}
                 </button>
 
-                {/* {!isMobile && ( */}
                 <button
                     onClick={toggleFullscreen}
                     className="flex flex-col items-center"
                     style={iconBtnStyle(false, "#8b5cf6", isMobile)}
                 >
                     {isFullscreen ? <IconMinimize /> : <IconMaximize />}
-                    {/* <span className="text-[0.65rem]">
-                        {isFullscreen ? "Salir" : "Pantalla Completa"}
-                    </span> */}
                 </button>
-                {/* )} */}
             </div>
 
+            {/* Zoom indicator — solo visible en fullscreen cuando hay zoom */}
             {zoom > 1 && (
                 <div
-                    style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#3b82f6",
-                        color: "white",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem",
-                        fontWeight: "600",
-                    }}
+                    style={
+                        isFullscreen
+                            ? {
+                                  position: "fixed",
+                                  top: "1rem",
+                                  left: "50%",
+                                  transform: "translateX(-50%)",
+                                  zIndex: 100,
+                                  padding: "0.4rem 1rem",
+                                  backgroundColor: "rgba(59,130,246,0.85)",
+                                  backdropFilter: "blur(6px)",
+                                  color: "white",
+                                  borderRadius: "9999px",
+                                  fontSize: "0.8rem",
+                                  fontWeight: "600",
+                              }
+                            : {
+                                  padding: "0.5rem 1rem",
+                                  backgroundColor: "#3b82f6",
+                                  color: "white",
+                                  borderRadius: "0.5rem",
+                                  fontSize: "0.875rem",
+                                  fontWeight: "600",
+                              }
+                    }
                 >
                     Zoom: {(zoom * 100).toFixed(0)}% • Arrastra para moverte
                 </div>
             )}
 
-            {/* Contenedor del libro */}
+            {/* ── Contenedor del libro ── */}
             <div
                 style={{
                     width: "100%",
-                    maxWidth: isMobile ? "100%" : "1200px",
+                    // En fullscreen ocupa toda la pantalla sin maxWidth ni sombra
+                    maxWidth: isFullscreen
+                        ? "100%"
+                        : isMobile
+                          ? "100%"
+                          : "1200px",
+                    height: isFullscreen ? "100vh" : "auto",
                     overflow: zoom > 1 ? "hidden" : "visible",
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
-                    borderRadius: "0.5rem",
+                    boxShadow: isFullscreen
+                        ? "none"
+                        : "0 10px 40px rgba(0,0,0,0.3)",
+                    borderRadius: isFullscreen ? 0 : "0.5rem",
                     position: "relative",
+                    display: isFullscreen ? "flex" : "block",
+                    alignItems: isFullscreen ? "center" : undefined,
+                    justifyContent: isFullscreen ? "center" : undefined,
                 }}
             >
                 <div
@@ -388,19 +417,20 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                         ref={bookWrapperRef}
                         style={{
                             width: "100%",
-                            height: `${containerSize.height}px`,
+                            // En fullscreen usa toda la altura de la ventana
+                            height: isFullscreen
+                                ? `${window.innerHeight}px`
+                                : `${containerSize.height}px`,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             position: "relative",
-                            // Animación CSS cuando retrocede en mobile
                             transition: isAnimatingPrev
                                 ? "opacity 0.15s ease-out"
                                 : "none",
                             opacity: isAnimatingPrev ? 0.3 : 1,
                         }}
                     >
-                        {/* Bloquea drag interno del flipbook cuando hay zoom */}
                         {zoom > 1 && (
                             <div
                                 style={{
@@ -413,9 +443,13 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                         )}
                         <HTMLFlipBook
                             ref={bookRef}
-                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${orientation}`}
+                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${orientation}-${isFullscreen}`}
                             width={pageWidth}
-                            height={containerSize.height}
+                            height={
+                                isFullscreen
+                                    ? window.innerHeight
+                                    : containerSize.height
+                            }
                             size="stretch"
                             usePortrait={isMobile}
                             minWidth={200}
@@ -437,13 +471,14 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                                     isPrevTurnRef.current = false;
                                     return;
                                 }
-                                // console.log("[onFlip] nueva página:", e.data);
                                 currentPageRef.current = e.data;
                                 setCurrentPage(e.data);
                             }}
                             style={{
                                 minHeight: 0,
-                                height: containerSize.height,
+                                height: isFullscreen
+                                    ? window.innerHeight
+                                    : containerSize.height,
                             }}
                         >
                             {pages.map((img, index) => (
@@ -454,20 +489,23 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 </div>
             </div>
 
-            <p
-                style={{
-                    color: isFullscreen ? "#94a3b8" : "#64748b",
-                    fontSize: isMobile ? "0.75rem" : "0.875rem",
-                    textAlign: "center",
-                    padding: "0 1rem",
-                }}
-            >
-                {zoom > 1
-                    ? "Arrastra para moverte • Los botones de navegación están deshabilitados con zoom"
-                    : isMobile
-                      ? "Desliza o usa los botones para cambiar de página"
-                      : "Haz clic en los bordes laterales para voltear páginas"}
-            </p>
+            {/* Hint texto — oculto en fullscreen para no interferir */}
+            {!isFullscreen && (
+                <p
+                    style={{
+                        color: "#64748b",
+                        fontSize: isMobile ? "0.75rem" : "0.875rem",
+                        textAlign: "center",
+                        padding: "0 1rem",
+                    }}
+                >
+                    {zoom > 1
+                        ? "Arrastra para moverte • Los botones de navegación están deshabilitados con zoom"
+                        : isMobile
+                          ? "Desliza o usa los botones para cambiar de página"
+                          : "Haz clic en los bordes laterales para voltear páginas"}
+                </p>
+            )}
         </div>
     );
 }
