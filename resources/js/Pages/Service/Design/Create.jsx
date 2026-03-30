@@ -9,15 +9,22 @@ import { Transition } from "@headlessui/react";
 import { useState } from "react";
 
 export default function Create({ className = "" }) {
-    const { data, setData, post, processing, errors, recentlySuccessful } =
-        useForm({
-            title: "",
-            description: "",
-            type: "",
-            items: [],
-            benefits: [],
-            image: null,
-        });
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        recentlySuccessful,
+        transform,
+    } = useForm({
+        title: "",
+        description: "",
+        type: "",
+        items: [],
+        benefits: [],
+        image: null,
+    });
 
     // console.log(errors);
 
@@ -84,6 +91,12 @@ export default function Create({ className = "" }) {
             setPreview(URL.createObjectURL(file));
         }
     };
+
+    transform((data) => ({
+        ...data,
+        items: data.items.length > 0 ? data.items : null,
+        benefits: data.benefits.length > 0 ? data.benefits : null,
+    }));
 
     const submit = (e) => {
         e.preventDefault();

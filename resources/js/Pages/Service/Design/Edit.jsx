@@ -9,16 +9,26 @@ import { Transition } from "@headlessui/react";
 import { useState } from "react";
 
 export default function Edit({ service }) {
-    const { data, setData, post, errors, processing, recentlySuccessful } =
-        useForm({
-            _method: "PUT",
-            title: service.title,
-            description: service.description,
-            type: service.type,
-            items: service.items || [],
-            benefits: service.benefits || [],
-            image: null,
-        });
+    const {
+        data,
+        setData,
+        post,
+        errors,
+        processing,
+        recentlySuccessful,
+        transform,
+    } = useForm({
+        _method: "PUT",
+        title: service.title,
+        description: service.description,
+        type: service.type,
+        items: (service.items || []).map((item) => ({
+            title: item.title || "",
+            categories: item.categories || [],
+        })),
+        benefits: service.benefits || [],
+        image: null,
+    });
 
     const [preview, setPreview] = useState(null);
     const currentImageUrl = service.image
@@ -81,6 +91,12 @@ export default function Edit({ service }) {
         updated.splice(index, 1);
         setData("benefits", updated);
     };
+
+    transform((data) => ({
+        ...data,
+        items: data.items.length > 0 ? data.items : null,
+        benefits: data.benefits.length > 0 ? data.benefits : null,
+    }));
 
     const submit = (event) => {
         event.preventDefault();
@@ -173,7 +189,7 @@ export default function Edit({ service }) {
                                 categorías
                             </p>
 
-                            {data.items.map((item, itemIndex) => (
+                            {data.items?.map((item, itemIndex) => (
                                 <div
                                     key={itemIndex}
                                     className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50"
@@ -224,7 +240,7 @@ export default function Edit({ service }) {
                                             className="text-sm"
                                         />
 
-                                        {item.categories.map(
+                                        {item.categories?.map(
                                             (category, categoryIndex) => (
                                                 <div
                                                     key={categoryIndex}
@@ -308,7 +324,7 @@ export default function Edit({ service }) {
                         <div>
                             <InputLabel value="Beneficios" />
 
-                            {data.benefits.map((ben, index) => (
+                            {data.benefits?.map((ben, index) => (
                                 <div
                                     className="flex flex-col gap-2"
                                     key={index}

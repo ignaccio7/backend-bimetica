@@ -114,7 +114,8 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         } catch (e) {
             console.error(e);
         }
-        setTimeout(() => setIsFlipping(false), 700);
+        // setTimeout(() => setIsFlipping(false), 700);
+        setIsFlipping(false);
     };
 
     const prevPage = () => {
@@ -141,7 +142,8 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 console.error(e);
             }
         }
-        setTimeout(() => setIsFlipping(false), 700);
+        // setTimeout(() => setIsFlipping(false), 700);
+        setIsFlipping(false);
     };
 
     const toggleFullscreen = () => {

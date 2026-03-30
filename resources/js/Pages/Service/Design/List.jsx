@@ -73,8 +73,8 @@ export default function List({ services }) {
                 ))}
             </div>,
             <ul className="list-disc pl-5 marker:text-secondary-500">
-                {service.benefits?.map((benefit) => {
-                    return <li key={benefit}>{benefit}</li>;
+                {service.benefits?.map((benefit, index) => {
+                    return <li key={`${index}-${benefit}`}>{benefit}</li>;
                 })}
             </ul>,
             <img

@@ -102,12 +102,20 @@ function ResourceCard({ resource }) {
                         pdfUrl={resource.pdf_url}
                         onLoad={(imgs) => setImages(imgs)}
                     />
-                    {images.length > 0 && (
-                        <Magazine
-                            images={images}
-                            orientation={resource.orientation ?? "vertical"}
-                        />
-                    )}
+                    {/* ← fade-in suave al aparecer */}
+                    <div
+                        style={{
+                            opacity: images.length > 0 ? 1 : 0,
+                            transition: "opacity 0.4s ease",
+                        }}
+                    >
+                        {images.length > 0 && (
+                            <Magazine
+                                images={images}
+                                orientation={resource.orientation ?? "vertical"}
+                            />
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div
@@ -127,7 +135,6 @@ function ResourceCard({ resource }) {
         </div>
     );
 }
-
 // ─── Tarjeta Galería 360° ─────────────────────────────────────────────────────
 function GalleryCard({ gallery }) {
     return (

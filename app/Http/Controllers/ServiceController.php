@@ -50,7 +50,7 @@ class ServiceController extends Controller
             'items.*.categories.*' => 'required|string',
             'benefits' => 'nullable|array',
             'benefits.*' => 'required|string',
-            'image' => 'required|mimes:jpg,jpeg,png,webp|max:5120',
+            'image' => 'required|mimes:jpg,jpeg,png,webp',
         ]);
 
 
@@ -93,6 +93,25 @@ class ServiceController extends Controller
         Log::info("Ver mi request");
         Log::info($request);
         Log::info($request->hasFile('image'));
+
+        // Filtrar items vacíos
+        if ($request->has('items')) {
+            $items = collect($request->items ?? [])->filter(function ($item) {
+                return !empty($item['title']);
+            })->map(function ($item) {
+                $item['categories'] = collect($item['categories'] ?? [])->filter()->values()->all();
+                return $item;
+            })->values()->all();
+
+            $request->merge(['items' => count($items) > 0 ? $items : null]);
+        }
+
+        // Filtrar benefits vacíos
+        if ($request->has('benefits')) {
+            $benefits = collect($request->benefits ?? [])->filter()->values()->all();
+            $request->merge(['benefits' => count($benefits) > 0 ? $benefits : null]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:5000',
@@ -103,7 +122,7 @@ class ServiceController extends Controller
             'items.*.categories.*' => 'required|string',
             'benefits' => 'nullable|array',
             'benefits.*' => 'required|string',
-            'image' => 'nullable|mimes:jpg,jpeg,png,webp|max:5120',
+            'image' => 'nullable|mimes:jpg,jpeg,png,webp',
         ]);
 
         if ($request->file('image') && $request->file('image')->isValid()) {
