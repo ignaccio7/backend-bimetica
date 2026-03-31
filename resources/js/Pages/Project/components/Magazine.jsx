@@ -49,13 +49,13 @@ function useMediaQuery(query) {
     return matches;
 }
 
-// orientation: "vertical" | "horizontal"
 export default function Magazine({ images = [], orientation = "vertical" }) {
     const bookRef = useRef(null);
     const containerRef = useRef(null);
     const bookWrapperRef = useRef(null);
     const [isFlipping, setIsFlipping] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [fsHeight, setFsHeight] = useState(window.innerHeight);
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
@@ -64,7 +64,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         width: 900,
         height: 600,
     });
-    const currentPageRef = useRef(0); // fuente de verdad independiente
+    const currentPageRef = useRef(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [isAnimatingPrev, setIsAnimatingPrev] = useState(false);
     const isPrevTurnRef = useRef(false);
@@ -77,6 +77,32 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         pages.push(pages[pages.length - 1]);
     }
 
+    // Sincronizar con Escape y resetear zoom/pan al cambiar modo
+    useEffect(() => {
+        const handleFsChange = () => {
+            if (!document.fullscreenElement) {
+                setIsFullscreen(false);
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
+            } else {
+                setFsHeight(window.innerHeight);
+            }
+        };
+        document.addEventListener("fullscreenchange", handleFsChange);
+        return () =>
+            document.removeEventListener("fullscreenchange", handleFsChange);
+    }, []);
+
+    // Actualizar fsHeight al rotar pantalla en mobile
+    useEffect(() => {
+        const handleResize = () => {
+            if (isFullscreen) setFsHeight(window.innerHeight);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [isFullscreen]);
+
+    // Calcular tamaño del contenedor
     useEffect(() => {
         const updateSize = () => {
             if (bookWrapperRef.current) {
@@ -110,11 +136,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         try {
             const pf = bookRef.current?.pageFlip();
             pf?.flipNext();
-            // onFlip se dispara correctamente en next, así que no tocamos el ref aquí
         } catch (e) {
             console.error(e);
         }
-        // setTimeout(() => setIsFlipping(false), 700);
         setIsFlipping(false);
     };
 
@@ -128,9 +152,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             setTimeout(() => {
                 const pf = bookRef.current?.pageFlip();
                 const target = Math.max(0, currentPageRef.current - 1);
-                isPrevTurnRef.current = true; // activar flag ANTES del turn
+                isPrevTurnRef.current = true;
                 pf?.turnToPrevPage();
-                currentPageRef.current = target; // nuestra fuente de verdad
+                currentPageRef.current = target;
                 setCurrentPage(target);
                 setIsAnimatingPrev(false);
             }, 150);
@@ -142,7 +166,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 console.error(e);
             }
         }
-        // setTimeout(() => setIsFlipping(false), 700);
         setIsFlipping(false);
     };
 
@@ -150,16 +173,20 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         if (!document.fullscreenElement) {
             containerRef.current?.requestFullscreen();
             setIsFullscreen(true);
+            setFsHeight(window.innerHeight);
         } else {
             document.exitFullscreen();
-            setIsFullscreen(false);
+            // isFullscreen se actualiza en el listener fullscreenchange
         }
     };
 
     const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
     const handleZoomOut = () => {
-        setZoom((prev) => Math.max(prev - 0.25, 1));
-        if (zoom <= 1.25) setPan({ x: 0, y: 0 });
+        setZoom((prev) => {
+            const next = Math.max(prev - 0.25, 1);
+            if (next <= 1) setPan({ x: 0, y: 0 });
+            return next;
+        });
     };
     const handleReset = () => {
         setZoom(1);
@@ -207,14 +234,13 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
         else if (clickX > bookWidth - edgeZone) nextPage();
     };
 
-    // En horizontal el libro es más ancho que alto, cada página ocupa width/2
     const pageWidth = isMobile ? containerSize.width : containerSize.width / 2;
+    const bookHeight = isFullscreen ? fsHeight : containerSize.height;
 
     return (
         <div
             ref={containerRef}
             style={{
-                // ── En fullscreen: ocupa toda la pantalla sin padding ──
                 display: "flex",
                 flexDirection: isFullscreen ? "column" : "column-reverse",
                 alignItems: "center",
@@ -224,15 +250,16 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 minHeight: isFullscreen ? "100vh" : "auto",
                 justifyContent: isFullscreen ? "center" : "flex-start",
                 width: "100%",
-                position: "relative", // ← necesario para los botones absolutos
+                position: "relative",
+                boxSizing: "border-box",
             }}
         >
-            {/* ── Controles: flotantes en fullscreen, inline en normal ── */}
+            {/* ── Controles ── */}
             <div
                 style={
                     isFullscreen
                         ? {
-                              position: "fixed", // ← fixed para que queden sobre el fullscreen
+                              position: "fixed",
                               bottom: "1.5rem",
                               left: "50%",
                               transform: "translateX(-50%)",
@@ -279,7 +306,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 >
                     <IconChevronRight />
                 </button>
-
                 <button
                     onClick={handleZoomOut}
                     disabled={zoom <= 1}
@@ -304,7 +330,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 >
                     <IconReset />
                 </button>
-
                 <button
                     onClick={toggleFullscreen}
                     className="flex flex-col items-center"
@@ -314,7 +339,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 </button>
             </div>
 
-            {/* Zoom indicator — solo visible en fullscreen cuando hay zoom */}
+            {/* Zoom indicator */}
             {zoom > 1 && (
                 <div
                     style={
@@ -351,22 +376,22 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
             <div
                 style={{
                     width: "100%",
-                    // En fullscreen ocupa toda la pantalla sin maxWidth ni sombra
                     maxWidth: isFullscreen
                         ? "100%"
                         : isMobile
                           ? "100%"
                           : "1200px",
-                    height: isFullscreen ? "100vh" : "auto",
-                    overflow: zoom > 1 ? "hidden" : "visible",
+                    height: isFullscreen ? `${fsHeight}px` : "auto",
+                    overflow: "hidden",
                     boxShadow: isFullscreen
                         ? "none"
                         : "0 10px 40px rgba(0,0,0,0.3)",
                     borderRadius: isFullscreen ? 0 : "0.5rem",
                     position: "relative",
-                    display: isFullscreen ? "flex" : "block",
-                    alignItems: isFullscreen ? "center" : undefined,
-                    justifyContent: isFullscreen ? "center" : undefined,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxSizing: "border-box",
                 }}
             >
                 <div
@@ -409,26 +434,29 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                             : "transform 0.2s ease-out",
                         transformOrigin: "center center",
                         width: "100%",
+                        maxWidth: "100%",
                         display: "flex",
                         justifyContent: "center",
+                        alignItems: "center",
+                        boxSizing: "border-box",
                     }}
                 >
                     <div
                         ref={bookWrapperRef}
                         style={{
                             width: "100%",
-                            // En fullscreen usa toda la altura de la ventana
-                            height: isFullscreen
-                                ? `${window.innerHeight}px`
-                                : `${containerSize.height}px`,
+                            maxWidth: "100%",
+                            height: `${bookHeight}px`,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             position: "relative",
+                            overflow: "hidden",
                             transition: isAnimatingPrev
                                 ? "opacity 0.15s ease-out"
                                 : "none",
                             opacity: isAnimatingPrev ? 0.3 : 1,
+                            boxSizing: "border-box",
                         }}
                     >
                         {zoom > 1 && (
@@ -443,17 +471,13 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                         )}
                         <HTMLFlipBook
                             ref={bookRef}
-                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${orientation}-${isFullscreen}`}
+                            key={`${containerSize.width}-${containerSize.height}-${isMobile}-${orientation}-${isFullscreen}-${fsHeight}`}
                             width={pageWidth}
-                            height={
-                                isFullscreen
-                                    ? window.innerHeight
-                                    : containerSize.height
-                            }
+                            height={bookHeight}
                             size="stretch"
                             usePortrait={isMobile}
                             minWidth={200}
-                            maxWidth={1400}
+                            maxWidth={isMobile ? containerSize.width : 1400}
                             minHeight={200}
                             maxHeight={1400}
                             showCover={false}
@@ -476,9 +500,9 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                             }}
                             style={{
                                 minHeight: 0,
-                                height: isFullscreen
-                                    ? window.innerHeight
-                                    : containerSize.height,
+                                height: bookHeight,
+                                margin: "0 auto",
+                                maxWidth: "100%",
                             }}
                         >
                             {pages.map((img, index) => (
@@ -489,7 +513,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                 </div>
             </div>
 
-            {/* Hint texto — oculto en fullscreen para no interferir */}
+            {/* Hint texto */}
             {!isFullscreen && (
                 <p
                     style={{
@@ -497,6 +521,7 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
                         fontSize: isMobile ? "0.75rem" : "0.875rem",
                         textAlign: "center",
                         padding: "0 1rem",
+                        margin: 0,
                     }}
                 >
                     {zoom > 1
@@ -510,7 +535,6 @@ export default function Magazine({ images = [], orientation = "vertical" }) {
     );
 }
 
-// Helpers de estilos
 function btnStyle(disabled, color, isMobile) {
     return {
         padding: isMobile ? "0.2rem 0.5rem" : "0.5rem 0.5rem",
