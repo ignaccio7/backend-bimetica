@@ -1,4 +1,3 @@
-// resources/js/Pages/Resource/Gallery/List.jsx
 import ModalConfirm from "@/Components/ui/ModalConfirm";
 import { IconPencil, IconTrash } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -39,45 +38,35 @@ function GalleryRow({ gallery, onDelete }) {
                     )}
                 </span>
                 <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>
-                    Orden: {gallery.order} · {gallery.image_count}{" "}
-                    {gallery.image_count === 1 ? "imagen" : "imágenes"}
+                    Orden: {gallery.order}
                 </span>
             </div>
 
-            {/* Miniaturas preview */}
-            <div style={{ display: "flex", gap: "0.25rem" }}>
-                {gallery.image_urls?.slice(0, 4).map((url, i) => (
-                    <img
-                        key={i}
-                        src={url}
-                        alt={`img-${i}`}
-                        style={{
-                            width: "2.5rem",
-                            height: "2.5rem",
-                            objectFit: "cover",
-                            borderRadius: "0.25rem",
-                            border: "1px solid #e2e8f0",
-                        }}
-                    />
-                ))}
-                {gallery.image_count > 4 && (
-                    <div
-                        style={{
-                            width: "2.5rem",
-                            height: "2.5rem",
-                            borderRadius: "0.25rem",
-                            backgroundColor: "#f1f5f9",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "0.7rem",
-                            color: "#94a3b8",
-                            fontWeight: "700",
-                        }}
-                    >
-                        +{gallery.image_count - 4}
-                    </div>
-                )}
+            {/* Kuula ID badge */}
+            <div
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    backgroundColor: "#f0fdf4",
+                    border: "1px solid #bbf7d0",
+                    borderRadius: "0.375rem",
+                    padding: "0.25rem 0.5rem",
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: "0.65rem",
+                        color: "#15803d",
+                        fontWeight: "700",
+                        letterSpacing: "0.05em",
+                    }}
+                >
+                    KUULA
+                </span>
+                <code style={{ fontSize: "0.75rem", color: "#166534" }}>
+                    {gallery.kuula_id}
+                </code>
             </div>
 
             <Link
@@ -216,22 +205,20 @@ function ServiceAccordion({ service, onDelete }) {
                         borderBottom: "1px solid #e2e8f0",
                     }}
                 >
-                    {["Título / Orden", "Vista previa", "", ""].map(
-                        (col, i) => (
-                            <span
-                                key={i}
-                                style={{
-                                    fontSize: "0.7rem",
-                                    fontWeight: "700",
-                                    color: "#94a3b8",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.06em",
-                                }}
-                            >
-                                {col}
-                            </span>
-                        ),
-                    )}
+                    {["Título / Orden", "ID Kuula", "", ""].map((col, i) => (
+                        <span
+                            key={i}
+                            style={{
+                                fontSize: "0.7rem",
+                                fontWeight: "700",
+                                color: "#94a3b8",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.06em",
+                            }}
+                        >
+                            {col}
+                        </span>
+                    ))}
                 </div>
                 {service.galleries.map((gallery) => (
                     <GalleryRow
@@ -295,7 +282,7 @@ export default function List({ services }) {
                             </div>
                             <Link
                                 href={route("resource-gallery.create")}
-                                className={`inline-flex items-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900`}
+                                className="inline-flex items-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 + Nueva galería
                             </Link>
@@ -343,7 +330,7 @@ export default function List({ services }) {
                 closeModal={() => setModal(false)}
                 onConfirm={confirmDelete}
                 title="¿Eliminar galería?"
-                message="Se eliminarán todas las imágenes. Esta acción no se puede deshacer."
+                message="Esta acción no se puede deshacer."
             />
         </>
     );

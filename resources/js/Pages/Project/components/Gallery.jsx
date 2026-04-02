@@ -8,9 +8,6 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "./gallery.css";
 
-import "pannellum/build/pannellum.js";
-import "pannellum/build/pannellum.css";
-
 // Íconos inline para no depender de imports externos
 function IconExpand() {
     return (

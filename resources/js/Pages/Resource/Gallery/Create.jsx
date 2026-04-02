@@ -1,4 +1,3 @@
-// resources/js/Pages/Resource/Gallery/Create.jsx
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
@@ -6,7 +5,6 @@ import InputError from "@/Components/InputError";
 import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Transition } from "@headlessui/react";
-import { useState } from "react";
 
 export default function Create({ services }) {
     const { data, setData, post, processing, errors, recentlySuccessful } =
@@ -14,33 +12,12 @@ export default function Create({ services }) {
             service_id: "",
             title: "",
             order: 0,
-            images: [],
+            kuula_id: "",
         });
-
-    const [previews, setPreviews] = useState([]);
-
-    const handleImages = (e) => {
-        const incoming = Array.from(e.target.files);
-        const updated = [...data.images, ...incoming];
-        setData("images", updated);
-        setPreviews((prev) => [
-            ...prev,
-            ...incoming.map((f) => URL.createObjectURL(f)),
-        ]);
-        e.target.value = "";
-    };
-
-    const removeImage = (index) => {
-        setData(
-            "images",
-            data.images.filter((_, i) => i !== index),
-        );
-        setPreviews(previews.filter((_, i) => i !== index));
-    };
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("resource-gallery.store"), { forceFormData: true });
+        post(route("resource-gallery.store"));
     };
 
     return (
@@ -125,46 +102,45 @@ export default function Create({ services }) {
                             />
                         </div>
 
-                        {/* IMÁGENES */}
+                        {/* KUULA ID */}
                         <div>
-                            <InputLabel value="Imágenes equirectangulares 360° *" />
-                            <p className="text-xs text-gray-500 mb-2">
-                                JPG, PNG o WEBP — máx. 20MB por imagen
-                            </p>
-
-                            <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                multiple
-                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                                onChange={handleImages}
+                            <InputLabel
+                                htmlFor="kuula_id"
+                                value="ID de colección Kuula *"
                             />
+                            <TextInput
+                                id="kuula_id"
+                                className="mt-1 block w-full"
+                                placeholder="Ej: 5yXAN"
+                                value={data.kuula_id}
+                                onChange={(e) =>
+                                    setData("kuula_id", e.target.value)
+                                }
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Es el código que aparece en la URL de Kuula:{" "}
+                                <code className="bg-gray-100 px-1 rounded">
+                                    kuula.co/share/collection/
+                                    <strong>5yXAN</strong>
+                                </code>
+                            </p>
                             <InputError
                                 className="mt-2"
-                                message={errors.images}
+                                message={errors.kuula_id}
                             />
 
-                            {previews.length > 0 && (
-                                <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                    {previews.map((src, i) => (
-                                        <div key={i} className="relative group">
-                                            <img
-                                                src={src}
-                                                alt={`preview-${i}`}
-                                                className="w-full h-20 object-cover rounded-md border border-gray-200"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(i)}
-                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                ×
-                                            </button>
-                                            <p className="text-xs text-center text-gray-400 mt-1">
-                                                #{i + 1}
-                                            </p>
-                                        </div>
-                                    ))}
+                            {/* Preview del iframe si hay ID */}
+                            {data.kuula_id && (
+                                <div className="mt-4 rounded-xl overflow-hidden border border-gray-200">
+                                    <iframe
+                                        width="100%"
+                                        height="400"
+                                        frameBorder="0"
+                                        allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen"
+                                        allowFullScreen
+                                        scrolling="no"
+                                        src={`https://kuula.co/share/collection/${data.kuula_id}?logo=0&info=0&fs=1&vr=0&sd=1&thumbs=1`}
+                                    />
                                 </div>
                             )}
                         </div>

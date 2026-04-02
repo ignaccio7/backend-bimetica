@@ -154,18 +154,10 @@ class ResourceController extends Controller
                         'pdf_url'     => route('resource.pdf', $r),
                     ]),
                     'galleries' => $service->galleries->map(fn($g) => [
-                        'id'     => $g->id,
-                        'title'  => $g->title,
-                        'order'  => $g->order,
-                        'images' => collect($g->images ?? [])
-                            ->map(fn($path, $i) => [
-                                'id'  => $i,
-                                'url' => route('resource-gallery.image', [
-                                    'gallery' => $g->id,
-                                    'index'   => $i,
-                                ]),
-                            ])
-                            ->values(),
+                        'id'       => $g->id,
+                        'title'    => $g->title,
+                        'order'    => $g->order,
+                        'kuula_id' => $g->kuula_id,
                     ]),
                 ];
             });

@@ -137,6 +137,8 @@ function ResourceCard({ resource }) {
 }
 // ─── Tarjeta Galería 360° ─────────────────────────────────────────────────────
 function GalleryCard({ gallery }) {
+    console.log(gallery);
+
     return (
         <div
             style={{
@@ -147,9 +149,9 @@ function GalleryCard({ gallery }) {
                 borderRadius: "0.75rem",
                 border: "1px solid #e2e8f0",
                 padding: "1rem",
-                // ✅ Contiene el desbordamiento
                 overflow: "hidden",
                 width: "100%",
+                height: "100%",
             }}
         >
             <div
@@ -189,17 +191,24 @@ function GalleryCard({ gallery }) {
                 </span>
             </div>
 
-            {gallery.images?.length > 0 ? (
-                // ✅ Wrapper que fuerza ancho relativo al modal
+            {gallery.kuula_id ? (
                 <div
                     style={{
                         width: "100%",
+                        borderRadius: "0.5rem",
                         overflow: "hidden",
-                        // Reduce la altura del swiper principal dentro del modal
-                        "--gallery-height": "350px",
                     }}
                 >
-                    <Gallery360 images={gallery.images} mainHeight={350} />
+                    <iframe
+                        width="100%"
+                        height="420"
+                        frameBorder="0"
+                        allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen"
+                        allowFullScreen
+                        scrolling="no"
+                        src={`https://kuula.co/share/collection/${gallery.kuula_id}?logo=0&info=0&fs=1&vr=0&sd=1&thumbs=1`}
+                        style={{ display: "block" }}
+                    />
                 </div>
             ) : (
                 <div
@@ -213,7 +222,7 @@ function GalleryCard({ gallery }) {
                         fontStyle: "italic",
                     }}
                 >
-                    Sin imágenes
+                    Sin galería adjunta
                 </div>
             )}
         </div>
@@ -458,19 +467,29 @@ function ServiceModal({ service, isOpen, onClose }) {
                                             count={galleries.length}
                                         />
                                         <div
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: "1.25rem",
-                                                marginTop: "1rem",
-                                            }}
+                                            className="resource-grid"
+                                            style={{ marginTop: "1rem" }}
                                         >
-                                            {galleries.map((gallery) => (
-                                                <GalleryCard
-                                                    key={gallery.id}
-                                                    gallery={gallery}
-                                                />
-                                            ))}
+                                            {galleries.map((gallery, i) => {
+                                                const isLastOdd =
+                                                    galleries.length % 2 !==
+                                                        0 &&
+                                                    i === galleries.length - 1;
+                                                return (
+                                                    <div
+                                                        key={gallery.id}
+                                                        className={
+                                                            isLastOdd
+                                                                ? "resource-last-odd"
+                                                                : ""
+                                                        }
+                                                    >
+                                                        <GalleryCard
+                                                            gallery={gallery}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}

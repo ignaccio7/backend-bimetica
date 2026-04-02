@@ -80,7 +80,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/resource-galleries/{resourceGallery}/edit', [ResourceGalleryController::class, 'edit'])->name('resource-gallery.edit');
     Route::put('/resource-galleries/{resourceGallery}', [ResourceGalleryController::class, 'update'])->name('resource-gallery.update');
     Route::delete('/resource-galleries/{resourceGallery}', [ResourceGalleryController::class, 'destroy'])->name('resource-gallery.destroy');
-    Route::delete('/resource-galleries/{resourceGallery}/images/{index}', [ResourceGalleryController::class, 'destroyImage'])->name('resource-gallery.image.destroy');
 });
 
 
@@ -97,7 +96,6 @@ Route::middleware('auth')->group(function () {
 
     // Vista galerías (ambos roles)
     Route::get('/resource-galleries', [ResourceGalleryController::class, 'viewer'])->name('resource-gallery.viewer');
-    Route::get('/resource-galleries/{gallery}/images/{index}', [ResourceGalleryController::class, 'image'])->name('resource-gallery.image');
 
     // Proyectos vista (ambos roles)
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
