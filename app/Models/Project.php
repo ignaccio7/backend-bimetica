@@ -14,7 +14,6 @@ class Project extends Model
 
     protected $casts = [
         'characteristics' => 'array',
-        'gallery_equirectangular' => 'array',
     ];
 
     public function getSlugOptions(): SlugOptions

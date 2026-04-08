@@ -24,7 +24,7 @@ export default function PdfToImages({ pdfUrl, onLoad }) {
 
                 for (let i = 1; i <= total; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 2 });
+                    const viewport = page.getViewport({ scale: 1.5 });
                     const canvas = document.createElement("canvas");
                     const context = canvas.getContext("2d");
                     canvas.width = viewport.width;
@@ -32,7 +32,7 @@ export default function PdfToImages({ pdfUrl, onLoad }) {
 
                     await page.render({ canvasContext: context, viewport })
                         .promise;
-                    images.push(canvas.toDataURL("image/jpeg"));
+                    images.push(canvas.toDataURL("image/jpeg", 0.65));
                     setProgress(Math.round((i / total) * 100));
                 }
 

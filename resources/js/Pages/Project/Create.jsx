@@ -31,9 +31,6 @@ export default function CreateProject({ auth }) {
         { key: "", value: "" },
     ]);
 
-    // Preview de imágenes galería
-    const [galleryPreviews, setGalleryPreviews] = useState([]);
-
     const { data, setData, post, processing, errors } = useForm({
         title: "",
         description: "",
@@ -43,7 +40,7 @@ export default function CreateProject({ auth }) {
         characteristics: "",
         image: null,
         pdf: null,
-        gallery_equirectangular: [],
+        kuula_id: "",
     });
 
     /* ===============================
@@ -73,33 +70,6 @@ export default function CreateProject({ auth }) {
             if (key.trim()) obj[key.trim()] = value;
         });
         setData("characteristics", JSON.stringify(obj));
-    };
-
-    /* ===============================
-       GALERÍA
-    =============================== */
-    const handleGalleryChange = (e) => {
-        const newFiles = Array.from(e.target.files);
-
-        // Acumular archivos nuevos a los existentes
-        const updatedFiles = [...data.gallery_equirectangular, ...newFiles];
-        setData("gallery_equirectangular", updatedFiles);
-
-        // Acumular previews nuevos a los existentes
-        const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
-        setGalleryPreviews((prev) => [...prev, ...newPreviews]);
-
-        // Limpiar el input para permitir re-seleccionar el mismo archivo
-        e.target.value = "";
-    };
-
-    const removeGalleryImage = (index) => {
-        const updatedFiles = data.gallery_equirectangular.filter(
-            (_, i) => i !== index,
-        );
-        const updatedPreviews = galleryPreviews.filter((_, i) => i !== index);
-        setData("gallery_equirectangular", updatedFiles);
-        setGalleryPreviews(updatedPreviews);
     };
 
     /* ===============================
@@ -319,54 +289,38 @@ export default function CreateProject({ auth }) {
                             </div>
 
                             {/* ===== GALERÍA EQUIRECTANGULAR ===== */}
+                            {/* ===== KUULA ID ===== */}
                             <div className="md:col-span-2">
-                                <InputLabel value="Galería Equirectangular (imágenes 360°)" />
-                                <p className="text-xs text-gray-500 mb-2">
-                                    Puedes subir múltiples imágenes JPG, PNG o
-                                    WEBP
+                                <InputLabel value="ID de colección Kuula (Galería 360°)" />
+                                <TextInput
+                                    className="mt-1 block w-full"
+                                    placeholder="Ej: 5yXAN"
+                                    value={data.kuula_id}
+                                    onChange={(e) =>
+                                        setData("kuula_id", e.target.value)
+                                    }
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Código de la URL de Kuula:{" "}
+                                    <code className="bg-gray-100 px-1 rounded">
+                                        kuula.co/share/collection/
+                                        <strong>5yXAN</strong>
+                                    </code>
                                 </p>
-                                <input
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    multiple
-                                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                                    onChange={handleGalleryChange}
-                                />
-                                <InputError
-                                    message={errors.gallery_equirectangular}
-                                />
+                                <InputError message={errors.kuula_id} />
 
-                                {/* Previews */}
-                                {galleryPreviews.length > 0 && (
-                                    <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                        {galleryPreviews.map(
-                                            (preview, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="relative group"
-                                                >
-                                                    <img
-                                                        src={preview}
-                                                        alt={`preview-${index}`}
-                                                        className="w-full h-20 object-cover rounded-md border border-gray-200"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            removeGalleryImage(
-                                                                index,
-                                                            )
-                                                        }
-                                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                    <p className="text-xs text-center text-gray-400 mt-1 truncate">
-                                                        #{index + 1}
-                                                    </p>
-                                                </div>
-                                            ),
-                                        )}
+                                {data.kuula_id && (
+                                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-200">
+                                        <iframe
+                                            width="100%"
+                                            height="380"
+                                            frameBorder="0"
+                                            allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen"
+                                            allowFullScreen
+                                            scrolling="no"
+                                            src={`https://kuula.co/share/collection/${data.kuula_id}?logo=0&info=0&fs=1&vr=0&sd=1&thumbs=1`}
+                                            style={{ display: "block" }}
+                                        />
                                     </div>
                                 )}
                             </div>

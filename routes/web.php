@@ -55,7 +55,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('project.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
-    Route::delete('/projects/{project}/gallery/{index}', [ProjectController::class, 'destroyGalleryImage'])->name('project.gallery.destroy');
 
     // Public Projects
     Route::get('/public-projects', [PublicProjectController::class, 'index'])->name('public-project.index');
@@ -102,7 +101,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
     Route::get('/projects/{project}/pdf', [ProjectController::class, 'pdf'])->name('project.pdf');
     Route::get('/projects/{project}/cover', [ProjectController::class, 'cover'])->name('project.cover');
-    Route::get('/projects/{project}/gallery/{index}', [ProjectController::class, 'galleryImage'])->name('project.gallery.image');
 });
 
 

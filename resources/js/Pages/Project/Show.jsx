@@ -6,7 +6,6 @@ import {
     IconRuler,
     IconTag,
 } from "@/Icons/icons";
-import Gallery from "./components/Gallery";
 import Magazine from "./components/Magazine";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PdfToImages from "@/Components/ui/PdfToImages";
@@ -65,7 +64,6 @@ export default function Show({ auth, project }) {
     }
 
     const charEntries = Object.entries(project.characteristics ?? {});
-    const galleryImages = project.gallery_urls ?? [];
     const pdfUrl = project.pdf_url ?? null;
 
     return (
@@ -138,12 +136,23 @@ export default function Show({ auth, project }) {
                         </section>
 
                         {/* ══ GALERÍA 360° ══ */}
-                        {galleryImages.length > 0 && (
+                        {project.kuula_id && (
                             <section className="gallery-equirectangular mt-20 mb-10">
                                 <h2 className="text-center text-step-4 font-black text-primary-500 leading-none text-balance mb-6">
-                                    Galeria del proyecto
+                                    Galería del proyecto
                                 </h2>
-                                <Gallery images={galleryImages} />
+                                <div className="rounded-xl overflow-hidden border border-gray-200">
+                                    <iframe
+                                        width="100%"
+                                        height="640"
+                                        frameBorder="0"
+                                        allow="xr-spatial-tracking; gyroscope; accelerometer; fullscreen"
+                                        allowFullScreen
+                                        scrolling="no"
+                                        src={`https://kuula.co/share/collection/${project.kuula_id}?logo=0&info=0&fs=1&vr=0&sd=1&thumbs=1`}
+                                        style={{ display: "block" }}
+                                    />
+                                </div>
                             </section>
                         )}
 

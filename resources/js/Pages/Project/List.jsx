@@ -107,10 +107,9 @@ export default function List({ auth, projects }) {
         ),
 
         /* Galería */
-        project.gallery_count > 0 ? (
+        project.kuula_id ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
-                <IconImage /> {project.gallery_count} imagen
-                {project.gallery_count !== 1 ? "es" : ""}
+                <IconImage /> Kuula
             </span>
         ) : (
             <span className="text-gray-300 text-xs">Sin galería</span>

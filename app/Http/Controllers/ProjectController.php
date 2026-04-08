@@ -27,7 +27,6 @@ class ProjectController extends Controller
                 'status'          => $p->status,
                 'pdf_path'        => $p->pdf_path,
                 'characteristics' => $p->characteristics ?? [],
-                'gallery_count'   => count($p->gallery_equirectangular ?? []),
                 'created_at'      => $p->created_at,
                 'cover_url'       => $p->image_path
                     ? route('project.cover', $p)
@@ -46,7 +45,7 @@ class ProjectController extends Controller
     {
         Log::info('Mostrando lista de proyectos');
         $projects = Project::latest()
-            ->select('id', 'title', 'slug', 'pdf_path', 'gallery_equirectangular', 'orientation', 'category', 'status', 'created_at')
+            ->select('id', 'title', 'slug', 'pdf_path', 'kuula_id', 'orientation', 'category', 'status', 'created_at')
             ->get()
             ->map(function ($project) {
                 return [
@@ -57,8 +56,7 @@ class ProjectController extends Controller
                     'status'                  => $project->status,
                     'orientation'             => $project->orientation,
                     'pdf_path'                => $project->pdf_path,
-                    'gallery_equirectangular' => $project->gallery_equirectangular ?? [],
-                    'gallery_count'           => count($project->gallery_equirectangular ?? []),
+                    'kuula_id'                => $project->kuula_id,
                     'created_at'              => $project->created_at,
                 ];
             });
@@ -87,8 +85,7 @@ class ProjectController extends Controller
             'characteristics'          => 'nullable|string',
             'orientation'              => 'required|in:horizontal,vertical',
             'pdf'                      => 'nullable|file|mimes:pdf|max:102400',
-            'gallery_equirectangular'  => 'nullable|array',
-            'gallery_equirectangular.*' => 'file|mimes:jpg,jpeg,png,webp|max:20480',
+            'kuula_id'                 => 'nullable|string|max:255',
         ]);
 
         // Guardar la imagen principal
@@ -103,14 +100,6 @@ class ProjectController extends Controller
         $pdfPath = null;
         if ($request->hasFile('pdf')) {
             $pdfPath = $request->file('pdf')->store('projects', 'private');
-        }
-
-        // Guardar imágenes de galería equirectangular
-        $galleryPaths = [];
-        if ($request->hasFile('gallery_equirectangular')) {
-            foreach ($request->file('gallery_equirectangular') as $image) {
-                $galleryPaths[] = $image->store('projects/images', 'private');
-            }
         }
 
         // Parsear características (vienen como JSON string desde el form)
@@ -128,7 +117,7 @@ class ProjectController extends Controller
             'orientation'             => $request->orientation,
             'image_path'              => $imagePath,
             'pdf_path'                => $pdfPath,
-            'gallery_equirectangular' => $galleryPaths ?: null,
+            'kuula_id'                => $request->kuula_id,
         ]);
 
         return redirect()
@@ -165,40 +154,12 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function galleryImage(Project $project, int $index)
-    {
-        $gallery = $project->gallery_equirectangular ?? [];
-
-        if (!isset($gallery[$index])) abort(404);
-
-        $path = $gallery[$index];
-
-        if (!Storage::disk('private')->exists($path)) abort(404);
-
-        return response()->file(Storage::disk('private')->path($path));
-    }
-
     /**
      * Display the specified resource.
      */
     public function show($slug)
     {
         $project = Project::where('slug', $slug)->firstOrFail();
-
-        $gallery = $project->gallery_equirectangular ?? [];
-
-        // ← Devuelve objetos {id, url} que es lo que Gallery360 espera
-        $galleryUrls = collect($gallery)
-            ->values()
-            ->map(fn($path, $i) => [
-                'id'  => $i,
-                'url' => route('project.gallery.image', [
-                    'project' => $project->slug,
-                    'index'   => $i,
-                ]),
-            ])
-            ->values()
-            ->toArray();
 
         return Inertia::render('Project/Show', [
             'project' => [
@@ -215,7 +176,7 @@ class ProjectController extends Controller
                 'pdf_url'         => $project->pdf_path
                     ? route('project.pdf', $project->slug)
                     : null,
-                'gallery_urls'    => $galleryUrls,
+                'kuula_id'        => $project->kuula_id,
             ],
         ]);
     }
@@ -237,33 +198,9 @@ class ProjectController extends Controller
                 'characteristics' => $project->characteristics,
                 'pdf_path'        => $project->pdf_path,
                 'image_path'      => $project->image_path,
-                'gallery_equirectangular' => $project->gallery_equirectangular ?? [],
+                'kuula_id'        => $project->kuula_id,
             ]
         ]);
-    }
-
-    public function destroyGalleryImage(Request $request, Project $project, int $index)
-    {
-        $gallery = $project->gallery_equirectangular ?? [];
-
-        if (!isset($gallery[$index])) {
-            abort(404, 'Imagen no encontrada');
-        }
-
-        // Borrar del disco
-        $path = $gallery[$index];
-        if (Storage::disk('private')->exists($path)) {
-            Storage::disk('private')->delete($path);
-        }
-
-        // Reindexar el array
-        array_splice($gallery, $index, 1);
-
-        $project->update([
-            'gallery_equirectangular' => !empty($gallery) ? array_values($gallery) : null,
-        ]);
-
-        return back()->with('success', 'Imagen eliminada');
     }
 
     /**
@@ -285,8 +222,7 @@ class ProjectController extends Controller
             'orientation'              => 'required|in:horizontal,vertical',
             'image'                    => 'nullable|image|max:20480',
             'pdf'                      => 'nullable|file|mimes:pdf|max:102400',
-            'gallery_equirectangular'  => 'nullable|array',
-            'gallery_equirectangular.*' => 'file|mimes:jpg,jpeg,png,webp|max:20480',
+            'kuula_id'                 => 'nullable|string|max:255',
         ]);
 
         /* ===== IMAGEN PRINCIPAL ===== */
@@ -313,15 +249,6 @@ class ProjectController extends Controller
             $project->pdf_path = $request->file('pdf')->store('projects', 'private');
         }
 
-        /* ===== GALERÍA ===== */
-        $galleryPaths = $project->gallery_equirectangular ?? [];
-
-        if ($request->hasFile('gallery_equirectangular')) {
-            foreach ($request->file('gallery_equirectangular') as $image) {
-                $galleryPaths[] = $image->store('projects/images', 'private');
-            }
-        }
-
         /* ===== CARACTERÍSTICAS ===== */
         $characteristics = null;
         if ($request->filled('characteristics')) {
@@ -336,7 +263,7 @@ class ProjectController extends Controller
             'status'                  => $request->status,
             'orientation'             => $request->orientation,
             'characteristics'         => $characteristics,
-            'gallery_equirectangular' => $galleryPaths ?: null,
+            'kuula_id'                => $request->kuula_id,
         ]);
 
         return redirect()
@@ -360,15 +287,6 @@ class ProjectController extends Controller
         // Borrar PDF privado
         if ($project->pdf_path && Storage::disk('private')->exists($project->pdf_path)) {
             Storage::disk('private')->delete($project->pdf_path);
-        }
-
-        // Borrar galería pública
-        if ($project->gallery_equirectangular) {
-            foreach ($project->gallery_equirectangular as $image) {
-                if (Storage::disk('private')->exists($image)) {
-                    Storage::disk('private')->delete($image);
-                }
-            }
         }
 
         $project->delete();

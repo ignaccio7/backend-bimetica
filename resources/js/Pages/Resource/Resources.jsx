@@ -31,6 +31,8 @@ function getColor(index) {
 
 // ─── Tarjeta PDF ──────────────────────────────────────────────────────────────
 function ResourceCard({ resource }) {
+    console.log(resource);
+
     const [images, setImages] = useState([]);
 
     return (
