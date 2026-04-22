@@ -15,8 +15,8 @@ class ProcessResourcePdfToImages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 3600;
-    public $tries   = 1;
+    public $timeout = 1700; // 28 minutos
+    public $tries   = 3;    // 3 intentos si Hostinger lo mata
 
     public Resource $resource;
 
@@ -111,5 +111,11 @@ class ProcessResourcePdfToImages implements ShouldQueue
             $this->resource->update(['status' => 'failed']);
             Log::error('ERROR procesando Resource ID ' . $this->resource->id . ': ' . $e->getMessage());
         }
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $this->document->update(['status' => 'failed']);
+        \Log::error('Job falló definitivamente (ID: ' . $this->document->id . '): ' . $exception->getMessage());
     }
 }
