@@ -1,6 +1,6 @@
 // resources/js/Pages/Resource/Resources.jsx
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import {
     Dialog,
     DialogPanel,
@@ -8,9 +8,7 @@ import {
     Transition,
     TransitionChild,
 } from "@headlessui/react";
-import PdfToImages from "@/Components/ui/PdfToImages";
 import Magazine from "@/Pages/Project/components/Magazine";
-import Gallery360 from "@/Pages/Project/components/Gallery";
 
 const COLORS = [
     { color: "#9AC72D", hover: "#7E9B1F" },
@@ -27,6 +25,142 @@ function getColor(index) {
     const color = `hsl(${hue}, 55%, 38%)`;
     const hover = `hsl(${hue}, 55%, 28%)`;
     return { color, hover };
+}
+
+// ─── Skeleton mientras cargan las imágenes del servidor ───────────────────────
+function MagazineSkeleton() {
+    return (
+        <div
+            style={{
+                height: "420px",
+                backgroundColor: "#f8fafc",
+                borderRadius: "0.5rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "1.25rem",
+                border: "1px solid #f1f5f9",
+            }}
+        >
+            {/* Ícono animado igual al PdfToImages original */}
+            <div
+                style={{ position: "relative", width: "48px", height: "56px" }}
+            >
+                {[2, 1, 0].map((layer) => (
+                    <div
+                        key={layer}
+                        style={{
+                            position: "absolute",
+                            width: "36px",
+                            height: "46px",
+                            backgroundColor:
+                                layer === 0
+                                    ? "#fff"
+                                    : layer === 1
+                                      ? "#e2e8f0"
+                                      : "#cbd5e1",
+                            border: "1.5px solid #cbd5e1",
+                            borderRadius: "3px",
+                            top: `${layer * 4}px`,
+                            left: `${layer * 4}px`,
+                            animation:
+                                layer === 0
+                                    ? "pagePulse 1.6s ease-in-out infinite"
+                                    : "none",
+                            animationDelay: "0.2s",
+                        }}
+                    />
+                ))}
+                <style>{`
+                    @keyframes pagePulse {
+                        0%, 100% { transform: translateY(0); opacity: 1; }
+                        50%       { transform: translateY(-4px); opacity: 0.7; }
+                    }
+                `}</style>
+            </div>
+
+            <div style={{ textAlign: "center" }}>
+                <p
+                    style={{
+                        margin: "0 0 0.25rem",
+                        fontSize: "0.8rem",
+                        fontWeight: "600",
+                        color: "#475569",
+                    }}
+                >
+                    Preparando revista
+                </p>
+                <p style={{ margin: 0, fontSize: "0.7rem", color: "#94a3b8" }}>
+                    Cargando páginas...
+                </p>
+            </div>
+
+            {/* Barra de progreso indeterminada */}
+            <div
+                style={{
+                    width: "160px",
+                    height: "4px",
+                    backgroundColor: "#e2e8f0",
+                    borderRadius: "9999px",
+                    overflow: "hidden",
+                }}
+            >
+                <div
+                    style={{
+                        height: "100%",
+                        width: "40%",
+                        backgroundColor: "#9AC72D",
+                        borderRadius: "9999px",
+                        animation: "slideProgress 1.4s ease-in-out infinite",
+                    }}
+                />
+            </div>
+            <style>{`
+                @keyframes slideProgress {
+                    0%   { transform: translateX(-200%); }
+                    100% { transform: translateX(500%); }
+                }
+            `}</style>
+        </div>
+    );
+}
+
+// ─── Magazine con lazy load para evitar el salto ──────────────────────────────
+function MagazineWithLoader({ images, orientation }) {
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!images || images.length === 0) return;
+
+        // Precargamos solo la primera imagen para saber cuándo está lista
+        const img = new Image();
+        img.src = images[0];
+        img.onload = () => setLoaded(true);
+        img.onerror = () => setLoaded(true); // si falla igual mostramos
+    }, [images]);
+
+    return (
+        // El contenedor SIEMPRE tiene min-height → nunca hay salto
+        <div style={{ minHeight: "420px", position: "relative" }}>
+            {!loaded && <MagazineSkeleton />}
+            <div
+                style={{
+                    opacity: loaded ? 1 : 0,
+                    transition: "opacity 0.4s ease",
+                    // Cuando está invisible no ocupa espacio visual pero sí estructura
+                    position: loaded ? "relative" : "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                }}
+            >
+                {loaded && (
+                    <Magazine images={images} orientation={orientation} />
+                )}
+            </div>
+        </div>
+    );
 }
 
 // ─── Tarjeta PDF ──────────────────────────────────────────────────────────────
@@ -62,11 +196,13 @@ function ResourceCard({ resource }) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        height: "120px",
+                        height: "420px",
                         flexDirection: "column",
                         gap: "0.5rem",
                         color: "#94a3b8",
                         fontSize: "0.8rem",
+                        backgroundColor: "#f8fafc",
+                        borderRadius: "0.5rem",
                     }}
                 >
                     <span style={{ fontSize: "1.5rem" }}>⏳</span>
@@ -84,6 +220,10 @@ function ResourceCard({ resource }) {
                     borderRadius: "0.75rem",
                     border: "1px solid #fed7d7",
                     padding: "1rem",
+                    minHeight: "420px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
                 <p style={{ color: "#c53030", fontSize: "0.8rem", margin: 0 }}>
@@ -157,7 +297,7 @@ function ResourceCard({ resource }) {
             )}
 
             {resource.page_urls?.length > 0 ? (
-                <Magazine
+                <MagazineWithLoader
                     images={resource.page_urls}
                     orientation={resource.orientation ?? "vertical"}
                 />
@@ -167,10 +307,12 @@ function ResourceCard({ resource }) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        height: "60px",
+                        height: "420px",
                         fontSize: "0.75rem",
                         color: "#cbd5e1",
                         fontStyle: "italic",
+                        backgroundColor: "#f8fafc",
+                        borderRadius: "0.5rem",
                     }}
                 >
                     Sin páginas generadas
