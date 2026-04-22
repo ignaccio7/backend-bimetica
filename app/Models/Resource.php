@@ -19,4 +19,9 @@ class Resource extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function pages()
+    {
+        return $this->hasMany(ResourcePage::class)->orderBy('page_number');
+    }
 }

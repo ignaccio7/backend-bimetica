@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessResourcePdfToImages;
 use App\Models\Resource;
+use App\Models\ResourcePage;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -59,10 +61,13 @@ class ResourceController extends Controller
         ]);
 
         $validated['pdf'] = $request->file('pdf')->store('resources', 'private');
+        $validated['status'] = 'processing';
 
-        Resource::create($validated);
+        $resource = Resource::create($validated);
 
-        return redirect()->route('resource.index')->with('success', 'Recurso creado exitosamente.');
+        ProcessResourcePdfToImages::dispatch($resource);
+
+        return redirect()->route('resource.index')->with('success', 'Recurso creado exitosamente, espere mientras se procesa el PDF.');
     }
 
     public function edit(Resource $resource): Response
@@ -88,15 +93,32 @@ class ResourceController extends Controller
         ]);
 
         if ($request->hasFile('pdf') && $request->file('pdf')->isValid()) {
+            // 1. Borrar PDF viejo
             if ($resource->pdf && Storage::disk('private')->exists($resource->pdf)) {
                 Storage::disk('private')->delete($resource->pdf);
             }
+
+            // 2. Borrar imágenes WebP antiguas
+            $folderPath = storage_path('app/private/resource_pages/' . $resource->id);
+            if (file_exists($folderPath)) {
+                \Illuminate\Support\Facades\File::deleteDirectory($folderPath);
+            }
+
+            // 3. Borrar registros de páginas en la BD
+            $resource->pages()->delete();
+
+            // 4. Guardar nuevo PDF y marcar como procesando
             $validated['pdf'] = $request->file('pdf')->store('resources', 'private');
+            $validated['status'] = 'processing';
+
+            $resource->update($validated);
+
+            // 5. Despachar el job para generar las nuevas imágenes
+            ProcessResourcePdfToImages::dispatch($resource);
         } else {
             unset($validated['pdf']);
+            $resource->update($validated);
         }
-
-        $resource->update($validated);
 
         return redirect()->route('resource.index')
             ->with('success', 'Recurso actualizado exitosamente.');
@@ -104,14 +126,41 @@ class ResourceController extends Controller
 
     public function destroy(Resource $resource)
     {
+        // Borrar PDF
         if ($resource->pdf && Storage::disk('private')->exists($resource->pdf)) {
             Storage::disk('private')->delete($resource->pdf);
+        }
+
+        // Borrar carpeta de imágenes privadas
+        $folderPath = storage_path('app/private/resource_pages/' . $resource->id);
+        if (file_exists($folderPath)) {
+            \Illuminate\Support\Facades\File::deleteDirectory($folderPath);
         }
 
         $resource->delete();
 
         return redirect()->route('resource.index')
             ->with('success', 'Recurso eliminado exitosamente.');
+    }
+
+    // Sirve una imagen de página de forma privada
+    public function page(Resource $resource, ResourcePage $page)
+    {
+        // Verificar que la página pertenece al recurso
+        if ($page->resource_id !== $resource->id) {
+            abort(403);
+        }
+
+        $path = storage_path('app/private/' . $page->image_path);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type'  => 'image/webp',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 
     // Sirve el PDF privado — solo autenticados
@@ -151,7 +200,9 @@ class ResourceController extends Controller
                         'categories'  => $r->categories ?? [],
                         'orientation' => $r->orientation,
                         'order'       => $r->order,
-                        'pdf_url'     => route('resource.pdf', $r),
+                        'status'      => $r->status,
+                        'page_urls'   => $r->pages->map(fn($p) => route('resource.page', [$r, $p]))->toArray(),
+                        // 'pdf_url'     => route('resource.pdf', $r),
                     ]),
                     'galleries' => $service->galleries->map(fn($g) => [
                         'id'       => $g->id,

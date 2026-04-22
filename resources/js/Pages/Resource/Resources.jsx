@@ -31,9 +31,67 @@ function getColor(index) {
 
 // ─── Tarjeta PDF ──────────────────────────────────────────────────────────────
 function ResourceCard({ resource }) {
-    console.log(resource);
+    if (resource.status === "processing") {
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                    backgroundColor: "#f8fafc",
+                    borderRadius: "0.75rem",
+                    border: "1px solid #e2e8f0",
+                    padding: "1rem",
+                    height: "100%",
+                }}
+            >
+                {resource.title && (
+                    <h3
+                        style={{
+                            fontSize: "0.95rem",
+                            fontWeight: "700",
+                            color: "#1e293b",
+                            margin: 0,
+                        }}
+                    >
+                        {resource.title}
+                    </h3>
+                )}
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "120px",
+                        flexDirection: "column",
+                        gap: "0.5rem",
+                        color: "#94a3b8",
+                        fontSize: "0.8rem",
+                    }}
+                >
+                    <span style={{ fontSize: "1.5rem" }}>⏳</span>
+                    Convirtiendo páginas...
+                </div>
+            </div>
+        );
+    }
 
-    const [images, setImages] = useState([]);
+    if (resource.status === "failed") {
+        return (
+            <div
+                style={{
+                    backgroundColor: "#fff5f5",
+                    borderRadius: "0.75rem",
+                    border: "1px solid #fed7d7",
+                    padding: "1rem",
+                }}
+            >
+                <p style={{ color: "#c53030", fontSize: "0.8rem", margin: 0 }}>
+                    Error al convertir este recurso.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -98,27 +156,11 @@ function ResourceCard({ resource }) {
                 </ul>
             )}
 
-            {resource.pdf_url ? (
-                <div style={{ overflow: "hidden" }}>
-                    <PdfToImages
-                        pdfUrl={resource.pdf_url}
-                        onLoad={(imgs) => setImages(imgs)}
-                    />
-                    {/* ← fade-in suave al aparecer */}
-                    <div
-                        style={{
-                            opacity: images.length > 0 ? 1 : 0,
-                            transition: "opacity 0.4s ease",
-                        }}
-                    >
-                        {images.length > 0 && (
-                            <Magazine
-                                images={images}
-                                orientation={resource.orientation ?? "vertical"}
-                            />
-                        )}
-                    </div>
-                </div>
+            {resource.page_urls?.length > 0 ? (
+                <Magazine
+                    images={resource.page_urls}
+                    orientation={resource.orientation ?? "vertical"}
+                />
             ) : (
                 <div
                     style={{
@@ -131,12 +173,13 @@ function ResourceCard({ resource }) {
                         fontStyle: "italic",
                     }}
                 >
-                    Sin PDF adjunto
+                    Sin páginas generadas
                 </div>
             )}
         </div>
     );
 }
+
 // ─── Tarjeta Galería 360° ─────────────────────────────────────────────────────
 function GalleryCard({ gallery }) {
     console.log(gallery);

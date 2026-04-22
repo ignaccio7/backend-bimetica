@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
     // Vista recursos (ambos roles)
     Route::get('/resources', [ResourceController::class, 'viewer'])->name('resource.viewer');
     Route::get('/resources/{resource}/pdf', [ResourceController::class, 'pdf'])->name('resource.pdf');
+    Route::get('/resources/{resource}/pages/{page}', [ResourceController::class, 'page'])->name('resource.page');
 
     // Vista galerías (ambos roles)
     Route::get('/resource-galleries', [ResourceGalleryController::class, 'viewer'])->name('resource-gallery.viewer');
