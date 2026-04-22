@@ -15,7 +15,7 @@ class ProcessResourcePdfToImages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 1700; // 28 minutos
+    public $timeout = 1500; // 25 minutos exactos para hacer el relevo sin alertar a Hostinger
     public $tries   = 3;    // 3 intentos si Hostinger lo mata
 
     public Resource $resource;
@@ -39,27 +39,39 @@ class ProcessResourcePdfToImages implements ShouldQueue
             \Imagick::setResourceLimit(\Imagick::RESOURCETYPE_MEMORY, 128 * 1024 * 1024);
             \Imagick::setResourceLimit(\Imagick::RESOURCETYPE_MAP,    128 * 1024 * 1024);
 
-            // IMPORTANTE: Las imágenes van a storage/app/private/resource_pages/{id}/
-            // NO a storage/app/public/ porque deben ser privadas
             $folderPath = storage_path('app/private/resource_pages/' . $this->resource->id);
 
-            if (file_exists($folderPath)) {
-                File::cleanDirectory($folderPath);
+            // LÓGICA ANTI-BUCLE: Solo limpiamos desde cero si es el primer intento
+            if ($this->attempts() === 1) {
+                if (file_exists($folderPath)) {
+                    File::cleanDirectory($folderPath);
+                } else {
+                    mkdir($folderPath, 0775, true);
+                }
+                $this->resource->pages()->delete();
+                Log::info("Iniciando conversión LIMPIA Resource ID: {$this->resource->id}");
             } else {
-                mkdir($folderPath, 0775, true);
+                Log::info("Reanudando Resource ID: {$this->resource->id}, Intento: " . $this->attempts());
             }
 
-            $this->resource->pages()->delete();
-
-            Log::info("Iniciando conversión Resource ID: {$this->resource->id}");
-
-            $i = 0;
             $uniqueTimestamp = time();
+            $i = 0;
 
             while (true) {
+                // Si el job se reinició y la página ya fue guardada en BD, la saltamos
+                if ($this->resource->pages()->where('page_number', $i + 1)->exists()) {
+                    $i++;
+                    continue;
+                }
+
                 $imagick = new \Imagick();
+
+                // CALIDAD MÁXIMA
                 $imagick->setResolution(400, 400);
                 $imagick->setAntiAlias(false);
+
+                // SOLUCIÓN DE COLORES: Forzamos la lectura en RGB para evitar colores chillones
+                $imagick->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 try {
                     $imagick->readImage($pdfPath . '[' . $i . ']');
@@ -68,6 +80,11 @@ class ProcessResourcePdfToImages implements ShouldQueue
                     $imagick->destroy();
                     if ($i > 0) break;
                     else throw $e;
+                }
+
+                // Por si el PDF es rebelde y sigue en CMYK, lo transformamos
+                if ($imagick->getImageColorspace() == \Imagick::COLORSPACE_CMYK) {
+                    $imagick->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
                 }
 
                 $width  = $imagick->getImageWidth();
@@ -80,6 +97,7 @@ class ProcessResourcePdfToImages implements ShouldQueue
                 $imagick->setImageBackgroundColor('white');
                 $imagick->setImageAlphaChannel(\Imagick::ALPHACHANNEL_REMOVE);
                 $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+
                 $imagick->setImageFormat('webp');
                 $imagick->setImageCompressionQuality(95);
 
@@ -88,8 +106,6 @@ class ProcessResourcePdfToImages implements ShouldQueue
 
                 $imagick->writeImage($absolutePath);
 
-                // La ruta que guardamos es RELATIVA a storage/app/private/
-                // Nunca una URL pública
                 $this->resource->pages()->create([
                     'page_number' => $i + 1,
                     'image_path'  => 'resource_pages/' . $this->resource->id . '/' . $fileName,
@@ -108,14 +124,15 @@ class ProcessResourcePdfToImages implements ShouldQueue
             $this->resource->update(['status' => 'completed']);
             Log::info("Resource ID {$this->resource->id} completado. Páginas: {$i}");
         } catch (\Throwable $e) {
-            $this->resource->update(['status' => 'failed']);
-            Log::error('ERROR procesando Resource ID ' . $this->resource->id . ': ' . $e->getMessage());
+            Log::error('Intento fallido procesando Resource ID ' . $this->resource->id . ': ' . $e->getMessage());
+            throw $e; // Lanzamos el error para que Laravel cuente el intento y reinicie
         }
     }
 
     public function failed(\Throwable $exception): void
     {
-        $this->document->update(['status' => 'failed']);
-        \Log::error('Job falló definitivamente (ID: ' . $this->document->id . '): ' . $exception->getMessage());
+        // ARREGLO CRÍTICO: Antes decía $this->document, en tu proyecto es $this->resource
+        $this->resource->update(['status' => 'failed']);
+        Log::error('ERROR DEFINITIVO procesando Resource ID ' . $this->resource->id . ': ' . $exception->getMessage());
     }
 }

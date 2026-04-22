@@ -10,7 +10,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link rel="icon" href="/icono.ico" type="image/ico" />
+    <link rel="icon" href="{{ asset('icono.ico') }}?v=1" type="image/x-icon" />
 
     <!-- Scripts -->
     @routes
