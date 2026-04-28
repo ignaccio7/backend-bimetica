@@ -31,6 +31,11 @@ Route::get('/dashboard', function () {
 // ── Solo ADMIN ────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
+    // Perfil del admin
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
@@ -84,10 +89,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 // Rutas para TODOS los autenticados (admin y user)
 Route::middleware('auth')->group(function () {
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Vista recursos (ambos roles)
     Route::get('/resources', [ResourceController::class, 'viewer'])->name('resource.viewer');

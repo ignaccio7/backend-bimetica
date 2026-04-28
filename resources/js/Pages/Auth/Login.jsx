@@ -34,7 +34,7 @@ export default function Login({
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Inicia sesion" />
             <div className="absolute inset-0 -z-10 h-full w-full bg-gray-100 [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#003d68_100%)]"></div>
 
             <div className="w-full h-full flex flex-row bg-white shadow-md">

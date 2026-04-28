@@ -83,13 +83,15 @@ export default function AuthenticatedLayout({ header, children }) {
                             Inicio
                         </NavLink>
 
-                        <NavLink
-                            href={route("profile.edit")}
-                            active={route().current("profile.edit")}
-                        >
-                            <IconUser />
-                            Perfíl
-                        </NavLink>
+                        {rol === "admin" && (
+                            <NavLink
+                                href={route("profile.edit")}
+                                active={route().current("profile.edit")}
+                            >
+                                <IconUser />
+                                Perfíl
+                            </NavLink>
+                        )}
                     </div>
 
                     {rol === "admin" && (
@@ -311,11 +313,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </Dropdown.Trigger>
 
                                         <Dropdown.Content>
-                                            <Dropdown.Link
-                                                href={route("profile.edit")}
-                                            >
-                                                Perfil
-                                            </Dropdown.Link>
+                                            {rol === "admin" && (
+                                                <Dropdown.Link
+                                                    href={route("profile.edit")}
+                                                >
+                                                    Perfil
+                                                </Dropdown.Link>
+                                            )}
                                             <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"

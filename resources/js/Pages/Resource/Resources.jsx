@@ -9,6 +9,7 @@ import {
     TransitionChild,
 } from "@headlessui/react";
 import Magazine from "@/Pages/Project/components/Magazine";
+import { Head } from "@inertiajs/react";
 
 const COLORS = [
     { color: "#9AC72D", hover: "#7E9B1F" },
@@ -738,6 +739,7 @@ export default function Resources({ auth, services }) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
+            <Head title="Recursos" />
             <div style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}>
                 <div
                     style={{

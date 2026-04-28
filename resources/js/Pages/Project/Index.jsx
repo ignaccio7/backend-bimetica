@@ -7,7 +7,7 @@ import {
     IconTag,
 } from "@/Icons/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import Shuffle from "shufflejs";
 
@@ -96,6 +96,8 @@ export default function ProjectsList({ auth, projects = [] }) {
 
     return (
         <AuthenticatedLayout user={auth?.user}>
+            <Head title="Proyectos" />
+
             <div className="py-6">
                 <div className="actions mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="px-2 sm:px-0">

@@ -10,6 +10,7 @@ import Magazine from "./components/Magazine";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PdfToImages from "@/Components/ui/PdfToImages";
 import { useState } from "react";
+import { Head } from "@inertiajs/react";
 
 /* ================================================
    MAPA DE ÍCONOS — normaliza tildes para comparar
@@ -68,6 +69,7 @@ export default function Show({ auth, project }) {
 
     return (
         <AuthenticatedLayout user={auth?.user}>
+            <Head title="Proyecto" />
             <div className="py-6">
                 <div className="actions mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="px-2 sm:px-0">

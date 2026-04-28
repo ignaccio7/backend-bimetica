@@ -199,12 +199,12 @@ const MODULES_USER = [
                 icon: IconHome,
                 href: route("dashboard"),
             },
-            {
-                label: "Perfil",
-                description: "Gestiona tu información personal",
-                icon: IconUser,
-                href: route("profile.edit"),
-            },
+            // {
+            //     label: "Perfil",
+            //     description: "Gestiona tu información personal",
+            //     icon: IconUser,
+            //     href: route("profile.edit"),
+            // },
         ],
     },
     {

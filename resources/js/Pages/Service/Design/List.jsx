@@ -109,7 +109,7 @@ export default function List({ services }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Servicios - Bimetica" />
+                <Head title="Servicios" />
 
                 <div className="py-6">
                     <div className="actions mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">

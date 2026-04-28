@@ -248,7 +248,7 @@ export default function List({ services }) {
     return (
         <>
             <AuthenticatedLayout>
-                <Head title="Recursos - Bimetica" />
+                <Head title="Recursos PDF" />
                 <div className="py-6">
                     <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                         <div

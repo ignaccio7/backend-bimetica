@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -155,6 +155,7 @@ export default function List({ auth, projects }) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
+            <Head title="Gestionar Proyectos" />
             <div className="py-6">
                 <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                     <CustomDataTable

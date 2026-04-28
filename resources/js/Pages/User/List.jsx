@@ -1,5 +1,5 @@
 // resources/js/Pages/Users/Index.jsx
-import { Link, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CustomDataTable from "@/Components/ui/CustomDataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -114,6 +114,7 @@ export default function Index(
 
     return (
         <AuthenticatedLayout user={auth.user}>
+            <Head title="Usuarios" />
             <div className="py-6">
                 <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                     <CustomDataTable
